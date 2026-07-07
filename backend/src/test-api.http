@@ -1,0 +1,11 @@
+POST http://localhost:3000/cars
+Content-Type: application/json
+
+{
+  "vin": "WBA123456789",
+  "brand": "BMW",
+  "model": "X5",
+  "color": "Black",
+  "arrivalDate": "2026-07-07T00:00:00.000Z"
+}
+
