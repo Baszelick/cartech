@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+
+# Angular
+.angular/
+out-tsc/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Tests
+coverage/
+.nyc_output/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+.tmp/
+.temp/
+
+# Runtime
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Prisma
+prisma/*.db
+prisma/*.db-journal
