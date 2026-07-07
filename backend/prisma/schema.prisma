@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CarStatus {
+  STOCK
+  ISSUED
+}
+
+
+model Car {
+
+  id Int @id @default(autoincrement())
+
+  vin String
+
+  brand String
+
+  model String
+
+  color String
+
+  arrivalDate DateTime
+
+  status CarStatus @default(STOCK)
+
+  psoCompletedAt DateTime?
+
+  issuedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
