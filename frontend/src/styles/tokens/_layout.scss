@@ -1,0 +1,23 @@
+:root {
+  /* ==========================================================================
+     Layout
+     ========================================================================== */
+
+  /* Sidebar */
+  --sidebar-width: 256px;
+  --sidebar-collapsed-width: 72px;
+
+  /* Right dashboard */
+  --control-center-width: 320px;
+
+  /* Header */
+  --desktop-header-height: 64px;
+  --mobile-header-height: 56px;
+
+  /* Bottom navigation */
+  --bottom-navigation-height: 64px;
+
+  /* Workspace */
+  --content-max-width: 1920px;
+  --page-padding: 24px;
+}

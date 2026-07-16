@@ -1,0 +1,20 @@
+<button
+  class="ct-button"
+  [class.ct-button--primary]="variant() === 'primary'"
+  [class.ct-button--secondary]="variant() === 'secondary'"
+  [class.ct-button--ghost]="variant() === 'ghost'"
+  [class.ct-button--danger]="variant() === 'danger'"
+  [class.ct-button--success]="variant() === 'success'"
+
+  [class.ct-button--sm]="size() === 'sm'"
+  [class.ct-button--md]="size() === 'md'"
+  [class.ct-button--lg]="size() === 'lg'"
+
+  [class.ct-button--icon]="iconOnly()"
+
+  [disabled]="disabled() || loading()"
+  [type]="type()">
+
+  <ng-content></ng-content>
+
+</button>

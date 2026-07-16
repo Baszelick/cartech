@@ -1,0 +1,15 @@
+@mixin hover-lift {
+  transition: transform var(--transition-normal);
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@mixin hover-scale {
+  transition: transform var(--transition-normal);
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}

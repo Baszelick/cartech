@@ -1,1 +1,18 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'styles/tokens/typography';
+@use 'styles/tokens/colors';
+@use 'styles/tokens/layout';
+@use 'styles/tokens/radius';
+@use 'styles/tokens/spacings';
+@use 'styles/tokens/z-index';
+
+
+@use 'styles/fonts';
+
+@use 'styles/base/reset';
+@use 'styles/base/globals';
+
+@use 'styles/mixins/breakpoints';
+@use 'styles/mixins/flex';
+@use 'styles/mixins/text';
+@use 'styles/mixins/scroll';
+@use 'styles/mixins/animations';

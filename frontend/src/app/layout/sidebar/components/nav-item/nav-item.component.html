@@ -1,0 +1,21 @@
+<a
+  class="nav-item"
+  [routerLink]="item().route"
+  routerLinkActive="nav-item--active">
+
+  <ct-icon
+    [name]="item().icon"
+    [size]="24">
+  </ct-icon>
+
+  <span class="nav-item__label">
+    {{ item().label }}
+  </span>
+
+  @if (item().badge) {
+    <span class="nav-item__badge">
+      {{ item().badge }}
+    </span>
+  }
+
+</a>

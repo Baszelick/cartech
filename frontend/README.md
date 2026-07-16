@@ -1,59 +1,524 @@
-# Frontend
+Проект: CarTech Assistant
+1. Общая информация
+   Название проекта
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
+CarTech Assistant
 
-## Development server
+Назначение
 
-To start a local development server, run:
+Веб-приложение для помощи техническому персоналу автосалона в контроле состояния автомобилей на складе.
 
-```bash
-ng serve
-```
+Система должна помогать технику:
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+видеть автомобили, требующие действий;
+контролировать выполнение ПСО;
+контролировать периодические проверки аккумуляторов;
+видеть время нахождения автомобиля на складе;
+фиксировать факт выдачи автомобиля.
+2. Цель MVP
 
-## Code scaffolding
+Создать минимально рабочую систему, которая заменяет ручной контроль автомобилей в Excel/бумажных списках.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Основная ценность:
 
-```bash
-ng generate component component-name
-```
+Техник открывает приложение и сразу понимает, какие автомобили требуют внимания.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+3. Ограничения MVP
 
-```bash
-ng generate --help
-```
+В первой версии НЕ реализуются:
 
-## Building
+❌ фотографии автомобилей
+❌ расположение на парковке
+❌ мойка
+❌ сервисные работы
+❌ запчасти
+❌ документы автомобиля
+❌ интеграция с дилерскими системами
+❌ уведомления Telegram/email
+❌ роли пользователей
+❌ сложная аналитика
 
-To build the project run:
+4. Пользователи системы
+   MVP
 
-```bash
-ng build
-```
+Один тип пользователя:
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Техник
 
-## Running unit tests
+Может:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+просматривать автомобили;
+добавлять автомобили;
+выполнять ПСО;
+выполнять проверку аккумулятора;
+отмечать выдачу автомобиля.
+5. Основные сущности
 
-```bash
-ng test
-```
+Система состоит из:
 
-## Running end-to-end tests
+User (будущее)
 
-For end-to-end (e2e) testing, run:
+Car
 
-```bash
-ng e2e
-```
+BatteryCheck
+6. Сущность Car (Автомобиль)
+   Назначение
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Основная сущность системы.
 
-## Additional Resources
+Каждый автомобиль проходит жизненный цикл:
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Поступил
+|
+|
+Контроль ПСО
+|
+|
+Периодические проверки АКБ
+|
+|
+Выдан
+Поля автомобиля
+Car {
+
+id: number
+
+vin: string
+
+brand: string
+
+model: string
+
+color: string
+
+arrivalDate: Date
+
+status: CarStatus
+
+psoCompletedAt: Date | null
+
+issuedAt: Date | null
+
+createdAt: Date
+
+updatedAt: Date
+
+}
+7. Статусы автомобиля
+
+Enum:
+
+enum CarStatus {
+
+STOCK = "STOCK",
+
+ISSUED = "ISSUED"
+
+}
+STOCK
+
+Автомобиль находится на складе.
+
+ISSUED
+
+Автомобиль выдан клиенту.
+
+8. ПСО
+   Бизнес-логика
+
+При создании автомобиля:
+
+psoCompletedAt = null
+
+Автомобиль считается:
+
+ПСО НЕ выполнено
+
+После выполнения:
+
+Создается дата:
+
+psoCompletedAt = текущая дата
+Отображение
+
+Если:
+
+psoCompletedAt = null
+
+показывать:
+
+❌ Требуется ПСО
+
+Иначе:
+
+✅ ПСО выполнено
+Дата: 07.07.2026
+9. Проверка аккумулятора
+   Требование
+
+Каждый автомобиль должен проходить проверку аккумулятора каждые 30 дней.
+
+История проверок
+
+Хранится отдельно.
+
+Сущность:
+
+BatteryCheck {
+
+id: number
+
+carId: number
+
+checkedAt: Date
+
+createdAt: Date
+
+}
+
+Связь:
+
+Car
+
+|
+|
+BatteryCheck[]
+
+
+Один автомобиль:
+
+BMW X5
+
+|
+|
+├──01.06.2026
+
+├──01.07.2026
+
+└──01.08.2026
+
+10. Логика проверки АКБ
+    Если проверок нет
+
+Берем:
+
+arrivalDate
+
+Например:
+
+Поступил:
+
+01.06.2026
+
+Следующая проверка:
+
+01.07.2026
+Если проверки есть
+
+Берем последнюю:
+
+lastBatteryCheck
+
+Добавляем:
+
+30 дней
+
+Пример:
+
+Последняя проверка:
+
+01.07.2026
+
+
+Следующая:
+
+31.07.2026
+
+11. Количество дней на складе
+
+Не хранится в базе.
+
+Вычисляется.
+
+Формула:
+
+today - arrivalDate
+
+Пример:
+
+Поступил:
+
+01.06.2026
+
+
+Сегодня:
+
+07.07.2026
+
+
+На складе:
+
+36 дней
+
+12. API Backend
+    Cars
+    Получить список автомобилей
+    GET /cars
+
+Ответ:
+
+[
+{
+"id":1,
+"vin":"WBA123",
+"brand":"BMW",
+"model":"X5"
+}
+]
+Получить автомобиль
+GET /cars/:id
+Создать автомобиль
+POST /cars
+
+Body:
+
+{
+"vin":"WBA123",
+"brand":"BMW",
+"model":"X5",
+"color":"Black",
+"arrivalDate":"2026-07-07"
+}
+
+После создания:
+
+автоматически:
+
+status = STOCK
+
+psoCompletedAt = null
+
+Выполнить ПСО
+PATCH /cars/:id/pso
+
+Результат:
+
+psoCompletedAt = today
+Выдать автомобиль
+PATCH /cars/:id/issue
+
+Результат:
+
+status = ISSUED
+
+issuedAt = today
+Battery API
+Получить историю проверок
+GET /cars/:id/battery
+Добавить проверку
+POST /cars/:id/battery
+
+Результат:
+
+Создается:
+
+{
+"checkedAt":"2026-07-07"
+}
+Dashboard API
+GET /dashboard
+
+Возвращает:
+
+{
+"totalCars":150,
+
+"needPso":20,
+
+"needBatteryCheck":15,
+
+"stockCars":140,
+
+"issuedCars":10
+}
+13. Frontend Angular
+
+Структура:
+
+src/app
+
+core
+
+shared
+
+features
+
+    cars
+
+    dashboard
+
+Страницы
+Login
+
+(пока заглушка)
+
+Dashboard
+
+Показывает:
+
+Всего автомобилей
+
+150
+
+
+Требуют ПСО
+
+20
+
+
+Требуют АКБ
+
+15
+
+Cars list
+
+Таблица:
+
+Колонки:
+
+VIN
+
+Марка
+
+Модель
+
+Цвет
+
+Дней на складе
+
+ПСО
+
+АКБ
+
+Статус
+
+Car details
+
+Информация:
+
+VIN
+
+Марка
+
+Модель
+
+Цвет
+
+Дата поступления
+
+Дней на складе
+
+
+ПСО
+
+АКБ история
+
+
+Кнопки:
+
+Выполнить ПСО
+
+Проверить АКБ
+
+Выдать
+
+14. Backend Stack
+
+Использовать:
+
+Node.js
+
+NestJS
+
+Prisma
+
+PostgreSQL
+
+JWT (позже)
+
+15. Frontend Stack
+
+Использовать:
+
+Angular
+
+Signals
+
+RxJS
+
+Angular Router
+
+HttpClient
+
+SCSS
+
+Angular Material
+16. Хостинг MVP
+
+Frontend:
+
+Cloudflare Pages
+
+Backend:
+
+Render
+
+Database:
+
+Neon PostgreSQL
+17. Этапы разработки
+    Sprint 1
+
+Backend foundation
+
+NestJS
+Prisma
+PostgreSQL
+Car model
+Sprint 2
+
+Cars CRUD
+
+создание
+просмотр
+изменение
+Sprint 3
+
+Business logic
+
+ПСО
+АКБ
+расчет дней
+Sprint 4
+
+Angular
+
+список
+карточка
+dashboard
+Sprint 5
+
+Deploy
+
+frontend
+backend
+database
+18. Главный принцип проекта
+
+Не создавать лишнюю сложность.
+
+MVP должен решать одну задачу:
+
+"Техник всегда знает, какую машину нужно проверить и что с ней сделать."
+
+Это ТЗ можно использовать как базовый документ для любой другой нейронки. Главное правило для нее: не добавлять новые сущности и функции без согласования, пока MVP не завершен.

@@ -1,0 +1,33 @@
+<div class="app-shell">
+
+  @if (layout.sidebarOpened()) {
+    <aside class="sidebar">
+      <app-sidebar />
+    </aside>
+  }
+
+  <section class="content">
+
+    @if (layout.isMobile()) {
+      <app-mobile-header />
+    } @else {
+      <app-desktop-header />
+    }
+
+    <main class="workspace">
+      <app-workspace />
+    </main>
+
+  </section>
+
+  @if (layout.dashboardOpened() && !layout.isMobile()) {
+    <aside class="control-center">
+      <app-control-center />
+    </aside>
+  }
+
+</div>
+
+@if (layout.isMobile()) {
+  <app-bottom-navigation />
+}

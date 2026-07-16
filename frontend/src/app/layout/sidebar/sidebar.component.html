@@ -1,0 +1,19 @@
+<aside class="sidebar">
+
+  <div class="sidebar__logo">
+
+  </div>
+
+  <nav class="sidebar__navigation">
+    @for (item of navigation; track item.route) {
+      <app-nav-item
+        [item]="item"
+      ></app-nav-item>
+    }
+  </nav>
+
+  <footer class="sidebar__footer">
+    <span>FOOTER</span>
+  </footer>
+
+</aside>

@@ -1,0 +1,30 @@
+:host{
+  display: block;
+  height: var(--desktop-header-height);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  border-radius: var(--radius-8);
+  padding-inline: var(--space-24);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header__left,
+.header__center,
+.header__right {
+  display: flex;
+  align-items: center;
+}
+
+.header__left {
+  gap: var(--space-4);
+}
+
+.header__right {
+  gap: var(--space-3);
+}
