@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { CarsModule } from './cars/cars.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     PrismaModule,
     CarsModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

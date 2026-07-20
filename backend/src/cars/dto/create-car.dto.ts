@@ -4,4 +4,5 @@ export class CreateCarDto {
   model: string;
   color: string;
   arrivalDate: Date;
+  nextBatteryCheckAt: Date;
 }
