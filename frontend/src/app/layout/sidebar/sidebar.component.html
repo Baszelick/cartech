@@ -1,6 +1,27 @@
-<aside class="sidebar">
+<aside
+  class="sidebar"
+  [class.sidebar--collapsed]="layout.sidebarCollapsed()"
+>
 
   <div class="sidebar__logo">
+    <ct-logo
+      [height]="40"
+    ></ct-logo>
+    @if (!layout.sidebarCollapsed()) {
+      <span class="brand-text">CarTech</span>
+    }
+
+    <ct-button
+      type="button"
+      variant="ghost"
+      size="md"
+      (click)="layout.toggleSidebar()"
+    >
+      <ct-icon
+        name="sidebar"
+      ></ct-icon>
+    </ct-button>
+
 
   </div>
 

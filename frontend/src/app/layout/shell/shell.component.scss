@@ -14,19 +14,21 @@
     var(--control-center-width);
 
   height: 100%;
-
   background: var(--color-bg-main);
+
+  transition: grid-template-columns 0.2s ease-in-out;
+
+  &--sidebar-collapsed {
+    --sidebar-width: var(--sidebar-collapsed-width);
+  }
 }
 
 .content {
   display: flex;
   flex-direction: column;
-
   min-width: 0;
   min-height: 0;
-
   overflow: hidden;
-
   padding: var(--space-12) var(--space-8);
 }
 
@@ -42,6 +44,10 @@
 
 .sidebar {
   padding: var(--space-12) var(--space-8);
+  transition: padding 0.2s ease-in-out;
+  .app-shell--sidebar-collapsed & {
+    padding: var(--space-12) var(--space-4);
+  }
 }
 
 .control-center {

@@ -1,5 +1,6 @@
 import {computed, effect, inject, Injectable, signal} from '@angular/core';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
+import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class LayoutService {
   isMobile = signal(false)
   sidebarOpened = signal(true)
   dashboardOpened = signal(true)
+  sidebarCollapsed = signal(false)
 
   constructor() {
     this.#breakpointObserver.observe([Breakpoints.Handset, '(max-width: 768px)'])
@@ -28,11 +30,11 @@ export class LayoutService {
   }
 
   toggleSidebar () {
-    this.sidebarOpened.set(!this.sidebarOpened)
+    this.sidebarCollapsed.update(v=> !v)
   }
 
   toggleDashboard () {
-    this.dashboardOpened.set(!this.dashboardOpened)
+    this.dashboardOpened.update(v=> !v)
   }
 
 

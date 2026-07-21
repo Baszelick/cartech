@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, input, output} from '@angular/core';
 import {ButtonSize, ButtonVariant} from './button.type';
 
 @Component({
@@ -16,6 +16,12 @@ export class ButtonComponent {
   readonly size = input<ButtonSize>('md');
   readonly iconOnly = input(false);
   readonly fullWidth = input(false);
+
+  readonly clicked = output<MouseEvent>();
+
+  onClick(event: MouseEvent) {
+    this.clicked.emit(event);
+  }
 
   protected readonly hostClasses = computed(() => [
     'ct-button',

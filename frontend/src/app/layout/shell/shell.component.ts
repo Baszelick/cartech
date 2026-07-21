@@ -6,7 +6,6 @@ import {ControlCenterComponent} from '../control-center/control-center.component
 import {BottomNavigationComponent} from '../bottom-navigation/bottom-navigation.component';
 import {LayoutService} from '../../core/services/layout.service';
 import {MobileHeaderComponent} from '../mobile-header/mobile-header.component';
-import {MobileStatsBarComponent} from '../mobile-stats-bar/mobile-stats-bar.component';
 
 @Component({
   selector: 'app-shell',
@@ -17,7 +16,6 @@ import {MobileStatsBarComponent} from '../mobile-stats-bar/mobile-stats-bar.comp
     ControlCenterComponent,
     BottomNavigationComponent,
     MobileHeaderComponent,
-    MobileStatsBarComponent
   ],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',

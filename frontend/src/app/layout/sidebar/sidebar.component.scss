@@ -11,13 +11,41 @@
   border-radius: var(--radius-8);
   background: var(--color-bg-surface);
   border-right: 1px solid var(--color-border);
+  transition: padding 0.2s ease-in-out;
+
+  &--collapsed {
+    padding: var(--space-8) var(--space-4);
+
+    .sidebar__logo {
+      justify-content: center;
+    }
+  }
 }
 
 .sidebar__navigation {
   flex: 1;
-
   display: flex;
   flex-direction: column;
-
   gap: var(--space-8);
+}
+
+.sidebar__logo {
+  display: flex;
+  margin-bottom: 24px;
+  justify-content: space-between;
+  transition: justify-content 0.2s ease, gap 0.2s ease;
+
+  ct-logo,
+  ct-button {
+    flex-shrink: 0;
+  }
+
+
+  .brand-text {
+    letter-spacing: -0.08em;
+    font-size: var(--text-32);
+    color: var(--color-text-main);
+    font-weight: var(--font-extrabold);
+    -webkit-text-stroke: 1px var(--color-text-main);
+  }
 }

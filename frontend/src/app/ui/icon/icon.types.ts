@@ -1,7 +1,7 @@
 export type IconName =
   | 'home'
   | 'tasks'
-  | 'warehouse'
+  | 'sidebar'
   | 'arrival'
   | 'car'
   | 'battery'

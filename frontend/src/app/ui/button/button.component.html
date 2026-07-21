@@ -10,6 +10,8 @@
   [class.ct-button--md]="size() === 'md'"
   [class.ct-button--lg]="size() === 'lg'"
 
+  (click)="onClick($event)"
+
   [class.ct-button--icon]="iconOnly()"
 
   [disabled]="disabled() || loading()"

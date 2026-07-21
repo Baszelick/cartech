@@ -3,7 +3,7 @@ import { IconName } from './icon.types';
 export const ICON_PATHS: Record<IconName, string> = {
   home: '/icons/home.svg',
   tasks: '/icons/tasks.svg',
-  warehouse: '/icons/warehouse.svg',
+  sidebar: '/icons/sidebar.svg',
   arrival: '/icons/arrival.svg',
 
   battery: '/icons/battery.svg',
