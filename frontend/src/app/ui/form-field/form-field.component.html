@@ -1,0 +1,31 @@
+<div class="ct-form-field">
+
+  @if (label()) {
+    <label class="ct-form-field__label">
+
+      {{ label() }}
+
+      @if (required()) {
+        <span class="ct-form-field__required">*</span>
+      }
+
+    </label>
+  }
+
+  <div class="ct-form-field__control">
+    <ng-content />
+  </div>
+
+  @if (hint()) {
+    <div class="ct-form-field__hint">
+      {{ hint() }}
+    </div>
+  }
+
+  @if (error()) {
+    <div class="ct-form-field__error">
+      {{ error() }}
+    </div>
+  }
+
+</div>
