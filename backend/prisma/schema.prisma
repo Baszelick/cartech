@@ -7,52 +7,164 @@ datasource db {
 }
 
 enum CarStatus {
-  STOCK
+  ARRIVED
+  PSO
+  READY
   ISSUED
 }
 
+// --------------------------------------------------
+// 1. СПРАВОЧНИКИ (Создаются через админку / API без миграций)
+// --------------------------------------------------
 
-model Car {
-
-  id Int @id @default(autoincrement())
-
-  vin String @unique
-
-  brand String
-
-  model String
-
-  color String
-
-  arrivalDate DateTime
-
-  batteryChecks BatteryCheck[]
-
-  status CarStatus @default(STOCK)
-
-  psoCompletedAt DateTime?
-
-  issuedAt DateTime?
+model Location {
+  id    Int    @id @default(autoincrement())
+  name  String @unique // "Х1", "В27"
+  sites Site[]
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
+model Site {
+  id         Int         @id @default(autoincrement())
+  name       String      // "Поле", "Территория 1"
+  locationId Int
+  location   Location    @relation(fields: [locationId], references: [id])
+
+  brands     SiteBrand[]
+  cars       Car[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id     Int         @id @default(autoincrement())
+  name   String      @unique // "Jetour", "Soueast"
+  models CarModel[]
+  sites  SiteBrand[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Связь M:N (какие бренды разрешены на конкретной площадке)
+model SiteBrand {
+  siteId  Int
+  brandId Int
+  site    Site  @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  brand   Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@id([siteId, brandId])
+}
+
+model CarModel {
+  id      Int    @id @default(autoincrement())
+  name    String // "X70", "Dashing"
+  brandId Int
+  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  cars    Car[]
+
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  batteryLastCheckAt DateTime?
+  @@unique([brandId, name])
+}
 
+model Color {
+  id   Int    @id @default(autoincrement())
+  name String @unique // "Белый", "Черный"
+  cars Car[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+
+  username     String   @unique
+  passwordHash String
+
+  firstName    String
+  lastName     String
+
+  role         UserRole @default(EMPLOYEE)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// --------------------------------------------------
+// 2. ОСНОВНЫЕ СУЩНОСТИ ПРОЦЕССА
+// --------------------------------------------------
+
+model Arrival {
+  id          String   @id @default(cuid())
+  truckNumber String
+  arrivalDate DateTime
+  comment     String?
+
+  cars        Car[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([arrivalDate])
+}
+
+model Car {
+  id                 Int        @id @default(autoincrement())
+  vin                String     @unique
+
+  // Связи со справочниками (вместо обычных String)
+  siteId             Int
+  site               Site       @relation(fields: [siteId], references: [id])
+
+  modelId            Int
+  model              CarModel   @relation(fields: [modelId], references: [id])
+
+  colorId            Int
+  color              Color      @relation(fields: [colorId], references: [id])
+
+  status             CarStatus  @default(ARRIVED)
+
+  arrivalId          String
+  arrival            Arrival    @relation(fields: [arrivalId], references: [id], onDelete: Cascade)
+
+  psoCompletedAt     DateTime?
+  issuedAt           DateTime?
+
+  batteryLastCheckAt DateTime?
   nextBatteryCheckAt DateTime?
+
+  checks             BatteryCheck[]
+
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  @@index([vin])
+  @@index([status])
+  @@index([arrivalId])
+  @@index([siteId])
 }
 
 model BatteryCheck {
-  id Int @id @default(autoincrement())
-
+  id        Int      @id @default(autoincrement())
   checkedAt DateTime @default(now())
+  voltage   Float?
+  comment   String?
 
-  voltage Float?
+  carId     Int
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
 
-  comment String?
-
-  carId Int
-
-  car Car @relation(fields: [carId],references: [id])
+  @@index([carId])
+  @@index([checkedAt])
 }

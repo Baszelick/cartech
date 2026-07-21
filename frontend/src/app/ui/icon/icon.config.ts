@@ -18,4 +18,7 @@ export const ICON_PATHS: Record<IconName, string> = {
 
   issue: '/icons/issue.svg',
   pso: '/icons/pso.svg',
+  chevron: '/icons/chevron.svg',
+  check: '/icons/check.svg',
+  calendar: '/icons/calendar.svg',
 };

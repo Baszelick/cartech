@@ -21,6 +21,11 @@
   align-items: center;
 }
 
+.header__center {
+  width: var(--input-width-560);
+
+}
+
 .header__left {
   gap: var(--space-4);
 }

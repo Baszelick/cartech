@@ -4,32 +4,36 @@
 >
 
   <div class="sidebar__logo">
-    <ct-logo
-      [height]="40"
-    ></ct-logo>
-    @if (!layout.sidebarCollapsed()) {
-      <span class="brand-text">CarTech</span>
+    @if (layout.sidebarCollapsed()) {
+      <button
+        type="button"
+        class="sidebar__expand-btn"
+        (click)="layout.toggleSidebar()"
+        title="Развернуть"
+      >
+        <ct-logo [height]="32" class="sidebar__logo-icon"></ct-logo>
+        <ct-icon name="sidebar" class="sidebar__hover-icon"></ct-icon>
+      </button>
+    } @else {
+      <div class="sidebar__brand">
+        <ct-logo [height]="40"></ct-logo>
+        <span class="brand-text">CarTech</span>
+      </div>
+
+      <ct-button
+        type="button"
+        variant="ghost"
+        size="md"
+        (click)="layout.toggleSidebar()"
+      >
+        <ct-icon name="sidebar"></ct-icon>
+      </ct-button>
     }
-
-    <ct-button
-      type="button"
-      variant="ghost"
-      size="md"
-      (click)="layout.toggleSidebar()"
-    >
-      <ct-icon
-        name="sidebar"
-      ></ct-icon>
-    </ct-button>
-
-
   </div>
 
   <nav class="sidebar__navigation">
     @for (item of navigation; track item.route) {
-      <app-nav-item
-        [item]="item"
-      ></app-nav-item>
+      <app-nav-item [item]="item"></app-nav-item>
     }
   </nav>
 

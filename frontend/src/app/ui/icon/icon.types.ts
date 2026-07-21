@@ -11,4 +11,8 @@ export type IconName =
   | 'warning'
   | 'critical'
   | 'issue'
-  | 'pso';
+  | 'pso'
+  | 'chevron'
+  | 'check'
+  | 'calendar'
+

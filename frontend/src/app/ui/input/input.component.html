@@ -1,11 +1,8 @@
-<!-- shared/components/input/input.component.html -->
 <div class="ct-input-wrapper" [class.ct-input-wrapper--disabled]="disabled()">
 
-  @if (icon()) {
-    <span class="ct-input-wrapper__icon">
-      🔍
-    </span>
-  }
+  <div class="ct-input-wrapper__prefix">
+    <ng-content select="[ctInputPrefix]"></ng-content>
+  </div>
 
   <input
     [type]="type()"
@@ -13,9 +10,11 @@
     [disabled]="disabled()"
     [value]="value()"
     (input)="handleInput($event)"
-    (blur)="handleBlur()"
     class="ct-input"
-    [class.ct-input--has-icon]="icon()"
   />
+
+  <div class="ct-input-wrapper__suffix">
+    <ng-content select="[ctInputSuffix]"></ng-content>
+  </div>
 
 </div>

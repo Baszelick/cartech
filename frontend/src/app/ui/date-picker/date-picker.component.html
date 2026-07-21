@@ -1,0 +1,75 @@
+@if (label()) {
+  <label class="ct-date-picker__label">{{ label() }}</label>
+}
+
+<div
+  #trigger="cdkOverlayOrigin"
+  cdkOverlayOrigin
+  class="ct-date-picker-trigger"
+  (click)="toggle()"
+>
+  <span
+    class="ct-date-picker-trigger__value"
+    [class.ct-date-picker-trigger__value--placeholder]="!value()"
+  >
+    {{ displayValue() || placeholder() }}
+  </span>
+
+  <ct-icon name="calendar" class="ct-date-picker-trigger__icon" />
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  (overlayOutsideClick)="close()"
+>
+  <div class="ct-calendar">
+    <div class="ct-calendar__header">
+      <button
+        type="button"
+        class="ct-calendar__nav-btn"
+        (click)="prevMonth()"
+        aria-label="Предыдущий месяц"
+      >
+        <ct-icon name="chevron" />
+      </button>
+
+      <span class="ct-calendar__title">
+        {{ activeMonth().toFormat('LLLL yyyy') }}
+      </span>
+
+      <button
+        type="button"
+        class="ct-calendar__nav-btn"
+        (click)="nextMonth()"
+        aria-label="Следующий месяц"
+      >
+        <ct-icon name="chevron" />
+      </button>
+    </div>
+
+    <div class="ct-calendar__weekdays">
+      @for (dayName of weekDays; track dayName) {
+        <span class="ct-calendar__weekday">{{ dayName }}</span>
+      }
+    </div>
+
+    <div class="ct-calendar__grid">
+      @for (day of calendarGrid(); track day.date.toMillis()) {
+        <button
+          type="button"
+          class="ct-calendar__day"
+          [class.ct-calendar__day--other-month]="!day.isCurrentMonth"
+          [class.ct-calendar__day--today]="day.isToday"
+          [class.ct-calendar__day--selected]="day.isSelected"
+          [class.ct-calendar__day--disabled]="day.isDisabled"
+          [disabled]="day.isDisabled"
+          (click)="selectDate(day)"
+        >
+          {{ day.date.day }}
+        </button>
+      }
+    </div>
+  </div>
+</ng-template>

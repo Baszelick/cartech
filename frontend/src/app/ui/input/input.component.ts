@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, forwardRef, input, signal} from '@an
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 @Component({
-  selector: 'app-input',
+  selector: 'ct-input',
   imports: [],
   templateUrl: './input.component.html',
   styleUrl: './input.component.scss',
@@ -19,7 +19,6 @@ export class InputComponent implements ControlValueAccessor {
 
   readonly type = input<string>('text')
   readonly placeholder = input<string>('')
-  readonly icon = input<string>()
 
   protected readonly value = signal<string>('');
   protected readonly disabled = signal<boolean>(false)

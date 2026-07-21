@@ -1,0 +1,47 @@
+@if (label()) {
+  <label class="ct-select__label">{{ label() }}</label>
+}
+
+<div
+  #trigger="cdkOverlayOrigin"
+  cdkOverlayOrigin
+  class="ct-select-trigger"
+  (click)="toggle()"
+>
+  <span
+    class="ct-select-trigger__value"
+    [class.ct-select-trigger__value--placeholder]="value() === null"
+  >
+    <!-- Тут покажем label выбранной опции, либо placeholder -->
+    {{ selectedLabel || placeholder() }}
+  </span>
+
+  <ct-icon name="chevron" class="ct-select-trigger__arrow" />
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayMinWidth]="triggerWidth"
+  (overlayOutsideClick)="close()"
+>
+  <ul class="ct-select-dropdown">
+    @for (option of options(); track option.value) {
+      <li
+        class="ct-select-dropdown__item"
+        [class.ct-select-dropdown__item--selected]="option.value === value()"
+        [class.ct-select-dropdown__item--disabled]="option.disabled"
+        (click)="selectOption(option)"
+      >
+        <span>{{ option.label }}</span>
+
+        @if (option.value === value()) {
+          <ct-icon name="check" class="ct-select-dropdown__check" />
+        }
+      </li>
+    } @empty {
+      <li class="ct-select-dropdown__empty">Нет данных</li>
+    }
+  </ul>
+</ng-template>

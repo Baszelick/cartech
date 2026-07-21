@@ -1,0 +1,179 @@
+:host {
+  display: block;
+  width: var(--date-picker-width, 100%);
+  font-family: inherit;
+  user-select: none;
+}
+
+// Внешний лейбл
+.ct-date-picker__label {
+  display: block;
+  margin-bottom: var(--space-6);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-main);
+}
+
+.ct-date-picker-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  height: 40px;
+  padding: 0 14px;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  &__value {
+    flex: 1;
+    font-size: 14px;
+    color: var(--color-text-main);
+
+    &--placeholder {
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    color: var(--color-text-secondary);
+  }
+}
+
+// Состояние: Открыт
+:host(.ct-date-picker--open) {
+  .ct-date-picker-trigger {
+    border-color: var(--color-brand-blue);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+  }
+}
+
+// Состояние: Заблокирован
+:host(.ct-date-picker--disabled) {
+  opacity: 0.6;
+  pointer-events: none;
+
+  .ct-date-picker-trigger {
+    cursor: not-allowed;
+    background-color: var(--color-bg-disabled);
+  }
+}
+
+// --------------------------------------------------
+// Календарь (Выпадающий блок)
+// --------------------------------------------------
+.ct-calendar {
+  width: 280px;
+  margin-top: 4px;
+  padding: 16px;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-12);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-main);
+    text-transform: capitalize;
+  }
+
+  &__nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    //TODO: переменная для календаря
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-6);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background-color: var(--color-bg-main);
+      color: var(--color-text-main);
+    }
+  }
+
+  &__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  &__weekday {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  &__day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    margin: 0 auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    font-size: 13px;
+    color: var(--color-text-main);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover:not(&--disabled) {
+      background-color: var(--color-bg-main);
+    }
+
+    &--other-month {
+      color: var(--color-text-muted);
+    }
+
+    // Текущий день (Сегодня)
+    &--today {
+      font-weight: var(--font-bold);
+      color: var(--color-brand-blue);
+    }
+
+    &--selected {
+      background-color: var(--color-brand-blue) !important;
+      color: #ffffff !important;
+      font-weight: var(--font-semibold);
+    }
+
+    &--disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+}
