@@ -16,7 +16,7 @@ model Car {
 
   id Int @id @default(autoincrement())
 
-  vin String
+  vin String @unique
 
   brand String
 
@@ -25,6 +25,8 @@ model Car {
   color String
 
   arrivalDate DateTime
+
+  batteryChecks BatteryCheck[]
 
   status CarStatus @default(STOCK)
 
@@ -35,4 +37,22 @@ model Car {
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+
+  batteryLastCheckAt DateTime?
+
+  nextBatteryCheckAt DateTime?
+}
+
+model BatteryCheck {
+  id Int @id @default(autoincrement())
+
+  checkedAt DateTime @default(now())
+
+  voltage Float?
+
+  comment String?
+
+  carId Int
+
+  car Car @relation(fields: [carId],references: [id])
 }
