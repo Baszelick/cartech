@@ -1,6 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UserRole } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
+import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
 
 const connectionString =
@@ -12,6 +13,26 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('🌱 Начинаем забивать тестовые данные (seeding)...');
+
+  // Seeding admin user
+  const hashedPassword = await bcrypt.hash('admin123', 10);
+  await prisma.user.upsert({
+    where: { username: 'admin' },
+    update: {
+      passwordHash: hashedPassword,
+      role: UserRole.ADMIN,
+      firstName: 'Админ',
+      lastName: 'Админов',
+    },
+    create: {
+      username: 'admin',
+      passwordHash: hashedPassword,
+      role: UserRole.ADMIN,
+      firstName: 'Админ',
+      lastName: 'Админов',
+    },
+  });
+  console.log('👤 Seed-пользователь admin успешно создан/обновлен.');
 
   await prisma.location.upsert({
     where: { name: 'Санкт-Петербург' },
@@ -68,29 +89,43 @@ async function main() {
   });
 
   if (siteParnas && monjaroModel && blackColor) {
-    const arrival = await prisma.arrival.create({
-      data: {
-        truckNumber: 'Автовоз №42',
-        arrivalDate: new Date(),
-        comment: 'Первая тестовая партия машин',
-      },
+    const truckNumber = 'Автовоз №42';
+    let arrival = await prisma.arrival.findFirst({
+      where: { truckNumber },
     });
 
-    await prisma.car.create({
-      data: {
-        vin: 'LV234567890123456',
-        modelId: monjaroModel.id,
-        colorId: blackColor.id,
-        siteId: siteParnas.id,
-        arrivalId: arrival.id,
-        checks: {
-          create: {
-            voltage: 12.6,
-            comment: 'Заводская проверка при приеме',
+    if (!arrival) {
+      arrival = await prisma.arrival.create({
+        data: {
+          truckNumber,
+          arrivalDate: new Date(),
+          comment: 'Первая тестовая партия машин',
+        },
+      });
+    }
+
+    const vin = 'LV234567890123456';
+    const existingCar = await prisma.car.findUnique({
+      where: { vin },
+    });
+
+    if (!existingCar) {
+      await prisma.car.create({
+        data: {
+          vin,
+          modelId: monjaroModel.id,
+          colorId: blackColor.id,
+          siteId: siteParnas.id,
+          arrivalId: arrival.id,
+          checks: {
+            create: {
+              voltage: 12.6,
+              comment: 'Заводская проверка при приеме',
+            },
           },
         },
-      },
-    });
+      });
+    }
   }
 
   console.log('✅ База успешно заполнена тестовыми данными!');

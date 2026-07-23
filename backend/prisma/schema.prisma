@@ -88,16 +88,12 @@ enum UserRole {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-
+  id           String   @id @default(uuid())
   username     String   @unique
   passwordHash String
-
-  firstName    String
-  lastName     String
-
-  role         UserRole @default(EMPLOYEE)
-
+  role         UserRole @default(ADMIN)
+  firstName    String   @default("Admin")
+  lastName     String   @default("User")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
