@@ -15,20 +15,20 @@ export class DashboardService {
       await Promise.all([
         this.prismaService.car.count({
           where: {
-            status: CarStatus.STOCK,
+            status: { not: CarStatus.ISSUED },
           },
         }),
 
         this.prismaService.car.count({
           where: {
-            status: CarStatus.STOCK,
+            status: { not: CarStatus.ISSUED },
             psoCompletedAt: null,
           },
         }),
 
         this.prismaService.car.findMany({
           where: {
-            status: CarStatus.STOCK,
+            status: { not: CarStatus.ISSUED },
             nextBatteryCheckAt: {
               not: null,
             },

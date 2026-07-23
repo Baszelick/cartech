@@ -1,0 +1,11 @@
+<div class="ct-textarea-wrapper" [class.ct-textarea-wrapper--disabled]="disabled()">
+  <textarea
+    [placeholder]="placeholder()"
+    [rows]="rows()"
+    [disabled]="disabled()"
+    [value]="value()"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    class="ct-textarea"
+  ></textarea>
+</div>

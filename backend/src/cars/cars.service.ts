@@ -14,14 +14,30 @@ export class CarsService {
   constructor(private prismaService: PrismaService) {}
 
   findAll() {
-    return this.prismaService.car.findMany();
+    return this.prismaService.car.findMany({
+      include: {
+        model: {
+          include: { brand: true },
+        },
+        color: true,
+        site: true,
+      },
+    });
   }
 
   create(createCarDto: CreateCarDto) {
-    const nextBatteryCheckAt = new Date(createCarDto.arrivalDate);
+    const nextBatteryCheckAt = new Date();
     nextBatteryCheckAt.setDate(nextBatteryCheckAt.getDate() + 30);
     return this.prismaService.car.create({
-      data: { ...createCarDto, nextBatteryCheckAt: nextBatteryCheckAt },
+      data: {
+        vin: createCarDto.vin,
+        siteId: createCarDto.siteId,
+        modelId: createCarDto.modelId,
+        colorId: createCarDto.colorId,
+        arrivalId: createCarDto.arrivalId,
+        ...(createCarDto.comment && { comment: createCarDto.comment }),
+        nextBatteryCheckAt,
+      },
     });
   }
 
@@ -31,7 +47,12 @@ export class CarsService {
         id: carId,
       },
       include: {
-        batteryChecks: {
+        model: {
+          include: { brand: true },
+        },
+        color: true,
+        site: true,
+        checks: {
           orderBy: {
             checkedAt: 'desc',
           },
@@ -96,6 +117,9 @@ export class CarsService {
 
     const cars = await this.prismaService.car.findMany({
       where: {
+        status: {
+          not: CarStatus.ISSUED,
+        },
         OR: [
           {
             psoCompletedAt: null,
@@ -106,6 +130,13 @@ export class CarsService {
             },
           },
         ],
+      },
+      include: {
+        model: {
+          include: { brand: true },
+        },
+        color: true,
+        site: true,
       },
     });
 
@@ -122,6 +153,11 @@ export class CarsService {
     });
 
     if (!car) throw new NotFoundException('Car not found');
+    if (car.status !== CarStatus.ARRIVED && car.status !== CarStatus.PSO) {
+      throw new BadRequestException(
+        'Car is not in a valid status for PSO completion',
+      );
+    }
 
     return await this.prismaService.car.update({
       where: {
@@ -129,6 +165,7 @@ export class CarsService {
       },
       data: {
         psoCompletedAt: today,
+        status: CarStatus.READY,
       },
     });
   }

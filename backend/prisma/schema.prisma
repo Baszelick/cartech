@@ -142,6 +142,8 @@ model Car {
   psoCompletedAt     DateTime?
   issuedAt           DateTime?
 
+  comment     String?
+
   batteryLastCheckAt DateTime?
   nextBatteryCheckAt DateTime?
 
