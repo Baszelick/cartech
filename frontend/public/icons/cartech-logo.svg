@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" role="img" aria-labelledby="title desc">
+  <title id="title">CarTech</title>
+  <desc id="desc">Минималистичный автомобиль под крышей склада</desc>
+  <g fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M42 92 L160 42 L278 92"/>
+    <path d="M58 86 V224"/>
+    <path d="M262 86 V224"/>
+    <path d="M91 153 L108 116 Q114 102 130 102 H190 Q206 102 212 116 L229 153"/>
+    <path d="M89 153 Q76 158 74 174 V205 Q74 216 86 216 H234 Q246 216 246 205 V174 Q244 158 231 153 Z"/>
+    <path d="M91 153 L76 146 H65"/>
+    <path d="M229 153 L244 146 H255"/>
+    <path d="M92 174 L124 182 L111 195 L88 189 Z"/>
+    <path d="M228 174 L196 182 L209 195 L232 189 Z"/>
+    <path d="M132 181 H188"/>
+    <path d="M126 199 H194"/>
+  </g>
+</svg>

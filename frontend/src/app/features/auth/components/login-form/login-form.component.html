@@ -1,0 +1,49 @@
+<div class="login-form-wrapper">
+  <div class="login-logo">
+    <ct-image-logo
+      [size]="200"
+    ></ct-image-logo>
+    <span class="brand-text">Car<span class="brand-text-blue">Tech</span></span>
+  </div>
+
+  <span class="welcome">Войдите, чтобы продолжить</span>
+
+  <div class="login-form">
+    <div class="login-input login">
+      Логин
+      <ct-input
+        placeholder="Введите Логин"
+      >
+        <ct-icon
+          ctInputPrefix
+          name="user"
+        ></ct-icon>
+      </ct-input>
+    </div>
+
+    <div class="login-input password">
+      Пароль
+      <ct-input
+        placeholder="Введите пароль"
+      >
+        <ct-icon
+          ctInputPrefix
+          name="lock"
+        ></ct-icon>
+        <ct-icon
+          ctInputSuffix
+          name="eye"
+        ></ct-icon>
+      </ct-input>
+    </div>
+  </div>
+
+
+  <div class="login-buttons">
+    <ct-button
+      size="full"
+      class="full-width"
+      variant="primary"
+    ><span class="action-btn-text">Войти</span></ct-button>
+  </div>
+</div>

@@ -4,6 +4,7 @@
 @use 'styles/tokens/radius';
 @use 'styles/tokens/spacings';
 @use 'styles/tokens/z-index';
+@use 'styles/tokens/shadows';
 
 
 @use 'styles/fonts';
@@ -16,3 +17,4 @@
 @use 'styles/mixins/text';
 @use 'styles/mixins/scroll';
 @use 'styles/mixins/animations';
+

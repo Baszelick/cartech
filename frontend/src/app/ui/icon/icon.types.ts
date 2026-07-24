@@ -15,4 +15,7 @@ export type IconName =
   | 'chevron'
   | 'check'
   | 'calendar'
+  | 'lock'
+  | 'eye'
+  | 'eyeOff'
 

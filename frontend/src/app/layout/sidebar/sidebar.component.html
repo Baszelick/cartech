@@ -1,3 +1,4 @@
+
 <aside
   class="sidebar"
   [class.sidebar--collapsed]="layout.sidebarCollapsed()"
@@ -11,13 +12,13 @@
         (click)="layout.toggleSidebar()"
         title="Развернуть"
       >
-        <ct-logo [height]="32" class="sidebar__logo-icon"></ct-logo>
+        <ct-image-logo class="sidebar__logo-icon" borderRadius="var(--radius-8)" [size]="42" imageColor="var(--color-bg-surface)" backgroundColor="var(--color-brand-blue)"></ct-image-logo>
         <ct-icon name="sidebar" class="sidebar__hover-icon"></ct-icon>
       </button>
     } @else {
       <div class="sidebar__brand">
-        <ct-logo [height]="40"></ct-logo>
-        <span class="brand-text">CarTech</span>
+        <ct-image-logo borderRadius="var(--radius-8)" [size]="42" imageColor="var(--color-bg-surface)" backgroundColor="var(--color-brand-blue)"></ct-image-logo>
+        <span class="brand-text">Car<span>Tech</span></span>
       </div>
 
       <ct-button

@@ -52,7 +52,7 @@
 :host(.ct-date-picker--open) {
   .ct-date-picker-trigger {
     border-color: var(--color-brand-blue);
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+    box-shadow: var(--focus-ring);
   }
 }
 
@@ -77,7 +77,7 @@
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-12);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-dropdown);
 
   &__header {
     display: flex;
@@ -146,7 +146,7 @@
     background: transparent;
     border: none;
     border-radius: 50%;
-    font-size: 13px;
+    font-size: var(--text-13);
     color: var(--color-text-main);
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
@@ -167,7 +167,7 @@
 
     &--selected {
       background-color: var(--color-brand-blue) !important;
-      color: #ffffff !important;
+      color: var(--color-white, #ffffff) !important;
       font-weight: var(--font-semibold);
     }
 

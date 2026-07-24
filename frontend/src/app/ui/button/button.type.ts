@@ -8,4 +8,5 @@ export type ButtonVariant =
 export type ButtonSize =
   | 'sm'
   | 'md'
-  | 'lg';
+  | 'lg'
+  | 'full'

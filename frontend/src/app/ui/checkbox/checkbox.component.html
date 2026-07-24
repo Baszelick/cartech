@@ -1,0 +1,24 @@
+<div
+  class="ct-checkbox"
+  [class.ct-checkbox--checked]="checked()"
+  [class.ct-checkbox--disabled]="disabled()"
+  (click)="toggle()"
+  (keydown.enter)="toggle()"
+  (keydown.space)="toggle(); $event.preventDefault()"
+  tabindex="0"
+  role="checkbox"
+  [attr.aria-checked]="checked()"
+  [attr.aria-disabled]="disabled()"
+>
+  <div class="ct-checkbox__box">
+    @if (checked()) {
+      <svg class="ct-checkbox__check" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    }
+  </div>
+
+  @if (label()) {
+    <span class="ct-checkbox__label">{{ label() }}</span>
+  }
+</div>

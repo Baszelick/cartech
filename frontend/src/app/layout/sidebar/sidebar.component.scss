@@ -34,7 +34,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-24);
 
   .sidebar__brand {
     display: flex;
@@ -43,11 +43,14 @@
   }
 
   .brand-text {
-    letter-spacing: -0.08em;
-    font-size: var(--text-32);
+    font-family: 'Orbitron';
+    font-size: var(--text-24);
     color: var(--color-text-main);
-    font-weight: var(--font-extrabold);
-    -webkit-text-stroke: 1px var(--color-text-main);
+    font-weight: var(--font-bold);
+
+    span {
+      color: var(--color-brand-blue);
+    }
   }
 }
 
@@ -56,15 +59,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: var(--space-40);
+  height: var(--space-40);
   padding: 0;
   border: none;
   background: transparent;
   border-radius: var(--radius-8);
   cursor: pointer;
   color: var(--color-text-main);
-  transition: background-color 0.2s ease;
+  transition: background-color var(--transition-fast);
 
   &:hover {
     background-color: var(--color-bg-hover, rgba(0, 0, 0, 0.05));

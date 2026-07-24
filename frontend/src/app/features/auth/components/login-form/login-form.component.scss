@@ -1,0 +1,68 @@
+.login-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  max-height: 720px;
+  padding: 0 24px;
+  border-radius: var(--radius-24);
+  background-color: var(--color-bg-deep-blue);
+  box-sizing: border-box;
+}
+
+.login-logo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  // TODO: variable for calendar
+}
+
+.brand-text {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Orbitron';
+  font-size: var(--text-80);
+  color: var(--color-bg-surface);
+  font-weight: var(--font-bold);
+
+  .brand-text-blue {
+    color: var(--color-brand-blue);
+  }
+}
+
+.welcome {
+  font-weight: var(--font-regular);
+  font-size: var(--text-16);
+  color: var(--color-bg-surface);
+  margin-bottom: var(--space-16);
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  font-weight: var(--font-extrabold);
+  color: var(--color-bg-surface);
+  margin-bottom: var(--space-16);
+  width: 100%;
+}
+
+.login-buttons {
+  width: 100%;
+  display: flex;
+}
+
+.action-btn-text{
+  color: var(--color-bg-surface);
+}

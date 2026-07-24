@@ -15,7 +15,6 @@ export class ButtonComponent {
   readonly variant = input<ButtonVariant>('primary');
   readonly size = input<ButtonSize>('md');
   readonly iconOnly = input(false);
-  readonly fullWidth = input(false);
 
   readonly clicked = output<MouseEvent>();
 
@@ -28,7 +27,6 @@ export class ButtonComponent {
     `ct-button--${this.variant()}`,
     `ct-button--${this.size()}`,
     this.iconOnly() && 'ct-button--icon',
-    this.fullWidth() && 'ct-button--full',
   ]
     .filter(Boolean)
     .join(' '));
