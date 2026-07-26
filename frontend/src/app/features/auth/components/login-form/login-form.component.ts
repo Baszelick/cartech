@@ -6,7 +6,7 @@ import {ButtonComponent} from '../../../../ui/button/button.component';
 import {FormFieldComponent} from '../../../../ui/form-field/form-field.component';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../../../core/services/auth.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {finalize} from 'rxjs';
 
@@ -28,6 +28,7 @@ export class LoginFormComponent {
   readonly #fb = inject(FormBuilder)
   readonly #authService = inject(AuthService);
   readonly #router = inject(Router);
+  readonly #route = inject(ActivatedRoute);
   #destroy = inject(DestroyRef)
 
   readonly passwordVisible =signal<boolean>(false)
@@ -46,20 +47,26 @@ export class LoginFormComponent {
   passwordEye = computed(() => this.passwordVisible() ? 'eyeOff' : 'eye')
 
   onSubmit() {
-    if(this.form.invalid) {
+    if(this.form.invalid || this.isLoading()) {
       this.form.markAllAsTouched()
       console.log('form invalid')
       return
     }
     this.isLoading.set(true)
     this.loginError.set(null)
+    this.form.disable()
 
     this.#authService.login(this.form.getRawValue()).pipe(
       takeUntilDestroyed(this.#destroy),
-      finalize(() => this.isLoading.set(false))
+      finalize(() => {
+        this.isLoading.set(false)
+        this.form.enable()
+      })
     ).subscribe({
-      next: res => {
-        this.#router.navigate(['/home'])
+      next: () => {
+        const returnUrl = this.#route.snapshot.queryParamMap.get('returnUrl');
+        const url = returnUrl?.startsWith('/') ? returnUrl : '/home';
+        void this.#router.navigateByUrl(url);
       },
       error: () => {
         this.loginError.set('Неверный логин или пароль')

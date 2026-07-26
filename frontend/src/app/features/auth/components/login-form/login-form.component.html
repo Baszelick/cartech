@@ -2,53 +2,63 @@
   <div class="login-logo">
     <ct-image-logo
       [size]="200"
-    ></ct-image-logo>
-    <span class="brand-text">Car<span class="brand-text-blue">Tech</span></span>
+    />
+
+    <span class="brand-text">
+      Car<span class="brand-text-blue">Tech</span>
+    </span>
   </div>
 
-  <span class="welcome">Войдите, чтобы продолжить</span>
+  <span class="welcome">
+    Войдите, чтобы продолжить
+  </span>
 
-  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
     <div class="login-form">
       <div class="form-group login">
         Логин
+
         <ct-form-field>
           <ct-input
             formControlName="username"
             type="text"
-            placeholder="Введите Логин"
-            [disabled]="isLoading()"
+            placeholder="Введите логин"
           >
             <ct-icon
               ctInputPrefix
               name="user"
-            ></ct-icon>
+            />
           </ct-input>
         </ct-form-field>
       </div>
 
       <div class="form-group password">
         Пароль
+
         <ct-form-field>
           <ct-input
+            formControlName="password"
             [type]="passwordVisible() ? 'text' : 'password'"
             placeholder="Введите пароль"
-            formControlName="password"
-            [disabled]="isLoading()"
           >
             <ct-icon
               ctInputPrefix
               name="lock"
-            ></ct-icon>
+            />
+
             <ct-button
               ctInputSuffix
               type="button"
               variant="ghost"
+              [disabled]="isLoading()"
               (click)="toggleVisibility()"
             >
               <ct-icon
                 [name]="passwordEye()"
-              ></ct-icon>
+              />
             </ct-button>
           </ct-input>
         </ct-form-field>
@@ -56,9 +66,10 @@
     </div>
 
     @if (loginError()) {
-      <span class="error">{{loginError()}}</span>
+      <span class="error">
+        {{ loginError() }}
+      </span>
     }
-
 
     <div class="form-actions">
       <ct-button
@@ -67,7 +78,11 @@
         variant="primary"
         type="submit"
         [disabled]="isLoading()"
-      ><span class="action-btn-text">{{ isLoading() ? 'Входим...' : 'Войти' }}</span></ct-button>
+      >
+        <span class="action-btn-text">
+          {{ isLoading() ? 'Входим...' : 'Войти' }}
+        </span>
+      </ct-button>
     </div>
   </form>
 </div>

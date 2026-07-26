@@ -15,3 +15,15 @@ export interface AuthUser {
     lastName: string;
     role: string;
 }
+
+export interface RefreshResponse {
+  accessToken: string;
+}
+
+export interface MeResponse {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+}
