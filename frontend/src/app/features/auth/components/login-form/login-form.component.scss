@@ -1,33 +1,30 @@
-.login-form-wrapper {
+@use "mixins/index" as *;
+
+.login-card {
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 480px;
-  max-height: 720px;
-  padding: 0 24px;
+  padding: 0 var(--space-48);
   border-radius: var(--radius-24);
   background-color: var(--color-bg-deep-blue);
   box-sizing: border-box;
 }
 
 .login-logo {
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 300px;
-  // TODO: variable for calendar
+  padding: var(--space-48) 0 var(--space-24);
+  gap: 0;
 }
 
 .brand-text {
-  position: absolute;
-  bottom: 26px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-top: -80px;
   font-family: 'Orbitron';
   font-size: var(--text-80);
-  color: var(--color-bg-surface);
+  color: var(--color-text-inverse);
   font-weight: var(--font-bold);
 
   .brand-text-blue {
@@ -38,7 +35,7 @@
 .welcome {
   font-weight: var(--font-regular);
   font-size: var(--text-16);
-  color: var(--color-bg-surface);
+  color: var(--color-text-inverse);
   margin-bottom: var(--space-16);
 }
 
@@ -48,21 +45,70 @@
   flex-direction: column;
 }
 
-.login-input {
+.form-group {
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
   font-weight: var(--font-extrabold);
-  color: var(--color-bg-surface);
+  color: var(--color-text-inverse);
   margin-bottom: var(--space-16);
   width: 100%;
 }
 
-.login-buttons {
+.form-actions {
   width: 100%;
   display: flex;
+  margin-top: var(--space-16);
+  padding: 0 0 var(--space-48);
 }
 
-.action-btn-text{
-  color: var(--color-bg-surface);
+.action-btn-text {
+  color: var(--color-text-inverse);
+}
+
+/* ==========================================================================
+   Mobile — full‑screen card, compact logo, smaller text
+   ========================================================================== */
+@include mobile {
+  .login-card {
+    min-width: calc(100dvh - 1148px);
+    min-height: 100dvh;
+    border-radius: 0;
+    padding: 0 var(--space-24);
+
+
+  }
+
+  .login-logo {
+    padding: var(--space-24) 0 var(--space-12);
+  }
+
+  .login-logo :first-child {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+
+  .brand-text {
+    margin-top: -80px;
+    font-size: 64px;
+  }
+
+  .welcome {
+    font-size: var(--text-14);
+    margin-bottom: var(--space-12);
+  }
+
+  .form-group {
+    margin-bottom: var(--space-12);
+  }
+
+  .form-actions {
+    margin-top: auto;
+    padding: 0 0 var(--space-24);
+  &::before{
+    content: '';
+    flex: 1;
+  }
+  }
+
 }

@@ -1,0 +1,23 @@
+@use "mixins/index" as *;
+
+.login-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(
+        90deg,
+        rgb(2 8 23 / 20%),
+        rgb(2 8 23 / 55%)
+    ),
+    url('/images/background.png') center / cover no-repeat;
+}
+
+@include mobile {
+  .login-page {
+    padding: 0;
+    align-items: stretch;
+    background: var(--color-bg-deep-blue);
+  }
+}

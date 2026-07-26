@@ -26,6 +26,7 @@
   --color-text-main: #0f172a;      /* Главный текст: VIN-код, заголовки (глубокий угольно-черный) */
   --color-text-muted: #64748b;     /* Второстепенный текст: марки, таймстампы (читаемый серый) */
   --color-text-secondary: #64748b;
+  --color-text-inverse: #ffffff;   /* Белый текст на тёмном фоне (логотип, welcome, метки на deep-blue) */
   --color-border: #e2e8f0;         /* Тонкие разделители и границы карточек */
   --color-border-hover: #cbd5e1;
 
@@ -50,4 +51,3 @@
   --color-status-critical: #9f1239;     /* Глубокий винный/бордовый для текста */
   --color-status-critical-bg: #ffe4e6;   /* Розово-алый контрастный фон карточки */
 }
-

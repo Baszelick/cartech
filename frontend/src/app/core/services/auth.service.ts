@@ -1,12 +1,8 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import {computed, inject, Injectable, signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable, tap} from 'rxjs';
 
-import {
-  AuthUser,
-  LoginRequest,
-  LoginResponse
-} from '../interfaces/auth.interface';
+import {AuthUser, LoginRequest, LoginResponse} from '../interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +32,7 @@ export class AuthService {
         tap(response => {
           this.#accessToken.set(response.accessToken);
           this.#currentUser.set(response.user);
+          localStorage.setItem('accessToken', response.accessToken);
         })
       );
   }
@@ -43,5 +40,6 @@ export class AuthService {
   logout(): void {
     this.#accessToken.set(null);
     this.#currentUser.set(null);
+    localStorage.removeItem('accessToken');
   }
 }

@@ -18,3 +18,9 @@
 @use 'styles/mixins/scroll';
 @use 'styles/mixins/animations';
 
+:root {
+  .error {
+    color: var(--color-status-danger);
+    font-size: var(--font-medium);
+  }
+}

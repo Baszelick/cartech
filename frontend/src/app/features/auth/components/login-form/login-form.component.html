@@ -1,4 +1,4 @@
-<div class="login-form-wrapper">
+<div class="login-card">
   <div class="login-logo">
     <ct-image-logo
       [size]="200"
@@ -8,42 +8,66 @@
 
   <span class="welcome">Войдите, чтобы продолжить</span>
 
-  <div class="login-form">
-    <div class="login-input login">
-      Логин
-      <ct-input
-        placeholder="Введите Логин"
-      >
-        <ct-icon
-          ctInputPrefix
-          name="user"
-        ></ct-icon>
-      </ct-input>
+  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <div class="login-form">
+      <div class="form-group login">
+        Логин
+        <ct-form-field>
+          <ct-input
+            formControlName="username"
+            type="text"
+            placeholder="Введите Логин"
+            [disabled]="isLoading()"
+          >
+            <ct-icon
+              ctInputPrefix
+              name="user"
+            ></ct-icon>
+          </ct-input>
+        </ct-form-field>
+      </div>
+
+      <div class="form-group password">
+        Пароль
+        <ct-form-field>
+          <ct-input
+            [type]="passwordVisible() ? 'text' : 'password'"
+            placeholder="Введите пароль"
+            formControlName="password"
+            [disabled]="isLoading()"
+          >
+            <ct-icon
+              ctInputPrefix
+              name="lock"
+            ></ct-icon>
+            <ct-button
+              ctInputSuffix
+              type="button"
+              variant="ghost"
+              (click)="toggleVisibility()"
+            >
+              <ct-icon
+                [name]="passwordEye()"
+              ></ct-icon>
+            </ct-button>
+          </ct-input>
+        </ct-form-field>
+      </div>
     </div>
 
-    <div class="login-input password">
-      Пароль
-      <ct-input
-        placeholder="Введите пароль"
-      >
-        <ct-icon
-          ctInputPrefix
-          name="lock"
-        ></ct-icon>
-        <ct-icon
-          ctInputSuffix
-          name="eye"
-        ></ct-icon>
-      </ct-input>
+    @if (loginError()) {
+      <span class="error">{{loginError()}}</span>
+    }
+
+
+    <div class="form-actions">
+      <ct-button
+        size="full"
+        class="full-width"
+        variant="primary"
+        type="submit"
+        [disabled]="isLoading()"
+      ><span class="action-btn-text">{{ isLoading() ? 'Входим...' : 'Войти' }}</span></ct-button>
     </div>
-  </div>
-
-
-  <div class="login-buttons">
-    <ct-button
-      size="full"
-      class="full-width"
-      variant="primary"
-    ><span class="action-btn-text">Войти</span></ct-button>
-  </div>
+  </form>
 </div>
