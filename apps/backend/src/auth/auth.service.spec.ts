@@ -4,39 +4,40 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { jest as jestRuntime } from '@jest/globals';
 import * as bcrypt from 'bcrypt';
 
-jest.mock('bcrypt');
+jestRuntime.mock('bcrypt');
 
 describe('AuthService', () => {
   let service: AuthService;
 
   const mockPrisma = {
     user: {
-      findUnique: jest.fn(),
-      findUniqueOrThrow: jest.fn(),
+      findUnique: jestRuntime.fn(),
+      findUniqueOrThrow: jestRuntime.fn(),
     },
     authSession: {
-      create: jest.fn(),
-      findUnique: jest.fn(),
-      update: jest.fn(),
-      updateMany: jest.fn(),
+      create: jestRuntime.fn(),
+      findUnique: jestRuntime.fn(),
+      update: jestRuntime.fn(),
+      updateMany: jestRuntime.fn(),
     },
   };
 
   const mockTokenService = {
-    createAccessToken: jest.fn(),
-    createRefreshToken: jest.fn(),
-    verifyRefreshToken: jest.fn(),
+    createAccessToken: jestRuntime.fn(),
+    createRefreshToken: jestRuntime.fn(),
+    verifyRefreshToken: jestRuntime.fn(),
     refreshExpiresInMs: 7 * 24 * 60 * 60 * 1000,
     accessExpiresInMs: 15 * 60 * 1000,
   };
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    jestRuntime.clearAllMocks();
 
     const mockConfigService = {
-      getOrThrow: jest.fn().mockReturnValue('cartech_refresh_token'),
+      getOrThrow: jestRuntime.fn().mockReturnValue('cartech_refresh_token'),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -78,7 +79,10 @@ describe('AuthService', () => {
       mockPrisma.authSession.update.mockResolvedValue({});
       mockTokenService.createAccessToken.mockResolvedValue('access_token');
 
-      const result = await service.login({ username: 'admin', password: 'password' });
+      const result = await service.login({
+        username: 'admin',
+        password: 'password',
+      });
 
       expect(result.accessToken).toBe('access_token');
       expect(result.refreshToken).toBe('refreshed_token');
@@ -92,32 +96,53 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException for invalid password', async () => {
-      mockPrisma.user.findUnique.mockResolvedValue({ id: 'u1', username: 'admin', passwordHash: 'hash', role: 'ADMIN' });
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'u1',
+        username: 'admin',
+        passwordHash: 'hash',
+        role: 'ADMIN',
+      });
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(service.login({ username: 'admin', password: 'wrong' })).rejects.toThrow(UnauthorizedException);
+      await expect(
+        service.login({ username: 'admin', password: 'wrong' }),
+      ).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException for non-existent user', async () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.login({ username: 'unknown', password: 'pwd' })).rejects.toThrow(UnauthorizedException);
+      await expect(
+        service.login({ username: 'unknown', password: 'pwd' }),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 
   describe('refresh', () => {
     it('should rotate refresh token and update hash', async () => {
-      mockTokenService.verifyRefreshToken.mockResolvedValue({ sub: 'user-1', sessionId: 'session-1', type: 'refresh' });
+      mockTokenService.verifyRefreshToken.mockResolvedValue({
+        sub: 'user-1',
+        sessionId: 'session-1',
+        type: 'refresh',
+      });
       mockPrisma.authSession.findUnique.mockResolvedValue({
         id: 'session-1',
         userId: 'user-1',
         refreshTokenHash: 'old_hash',
         expiresAt: new Date(Date.now() + 86400000),
         revokedAt: null,
-        user: { id: 'user-1', username: 'admin', role: 'ADMIN', firstName: 'Admin', lastName: 'User' },
+        user: {
+          id: 'user-1',
+          username: 'admin',
+          role: 'ADMIN',
+          firstName: 'Admin',
+          lastName: 'User',
+        },
       });
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-      mockTokenService.createRefreshToken.mockResolvedValue('new_refresh_token');
+      mockTokenService.createRefreshToken.mockResolvedValue(
+        'new_refresh_token',
+      );
       (bcrypt.hash as jest.Mock).mockResolvedValue('new_hash');
       mockPrisma.authSession.update.mockResolvedValue({});
       mockTokenService.createAccessToken.mockResolvedValue('new_access_token');
@@ -129,7 +154,11 @@ describe('AuthService', () => {
     });
 
     it('should revoke session on token reuse and throw 401', async () => {
-      mockTokenService.verifyRefreshToken.mockResolvedValue({ sub: 'user-1', sessionId: 'session-1', type: 'refresh' });
+      mockTokenService.verifyRefreshToken.mockResolvedValue({
+        sub: 'user-1',
+        sessionId: 'session-1',
+        type: 'refresh',
+      });
       mockPrisma.authSession.findUnique.mockResolvedValue({
         id: 'session-1',
         userId: 'user-1',
@@ -140,7 +169,9 @@ describe('AuthService', () => {
       });
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(service.refresh('reused_token')).rejects.toThrow(UnauthorizedException);
+      await expect(service.refresh('reused_token')).rejects.toThrow(
+        UnauthorizedException,
+      );
       expect(mockPrisma.authSession.update).toHaveBeenCalledWith({
         where: { id: 'session-1' },
         data: { revokedAt: expect.any(Date) },
@@ -150,7 +181,11 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     it('should revoke session when given valid token', async () => {
-      mockTokenService.verifyRefreshToken.mockResolvedValue({ sub: 'user-1', sessionId: 'session-1', type: 'refresh' });
+      mockTokenService.verifyRefreshToken.mockResolvedValue({
+        sub: 'user-1',
+        sessionId: 'session-1',
+        type: 'refresh',
+      });
       mockPrisma.authSession.updateMany.mockResolvedValue({ count: 1 });
 
       await service.logout('some_token');
