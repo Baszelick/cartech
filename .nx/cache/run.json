@@ -1,18 +1,18 @@
 {
   "run": {
-    "command": "nx lint auth-data-access",
-    "startTime": "2026-07-28T09:54:02.133Z",
-    "endTime": "2026-07-28T09:54:07.065Z",
+    "command": "nx lint frontend",
+    "startTime": "2026-07-28T10:35:59.567Z",
+    "endTime": "2026-07-28T10:36:04.563Z",
     "inner": false
   },
   "tasks": [
     {
-      "taskId": "auth-data-access:lint",
+      "taskId": "frontend:lint",
       "target": "lint",
-      "projectName": "auth-data-access",
-      "hash": "6709472547982057255",
-      "startTime": "2026-07-28T09:54:02.260Z",
-      "endTime": "2026-07-28T09:54:07.062Z",
+      "projectName": "frontend",
+      "hash": "7537181397870697141",
+      "startTime": "2026-07-28T10:35:59.600Z",
+      "endTime": "2026-07-28T10:36:04.554Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0

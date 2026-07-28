@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@cartech/frontend/ui": ["libs/frontend/ui/src/index.ts"],
-      "@cartech/frontend/auth/data-access": ["libs/frontend/auth/data-access/src/index.ts"]
+      "@cartech/frontend/auth/data-access": ["libs/frontend/auth/data-access/src/index.ts"],
+      "@cartech/frontend/auth/feature-login": ["libs/frontend/auth/feature-login/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

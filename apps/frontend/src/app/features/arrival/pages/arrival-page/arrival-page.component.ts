@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import {TextareaComponent} from "../../../../ui/textarea/textarea.component";
+import {TextareaComponent} from '@cartech/frontend/ui';
 
 @Component({
   selector: 'app-arrival.svg-page',

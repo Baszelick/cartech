@@ -1,185 +1,808 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-enum CarStatus {
-  ARRIVED
-  PSO
-  READY
-  ISSUED
+// ======================================================
+// ENUMS
+// ======================================================
+
+enum UserRole {
+  SYSTEM_OWNER
+  OPERATIONS_MANAGER
+  TECHNICIAN
+  VIEWER
 }
 
-// --------------------------------------------------
-// 1. СПРАВОЧНИКИ (Создаются через админку / API без миграций)
-// --------------------------------------------------
+enum CarLifecycleStatus {
+  ACTIVE
+  ISSUED
+  ARCHIVED
+}
 
-model Location {
-  id    Int    @id @default(autoincrement())
-  name  String @unique // "Х1", "В27"
-  sites Site[]
+enum PsoStatus {
+  PENDING
+  COMPLETED
+}
 
+enum DeliveryAppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum FeedPostType {
+  SYSTEM
+  USER
+}
+
+enum FeedScope {
+  COMPANY
+  LOCATION
+}
+
+enum FeedReactionType {
+  LIKE
+  VIEWED
+  DONE
+}
+
+enum VehicleEventType {
+  CAR_ARRIVED
+
+  PSO_COMPLETED
+  PSO_REOPENED
+
+  BATTERY_CHECK_COMPLETED
+
+  CAR_BLOCKED
+  CAR_UNBLOCKED
+
+  CAR_MOVED
+
+  DELIVERY_SCHEDULED
+  DELIVERY_RESCHEDULED
+  DELIVERY_CANCELLED
+
+  CAR_ISSUED
+  CAR_RETURNED
+
+  CAR_ARCHIVED
+  CAR_RESTORED
+
+  CAR_UPDATED
+}
+
+// ======================================================
+// ORGANIZATION
+// ======================================================
+
+model Company {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  users        User[]
+  locations    Location[]
+  cars         Car[]
+  feedPosts    FeedPost[]
+  vehicleEvents VehicleEvent[]
+  auditLogs    AuditLog[]
+
+  @@map("companies")
+}
+
+model Location {
+  id        String   @id @default(uuid()) @db.Uuid
+  companyId String   @db.Uuid
+  code      String
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company @relation(
+    fields: [companyId],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  sites              Site[]
+  userAccesses       UserLocationAccess[]
+  ownedCars          Car[]                @relation("CarOwnerLocation")
+  feedPosts          FeedPost[]
+  vehicleEvents      VehicleEvent[]
+  destinationEvents VehicleEvent[]        @relation("VehicleEventDestinationLocation")
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@index([companyId, isActive])
+  @@map("locations")
 }
 
 model Site {
-  id         Int      @id @default(autoincrement())
-  name       String // "Поле", "Территория 1"
-  locationId Int
-  location   Location @relation(fields: [locationId], references: [id])
+  id         String   @id @default(uuid()) @db.Uuid
+  locationId String   @db.Uuid
+  name       String
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  brands SiteBrand[]
-  cars   Car[]
+  location Location @relation(
+    fields: [locationId],
+    references: [id],
+    onDelete: Restrict
+  )
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  currentCars     Car[]             @relation("CarCurrentSite")
+  arrivalCars     Car[]             @relation("CarArrivalSite")
+  movementsFrom  VehicleMovement[] @relation("MovementFromSite")
+  movementsTo    VehicleMovement[] @relation("MovementToSite")
+  returnedIssues VehicleIssue[]    @relation("VehicleIssueReturnSite")
+
+  @@unique([locationId, name])
+  @@index([locationId])
+  @@index([locationId, isActive])
+  @@map("sites")
 }
 
-model Brand {
-  id     Int         @id @default(autoincrement())
-  name   String      @unique // "Jetour", "Soueast"
-  models CarModel[]
-  sites  SiteBrand[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Связь M:N (какие бренды разрешены на конкретной площадке)
-model SiteBrand {
-  siteId  Int
-  brandId Int
-  site    Site  @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  brand   Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
-
-  @@id([siteId, brandId])
-}
-
-model CarModel {
-  id      Int    @id @default(autoincrement())
-  name    String // "X70", "Dashing"
-  brandId Int
-  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  cars    Car[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([brandId, name])
-}
-
-model Color {
-  id   Int    @id @default(autoincrement())
-  name String @unique // "Белый", "Черный"
-  cars Car[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-enum UserRole {
-  ADMIN
-  MANAGER
-  EMPLOYEE
-}
+// ======================================================
+// USERS AND ACCESS
+// ======================================================
 
 model User {
-  id           String   @id @default(uuid())
-  username     String   @unique
+  id           String   @id @default(uuid()) @db.Uuid
+  companyId    String   @db.Uuid
+  username     String
   passwordHash String
-  role         UserRole @default(ADMIN)
-  firstName    String   @default("Admin")
-  lastName     String   @default("User")
+  firstName    String
+  lastName     String
+  isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  sessions AuthSession[]
+  company Company @relation(
+    fields: [companyId],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  roles            UserRoleAssignment[]
+  locationAccesses UserLocationAccess[]
+  sessions         AuthSession[]
+
+  createdCars Car[] @relation("CarCreatedBy")
+  archivedCars Car[] @relation("CarArchivedBy")
+
+  completedPsos Pso[] @relation("PsoCompletedBy")
+
+  batteryChecks BatteryCheck[]
+
+  blockedCars   Car[] @relation("CarBlockedBy")
+  movements     VehicleMovement[]
+
+  createdAppointments   DeliveryAppointment[] @relation("AppointmentCreatedBy")
+  cancelledAppointments DeliveryAppointment[] @relation("AppointmentCancelledBy")
+
+  issuedVehicles   VehicleIssue[] @relation("VehicleIssuedBy")
+  returnedVehicles VehicleIssue[] @relation("VehicleReturnedBy")
+
+  vehicleEvents VehicleEvent[]
+
+  feedPosts            FeedPost[]
+  feedComments         FeedComment[]
+  feedPostReactions    FeedPostReaction[]
+  feedCommentReactions FeedCommentReaction[]
+
+  auditLogs AuditLog[]
+
+  @@unique([companyId, username])
+  @@index([companyId])
+  @@index([companyId, isActive])
+  @@map("users")
 }
 
-// --------------------------------------------------
-// 2. ОСНОВНЫЕ СУЩНОСТИ ПРОЦЕССА
-// --------------------------------------------------
-
-model Arrival {
-  id          String   @id @default(cuid())
-  truckNumber String
-  arrivalDate DateTime
-  comment     String?
-
-  cars Car[]
-
+model UserRoleAssignment {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  role      UserRole
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  @@index([arrivalDate])
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  @@unique([userId, role])
+  @@index([userId])
+  @@index([role])
+  @@map("user_role_assignments")
 }
 
-model Car {
-  id  Int    @id @default(autoincrement())
-  vin String @unique
+model UserLocationAccess {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  locationId String   @db.Uuid
+  createdAt  DateTime @default(now())
 
-  // Связи со справочниками (вместо обычных String)
-  siteId Int
-  site   Site @relation(fields: [siteId], references: [id])
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
 
-  modelId Int
-  model   CarModel @relation(fields: [modelId], references: [id])
+  location Location @relation(
+    fields: [locationId],
+    references: [id],
+    onDelete: Cascade
+  )
 
-  colorId Int
-  color   Color @relation(fields: [colorId], references: [id])
-
-  status CarStatus @default(ARRIVED)
-
-  arrivalId String
-  arrival   Arrival @relation(fields: [arrivalId], references: [id], onDelete: Cascade)
-
-  psoCompletedAt DateTime?
-  issuedAt       DateTime?
-
-  comment String?
-
-  batteryLastCheckAt DateTime?
-  nextBatteryCheckAt DateTime?
-
-  checks BatteryCheck[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([vin])
-  @@index([status])
-  @@index([arrivalId])
-  @@index([siteId])
-}
-
-model BatteryCheck {
-  id        Int      @id @default(autoincrement())
-  checkedAt DateTime @default(now())
-  voltage   Float?
-  comment   String?
-
-  carId Int
-  car   Car @relation(fields: [carId], references: [id], onDelete: Cascade)
-
-  @@index([carId])
-  @@index([checkedAt])
+  @@unique([userId, locationId])
+  @@index([userId])
+  @@index([locationId])
+  @@map("user_location_accesses")
 }
 
 model AuthSession {
-  id               String    @id @default(uuid())
-  userId           String
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @db.Uuid
   refreshTokenHash String
+  userAgent        String?
+  ipAddress        String?
   expiresAt        DateTime
   revokedAt        DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
 
   @@index([userId])
   @@index([expiresAt])
+  @@index([userId, revokedAt])
+  @@map("auth_sessions")
+}
+
+// ======================================================
+// VEHICLES
+// ======================================================
+
+model Car {
+  id              String @id @default(uuid()) @db.Uuid
+  companyId       String @db.Uuid
+  ownerLocationId String @db.Uuid
+  currentSiteId   String @db.Uuid
+  arrivalSiteId   String @db.Uuid
+  createdById     String @db.Uuid
+
+  vin      String
+  shortVin String
+
+  brand String
+  model String
+  color String?
+
+  arrivedOn DateTime @db.Date
+
+  lifecycleStatus CarLifecycleStatus @default(ACTIVE)
+
+  isBlocked     Boolean   @default(false)
+  blockedReason String?
+  blockedById   String?   @db.Uuid
+  blockedAt     DateTime?
+
+  archivedReason String?
+  archivedById   String?   @db.Uuid
+  archivedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations...
+
+  @@unique([companyId, vin])
+
+  @@index([companyId, shortVin])
+  @@index([companyId, lifecycleStatus])
+  @@index([ownerLocationId, lifecycleStatus])
+  @@index([currentSiteId, lifecycleStatus])
+  @@index([ownerLocationId, isBlocked])
+  @@index([arrivedOn])
+
+  @@map("cars")
+}
+
+// ======================================================
+// PSO
+// ======================================================
+
+model Pso {
+  id            String    @id @default(uuid()) @db.Uuid
+  carId         String    @unique @db.Uuid
+  status        PsoStatus @default(PENDING)
+  deadlineOn    DateTime  @db.Date
+  completedOn   DateTime? @db.Date
+  completedById String?   @db.Uuid
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  car Car @relation(
+    fields: [carId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  completedBy User? @relation(
+    "PsoCompletedBy",
+    fields: [completedById],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  @@index([status])
+  @@index([deadlineOn])
+  @@index([status, deadlineOn])
+  @@index([completedById])
+  @@map("psos")
+}
+
+// ======================================================
+// BATTERY
+// ======================================================
+
+model BatteryCheck {
+  id          String   @id @default(uuid()) @db.Uuid
+  carId       String   @db.Uuid
+  checkedById String   @db.Uuid
+  checkedOn   DateTime @db.Date
+  voltage     Decimal? @db.Decimal(4, 2)
+  comment     String?
+  createdAt   DateTime @default(now())
+
+  car Car @relation(
+    fields: [carId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  checkedBy User @relation(
+    fields: [checkedById],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  @@index([carId])
+  @@index([checkedById])
+  @@index([checkedOn])
+  @@index([carId, checkedOn])
+  @@map("battery_checks")
+}
+
+// ======================================================
+// VEHICLE MOVEMENTS
+// ======================================================
+
+model VehicleMovement {
+  id         String   @id @default(uuid()) @db.Uuid
+  carId      String   @db.Uuid
+  fromSiteId String   @db.Uuid
+  toSiteId   String   @db.Uuid
+  movedById  String   @db.Uuid
+  comment    String?
+  movedAt    DateTime @default(now())
+
+  car Car @relation(
+    fields: [carId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  fromSite Site @relation(
+    "MovementFromSite",
+    fields: [fromSiteId],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  toSite Site @relation(
+    "MovementToSite",
+    fields: [toSiteId],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  movedBy User @relation(
+    fields: [movedById],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  @@index([carId])
+  @@index([fromSiteId])
+  @@index([toSiteId])
+  @@index([movedById])
+  @@index([carId, movedAt])
+  @@map("vehicle_movements")
+}
+
+// ======================================================
+// DELIVERY APPOINTMENTS
+// ======================================================
+
+model DeliveryAppointment {
+  id            String                    @id @default(uuid()) @db.Uuid
+  carId         String                    @db.Uuid
+  createdById   String                    @db.Uuid
+  cancelledById String?                   @db.Uuid
+
+  scheduledOn   DateTime                  @db.Date
+  scheduledHour Int
+  status        DeliveryAppointmentStatus @default(SCHEDULED)
+
+  cancellationReason String?
+  cancelledAt       DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  car Car @relation(
+    fields: [carId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  createdBy User @relation(
+    "AppointmentCreatedBy",
+    fields: [createdById],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  cancelledBy User? @relation(
+    "AppointmentCancelledBy",
+    fields: [cancelledById],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  issue VehicleIssue?
+
+  @@index([carId])
+  @@index([createdById])
+  @@index([cancelledById])
+  @@index([scheduledOn])
+  @@index([scheduledOn, scheduledHour])
+  @@index([status, scheduledOn])
+  @@index([carId, status])
+  @@map("delivery_appointments")
+}
+
+// ======================================================
+// VEHICLE ISSUE AND RETURN
+// ======================================================
+
+model VehicleIssue {
+  id            String  @id @default(uuid()) @db.Uuid
+  carId         String  @db.Uuid
+  appointmentId String? @unique @db.Uuid
+
+  issuedOn   DateTime @db.Date
+  issuedById String   @db.Uuid
+
+  returnedOn       DateTime? @db.Date
+  returnedById     String?   @db.Uuid
+  returnSiteId     String?   @db.Uuid
+  returnReason     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  car Car @relation(
+    fields: [carId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  appointment DeliveryAppointment? @relation(
+    fields: [appointmentId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  issuedBy User @relation(
+    "VehicleIssuedBy",
+    fields: [issuedById],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  returnedBy User? @relation(
+    "VehicleReturnedBy",
+    fields: [returnedById],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  returnSite Site? @relation(
+    "VehicleIssueReturnSite",
+    fields: [returnSiteId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  @@index([carId])
+  @@index([issuedById])
+  @@index([returnedById])
+  @@index([returnSiteId])
+  @@index([issuedOn])
+  @@index([carId, returnedOn])
+  @@map("vehicle_issues")
+}
+
+// ======================================================
+// VEHICLE HISTORY
+// ======================================================
+
+model VehicleEvent {
+  id                    String           @id @default(uuid()) @db.Uuid
+  companyId             String           @db.Uuid
+  carId                 String           @db.Uuid
+  locationId            String           @db.Uuid
+  destinationLocationId String?          @db.Uuid
+  performedById         String?          @db.Uuid
+
+  type     VehicleEventType
+  title    String
+  details  String?
+  metadata Json?
+
+  occurredAt DateTime @default(now())
+
+  company Company @relation(
+    fields: [companyId],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  car Car @relation(
+    fields: [carId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  location Location @relation(
+    fields: [locationId],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  destinationLocation Location? @relation(
+    "VehicleEventDestinationLocation",
+    fields: [destinationLocationId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  performedBy User? @relation(
+    fields: [performedById],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  feedPosts FeedPost[]
+
+  @@index([companyId])
+  @@index([carId])
+  @@index([locationId])
+  @@index([destinationLocationId])
+  @@index([performedById])
+  @@index([type])
+  @@index([carId, occurredAt])
+  @@index([locationId, occurredAt])
+  @@map("vehicle_events")
+}
+
+// ======================================================
+// FEED
+// ======================================================
+
+model FeedPost {
+  id             String       @id @default(uuid()) @db.Uuid
+  companyId      String       @db.Uuid
+  locationId     String?      @db.Uuid
+  authorId       String?      @db.Uuid
+  carId          String?      @db.Uuid
+  vehicleEventId String?      @db.Uuid
+
+  type  FeedPostType
+  scope FeedScope
+
+  systemEventType String?
+  content         String?
+  metadata        Json?
+
+  isPinned Boolean @default(false)
+
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company @relation(
+    fields: [companyId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  location Location? @relation(
+    fields: [locationId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  author User? @relation(
+    fields: [authorId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  car Car? @relation(
+    fields: [carId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  vehicleEvent VehicleEvent? @relation(
+    fields: [vehicleEventId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  comments  FeedComment[]
+  reactions FeedPostReaction[]
+
+  @@index([companyId])
+  @@index([locationId])
+  @@index([authorId])
+  @@index([carId])
+  @@index([vehicleEventId])
+
+  @@index([companyId, scope, createdAt])
+  @@index([locationId, createdAt])
+  @@index([companyId, isPinned])
+  @@index([locationId, isPinned])
+  @@index([deletedAt])
+
+  @@map("feed_posts")
+}
+
+model FeedComment {
+  id        String   @id @default(uuid()) @db.Uuid
+  postId    String   @db.Uuid
+  authorId  String   @db.Uuid
+  content   String
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post FeedPost @relation(
+    fields: [postId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  author User @relation(
+    fields: [authorId],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  reactions FeedCommentReaction[]
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([postId, createdAt])
+  @@index([deletedAt])
+  @@map("feed_comments")
+}
+
+model FeedPostReaction {
+  id        String           @id @default(uuid()) @db.Uuid
+  postId    String           @db.Uuid
+  userId    String           @db.Uuid
+  type      FeedReactionType
+  createdAt DateTime         @default(now())
+
+  post FeedPost @relation(
+    fields: [postId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  @@unique([postId, userId, type])
+  @@index([postId])
+  @@index([userId])
+  @@map("feed_post_reactions")
+}
+
+model FeedCommentReaction {
+  id        String           @id @default(uuid()) @db.Uuid
+  commentId String           @db.Uuid
+  userId    String           @db.Uuid
+  type      FeedReactionType
+  createdAt DateTime         @default(now())
+
+  comment FeedComment @relation(
+    fields: [commentId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  @@unique([commentId, userId, type])
+  @@index([commentId])
+  @@index([userId])
+  @@map("feed_comment_reactions")
+}
+
+// ======================================================
+// AUDIT
+// ======================================================
+
+model AuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  companyId String   @db.Uuid
+  userId    String?  @db.Uuid
+
+  action     String
+  entityType String
+  entityId   String?
+
+  previousData Json?
+  newData      Json?
+  metadata     Json?
+
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  company Company @relation(
+    fields: [companyId],
+    references: [id],
+    onDelete: Restrict
+  )
+
+  user User? @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([companyId, createdAt])
+  @@map("audit_logs")
 }

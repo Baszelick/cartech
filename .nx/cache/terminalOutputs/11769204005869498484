@@ -1,0 +1,8 @@
+[1m[33mThe `@nx/eslint:lint` executor is deprecated and will be removed in Nx v24. Run `nx g @nx/eslint:convert-to-inferred` to migrate to the `@nx/eslint/plugin` inferred targets. See https://nx.dev/docs/guides/tasks--caching/convert-to-inferred for details.[39m[22m
+
+Linting "auth-feature-login"...
+(node:19104) ESLintEmptyConfigWarning: Running ESLint with an empty config (from C:\Users\basze\cartech\libs\frontend\auth\feature-login\eslint.config.mjs). Please double-check that this is what you want. If you want to run ESLint with an empty config, export [{}] to remove this warning.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+✔ All files pass linting
+

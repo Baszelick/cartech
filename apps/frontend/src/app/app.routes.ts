@@ -6,7 +6,7 @@ export const routes: Routes = [
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () =>
-      import('./features/auth/pages/login-page/login-page.component')
+      import('@cartech/frontend/auth/feature-login')
         .then(c => c.LoginPageComponent),
   },
   {
