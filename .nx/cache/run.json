@@ -1,0 +1,21 @@
+{
+  "run": {
+    "command": "nx lint auth-data-access",
+    "startTime": "2026-07-28T09:54:02.133Z",
+    "endTime": "2026-07-28T09:54:07.065Z",
+    "inner": false
+  },
+  "tasks": [
+    {
+      "taskId": "auth-data-access:lint",
+      "target": "lint",
+      "projectName": "auth-data-access",
+      "hash": "6709472547982057255",
+      "startTime": "2026-07-28T09:54:02.260Z",
+      "endTime": "2026-07-28T09:54:07.062Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    }
+  ]
+}

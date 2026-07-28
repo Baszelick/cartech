@@ -1,10 +1,12 @@
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {Router} from '@angular/router';
-import {InputComponent} from '../../ui/input/input.component';
-import {IconComponent} from '../../ui/icon/icon.component';
-import {DatePickerComponent} from '../../ui/date-picker/date-picker.component';
-import {ButtonComponent} from '../../ui/button/button.component';
-import {AuthService} from '../../core/services/auth.service';
+import {
+  InputComponent,
+  IconComponent,
+  DatePickerComponent,
+  ButtonComponent,
+} from '@cartech/frontend/ui';
+import {AuthService} from '@cartech/frontend/auth/data-access';
 
 @Component({
   selector: 'app-desktop-header',

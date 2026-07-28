@@ -1,0 +1,357 @@
+{
+  "nodes": {
+    "auth-data-access": {
+      "name": "auth-data-access",
+      "type": "lib",
+      "data": {
+        "root": "libs/frontend/auth/data-access",
+        "targets": {
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "auth-data-access",
+        "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/frontend/auth/data-access/src",
+        "prefix": "ct",
+        "projectType": "library",
+        "tags": [],
+        "implicitDependencies": []
+      }
+    },
+    "ui": {
+      "name": "ui",
+      "type": "lib",
+      "data": {
+        "root": "libs/frontend/ui",
+        "targets": {
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "ui",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/frontend/ui/src",
+        "prefix": "ct",
+        "projectType": "library",
+        "tags": [],
+        "implicitDependencies": []
+      }
+    },
+    "backend": {
+      "name": "backend",
+      "type": "lib",
+      "data": {
+        "root": "apps/backend",
+        "targets": {
+          "lint": {
+            "cache": true,
+            "options": {
+              "cwd": "apps/backend",
+              "command": "eslint ."
+            },
+            "inputs": [
+              "default",
+              "^default",
+              "{projectRoot}/eslint.config.mjs",
+              "{workspaceRoot}/tools/eslint-rules/**/*",
+              {
+                "externalDependencies": [
+                  "eslint"
+                ]
+              }
+            ],
+            "outputs": [
+              "{options.outputFile}"
+            ],
+            "metadata": {
+              "technologies": [
+                "eslint"
+              ],
+              "description": "Runs ESLint on project",
+              "help": {
+                "command": "npx eslint --help",
+                "example": {
+                  "options": {
+                    "max-warnings": 0
+                  }
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "backend",
+        "implicitDependencies": [],
+        "tags": []
+      }
+    }
+  },
+  "externalNodes": {
+    "npm:@types/body-parser": {
+      "type": "npm",
+      "name": "npm:@types/body-parser",
+      "data": {
+        "version": "1.19.6",
+        "packageName": "@types/body-parser",
+        "hash": "sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g=="
+      }
+    },
+    "npm:@types/connect": {
+      "type": "npm",
+      "name": "npm:@types/connect",
+      "data": {
+        "version": "3.4.38",
+        "packageName": "@types/connect",
+        "hash": "sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug=="
+      }
+    },
+    "npm:@types/cookie-parser": {
+      "type": "npm",
+      "name": "npm:@types/cookie-parser",
+      "data": {
+        "version": "1.4.10",
+        "packageName": "@types/cookie-parser",
+        "hash": "sha512-B4xqkqfZ8Wek+rCOeRxsjMS9OgvzebEzzLYw7NHYuvzb7IdxOkI0ZHGgeEBX4PUM7QGVvNSK60T3OvWj3YfBRg=="
+      }
+    },
+    "npm:@types/express": {
+      "type": "npm",
+      "name": "npm:@types/express",
+      "data": {
+        "version": "5.0.6",
+        "packageName": "@types/express",
+        "hash": "sha512-sKYVuV7Sv9fbPIt/442koC7+IIwK5olP1KWeD88e/idgoJqDm3JV/YUiPwkoKK92ylff2MGxSz1CSjsXelx0YA=="
+      }
+    },
+    "npm:@types/express-serve-static-core": {
+      "type": "npm",
+      "name": "npm:@types/express-serve-static-core",
+      "data": {
+        "version": "5.1.2",
+        "packageName": "@types/express-serve-static-core",
+        "hash": "sha512-d3KvEXBSo/lOAMc2u6fkyDHBvetBHeqD7wm/AcXfLpSOQwlmG9D/aQ0SFswVjv05p7ullQS7Mjohj6/VdbZuTg=="
+      }
+    },
+    "npm:@types/http-errors": {
+      "type": "npm",
+      "name": "npm:@types/http-errors",
+      "data": {
+        "version": "2.0.5",
+        "packageName": "@types/http-errors",
+        "hash": "sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg=="
+      }
+    },
+    "npm:@types/node": {
+      "type": "npm",
+      "name": "npm:@types/node",
+      "data": {
+        "version": "26.1.1",
+        "packageName": "@types/node",
+        "hash": "sha512-nxAkRSVkN1Y0JC1W8ky/fTfkGsMmcrRsbx+3XoZE+rMOX71kLYTV7fLXpqud1GpbpP5TuffXFqfX7fH2GgZREw=="
+      }
+    },
+    "npm:@types/qs": {
+      "type": "npm",
+      "name": "npm:@types/qs",
+      "data": {
+        "version": "6.15.1",
+        "packageName": "@types/qs",
+        "hash": "sha512-GZHUBZR9hckSUhrxmp1nG6NwdpM9fCunJwyThLW1X3AyHgd9IlHb6VANpQQqDr2o/qQp6McZ3y/IA2rVzKzSbw=="
+      }
+    },
+    "npm:@types/range-parser": {
+      "type": "npm",
+      "name": "npm:@types/range-parser",
+      "data": {
+        "version": "1.2.7",
+        "packageName": "@types/range-parser",
+        "hash": "sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ=="
+      }
+    },
+    "npm:@types/send": {
+      "type": "npm",
+      "name": "npm:@types/send",
+      "data": {
+        "version": "1.2.1",
+        "packageName": "@types/send",
+        "hash": "sha512-arsCikDvlU99zl1g69TcAB3mzZPpxgw0UQnaHeC1Nwb015xp8bknZv5rIfri9xTOcMuaVgvabfIRA7PSZVuZIQ=="
+      }
+    },
+    "npm:@types/serve-static": {
+      "type": "npm",
+      "name": "npm:@types/serve-static",
+      "data": {
+        "version": "2.2.0",
+        "packageName": "@types/serve-static",
+        "hash": "sha512-8mam4H1NHLtu7nmtalF7eyBH14QyOASmcxHhSfEoRyr0nP/YdoesEtU+uSRvMe96TW/HPTtkoKqQLl53N7UXMQ=="
+      }
+    },
+    "npm:cookie": {
+      "type": "npm",
+      "name": "npm:cookie",
+      "data": {
+        "version": "0.7.2",
+        "packageName": "cookie",
+        "hash": "sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w=="
+      }
+    },
+    "npm:cookie-parser": {
+      "type": "npm",
+      "name": "npm:cookie-parser",
+      "data": {
+        "version": "1.4.7",
+        "packageName": "cookie-parser",
+        "hash": "sha512-nGUvgXnotP3BsjiLX2ypbQnWoGUPIIfHQNZkkC668ntrzGWEZVW70HDEB1qnNGMicPje6EttlIgzo51YSwNQGw=="
+      }
+    },
+    "npm:cookie-signature": {
+      "type": "npm",
+      "name": "npm:cookie-signature",
+      "data": {
+        "version": "1.0.6",
+        "packageName": "cookie-signature",
+        "hash": "sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ=="
+      }
+    },
+    "npm:undici-types": {
+      "type": "npm",
+      "name": "npm:undici-types",
+      "data": {
+        "version": "8.3.0",
+        "packageName": "undici-types",
+        "hash": "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="
+      }
+    }
+  },
+  "dependencies": {
+    "auth-data-access": [],
+    "ui": [],
+    "backend": [
+      {
+        "source": "backend",
+        "target": "npm:@types/express",
+        "type": "static"
+      },
+      {
+        "source": "backend",
+        "target": "npm:@types/node",
+        "type": "static"
+      }
+    ],
+    "npm:@types/body-parser": [
+      {
+        "source": "npm:@types/body-parser",
+        "target": "npm:@types/connect",
+        "type": "static"
+      },
+      {
+        "source": "npm:@types/body-parser",
+        "target": "npm:@types/node",
+        "type": "static"
+      }
+    ],
+    "npm:@types/connect": [
+      {
+        "source": "npm:@types/connect",
+        "target": "npm:@types/node",
+        "type": "static"
+      }
+    ],
+    "npm:@types/cookie-parser": [
+      {
+        "source": "npm:@types/cookie-parser",
+        "target": "npm:@types/express",
+        "type": "static"
+      }
+    ],
+    "npm:@types/express": [
+      {
+        "source": "npm:@types/express",
+        "target": "npm:@types/body-parser",
+        "type": "static"
+      },
+      {
+        "source": "npm:@types/express",
+        "target": "npm:@types/express-serve-static-core",
+        "type": "static"
+      },
+      {
+        "source": "npm:@types/express",
+        "target": "npm:@types/serve-static",
+        "type": "static"
+      }
+    ],
+    "npm:@types/express-serve-static-core": [
+      {
+        "source": "npm:@types/express-serve-static-core",
+        "target": "npm:@types/node",
+        "type": "static"
+      },
+      {
+        "source": "npm:@types/express-serve-static-core",
+        "target": "npm:@types/qs",
+        "type": "static"
+      },
+      {
+        "source": "npm:@types/express-serve-static-core",
+        "target": "npm:@types/range-parser",
+        "type": "static"
+      },
+      {
+        "source": "npm:@types/express-serve-static-core",
+        "target": "npm:@types/send",
+        "type": "static"
+      }
+    ],
+    "npm:@types/node": [
+      {
+        "source": "npm:@types/node",
+        "target": "npm:undici-types",
+        "type": "static"
+      }
+    ],
+    "npm:@types/send": [
+      {
+        "source": "npm:@types/send",
+        "target": "npm:@types/node",
+        "type": "static"
+      }
+    ],
+    "npm:@types/serve-static": [
+      {
+        "source": "npm:@types/serve-static",
+        "target": "npm:@types/http-errors",
+        "type": "static"
+      },
+      {
+        "source": "npm:@types/serve-static",
+        "target": "npm:@types/node",
+        "type": "static"
+      }
+    ],
+    "npm:cookie-parser": [
+      {
+        "source": "npm:cookie-parser",
+        "target": "npm:cookie",
+        "type": "static"
+      },
+      {
+        "source": "npm:cookie-parser",
+        "target": "npm:cookie-signature",
+        "type": "static"
+      }
+    ]
+  },
+  "version": "6.0",
+  "errors": [],
+  "computedAt": 1785232366352
+}

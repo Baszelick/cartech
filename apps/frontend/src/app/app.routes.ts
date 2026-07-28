@@ -1,6 +1,5 @@
 import {Routes} from '@angular/router';
-import {authGuard} from './core/guards/auth.guard';
-import {guestGuard} from './core/guards/guest.guard';
+import {authGuard, guestGuard} from '@cartech/frontend/auth/data-access';
 
 export const routes: Routes = [
   {

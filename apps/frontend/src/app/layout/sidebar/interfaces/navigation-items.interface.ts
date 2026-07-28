@@ -1,4 +1,4 @@
-import {IconName} from '../../../ui/icon/icon.types';
+import type {IconName} from '@cartech/frontend/ui';
 
 export interface NavigationItem {
   label: string;

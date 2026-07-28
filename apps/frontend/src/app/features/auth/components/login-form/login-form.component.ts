@@ -1,11 +1,13 @@
 import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal} from '@angular/core';
-import {ImageLogoComponent} from '../../../../ui/image-logo/image-logo.component';
-import {InputComponent} from '../../../../ui/input/input.component';
-import {IconComponent} from '../../../../ui/icon/icon.component';
-import {ButtonComponent} from '../../../../ui/button/button.component';
-import {FormFieldComponent} from '../../../../ui/form-field/form-field.component';
+import {
+  ImageLogoComponent,
+  InputComponent,
+  IconComponent,
+  ButtonComponent,
+  FormFieldComponent,
+} from '@cartech/frontend/ui';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthService} from '../../../../core/services/auth.service';
+import {AuthService} from '@cartech/frontend/auth/data-access';
 import {ActivatedRoute, Router} from '@angular/router';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {finalize} from 'rxjs';
