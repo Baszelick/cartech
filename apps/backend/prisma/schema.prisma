@@ -107,11 +107,7 @@ model Location {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  company Company @relation(
-    fields: [companyId],
-    references: [id],
-    onDelete: Restrict
-  )
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
   sites              Site[]
   userAccesses       UserLocationAccess[]
@@ -134,11 +130,7 @@ model Site {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  location Location @relation(
-    fields: [locationId],
-    references: [id],
-    onDelete: Restrict
-  )
+  location Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
 
   currentCars     Car[]             @relation("CarCurrentSite")
   arrivalCars     Car[]             @relation("CarArrivalSite")
@@ -167,11 +159,7 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  company Company @relation(
-    fields: [companyId],
-    references: [id],
-    onDelete: Restrict
-  )
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
   roles            UserRoleAssignment[]
   locationAccesses UserLocationAccess[]
@@ -214,11 +202,7 @@ model UserRoleAssignment {
   role      UserRole
   createdAt DateTime @default(now())
 
-  user User @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: Cascade
-  )
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, role])
   @@index([userId])
@@ -232,17 +216,9 @@ model UserLocationAccess {
   locationId String   @db.Uuid
   createdAt  DateTime @default(now())
 
-  user User @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: Cascade
-  )
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  location Location @relation(
-    fields: [locationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@unique([userId, locationId])
   @@index([userId])
@@ -261,11 +237,7 @@ model AuthSession {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  user User @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: Cascade
-  )
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([expiresAt])
@@ -308,7 +280,21 @@ model Car {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // relations...
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  ownerLocation Location @relation("CarOwnerLocation", fields: [ownerLocationId], references: [id], onDelete: Restrict)
+  currentSite   Site     @relation("CarCurrentSite", fields: [currentSiteId], references: [id], onDelete: Restrict)
+  arrivalSite   Site     @relation("CarArrivalSite", fields: [arrivalSiteId], references: [id], onDelete: Restrict)
+  createdBy     User     @relation("CarCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  blockedBy     User?    @relation("CarBlockedBy", fields: [blockedById], references: [id], onDelete: SetNull)
+  archivedBy    User?    @relation("CarArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull)
+
+  pso                  Pso?
+  batteryChecks        BatteryCheck[]
+  movements            VehicleMovement[]
+  deliveryAppointments DeliveryAppointment[]
+  issues               VehicleIssue[]
+  vehicleEvents        VehicleEvent[]
+  feedPosts            FeedPost[]
 
   @@unique([companyId, vin])
 
@@ -336,18 +322,9 @@ model Pso {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  car Car @relation(
-    fields: [carId],
-    references: [id],
-    onDelete: Cascade
-  )
+  car Car @relation(fields: [carId], references: [id], onDelete: Cascade)
 
-  completedBy User? @relation(
-    "PsoCompletedBy",
-    fields: [completedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  completedBy User? @relation("PsoCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
 
   @@index([status])
   @@index([deadlineOn])
@@ -369,17 +346,9 @@ model BatteryCheck {
   comment     String?
   createdAt   DateTime @default(now())
 
-  car Car @relation(
-    fields: [carId],
-    references: [id],
-    onDelete: Cascade
-  )
+  car Car @relation(fields: [carId], references: [id], onDelete: Cascade)
 
-  checkedBy User @relation(
-    fields: [checkedById],
-    references: [id],
-    onDelete: Restrict
-  )
+  checkedBy User @relation(fields: [checkedById], references: [id], onDelete: Restrict)
 
   @@index([carId])
   @@index([checkedById])
@@ -401,31 +370,13 @@ model VehicleMovement {
   comment    String?
   movedAt    DateTime @default(now())
 
-  car Car @relation(
-    fields: [carId],
-    references: [id],
-    onDelete: Cascade
-  )
+  car Car @relation(fields: [carId], references: [id], onDelete: Cascade)
 
-  fromSite Site @relation(
-    "MovementFromSite",
-    fields: [fromSiteId],
-    references: [id],
-    onDelete: Restrict
-  )
+  fromSite Site @relation("MovementFromSite", fields: [fromSiteId], references: [id], onDelete: Restrict)
 
-  toSite Site @relation(
-    "MovementToSite",
-    fields: [toSiteId],
-    references: [id],
-    onDelete: Restrict
-  )
+  toSite Site @relation("MovementToSite", fields: [toSiteId], references: [id], onDelete: Restrict)
 
-  movedBy User @relation(
-    fields: [movedById],
-    references: [id],
-    onDelete: Restrict
-  )
+  movedBy User @relation(fields: [movedById], references: [id], onDelete: Restrict)
 
   @@index([carId])
   @@index([fromSiteId])
@@ -455,25 +406,11 @@ model DeliveryAppointment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  car Car @relation(
-    fields: [carId],
-    references: [id],
-    onDelete: Cascade
-  )
+  car Car @relation(fields: [carId], references: [id], onDelete: Cascade)
 
-  createdBy User @relation(
-    "AppointmentCreatedBy",
-    fields: [createdById],
-    references: [id],
-    onDelete: Restrict
-  )
+  createdBy User @relation("AppointmentCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
 
-  cancelledBy User? @relation(
-    "AppointmentCancelledBy",
-    fields: [cancelledById],
-    references: [id],
-    onDelete: SetNull
-  )
+  cancelledBy User? @relation("AppointmentCancelledBy", fields: [cancelledById], references: [id], onDelete: SetNull)
 
   issue VehicleIssue?
 
@@ -507,38 +444,15 @@ model VehicleIssue {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  car Car @relation(
-    fields: [carId],
-    references: [id],
-    onDelete: Cascade
-  )
+  car Car @relation(fields: [carId], references: [id], onDelete: Cascade)
 
-  appointment DeliveryAppointment? @relation(
-    fields: [appointmentId],
-    references: [id],
-    onDelete: SetNull
-  )
+  appointment DeliveryAppointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
 
-  issuedBy User @relation(
-    "VehicleIssuedBy",
-    fields: [issuedById],
-    references: [id],
-    onDelete: Restrict
-  )
+  issuedBy User @relation("VehicleIssuedBy", fields: [issuedById], references: [id], onDelete: Restrict)
 
-  returnedBy User? @relation(
-    "VehicleReturnedBy",
-    fields: [returnedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  returnedBy User? @relation("VehicleReturnedBy", fields: [returnedById], references: [id], onDelete: SetNull)
 
-  returnSite Site? @relation(
-    "VehicleIssueReturnSite",
-    fields: [returnSiteId],
-    references: [id],
-    onDelete: SetNull
-  )
+  returnSite Site? @relation("VehicleIssueReturnSite", fields: [returnSiteId], references: [id], onDelete: SetNull)
 
   @@index([carId])
   @@index([issuedById])
@@ -568,36 +482,15 @@ model VehicleEvent {
 
   occurredAt DateTime @default(now())
 
-  company Company @relation(
-    fields: [companyId],
-    references: [id],
-    onDelete: Restrict
-  )
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
-  car Car @relation(
-    fields: [carId],
-    references: [id],
-    onDelete: Cascade
-  )
+  car Car @relation(fields: [carId], references: [id], onDelete: Cascade)
 
-  location Location @relation(
-    fields: [locationId],
-    references: [id],
-    onDelete: Restrict
-  )
+  location Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
 
-  destinationLocation Location? @relation(
-    "VehicleEventDestinationLocation",
-    fields: [destinationLocationId],
-    references: [id],
-    onDelete: SetNull
-  )
+  destinationLocation Location? @relation("VehicleEventDestinationLocation", fields: [destinationLocationId], references: [id], onDelete: SetNull)
 
-  performedBy User? @relation(
-    fields: [performedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  performedBy User? @relation(fields: [performedById], references: [id], onDelete: SetNull)
 
   feedPosts FeedPost[]
 
@@ -637,35 +530,15 @@ model FeedPost {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  company Company @relation(
-    fields: [companyId],
-    references: [id],
-    onDelete: Cascade
-  )
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  location Location? @relation(
-    fields: [locationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  location Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
-  author User? @relation(
-    fields: [authorId],
-    references: [id],
-    onDelete: SetNull
-  )
+  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
-  car Car? @relation(
-    fields: [carId],
-    references: [id],
-    onDelete: SetNull
-  )
+  car Car? @relation(fields: [carId], references: [id], onDelete: SetNull)
 
-  vehicleEvent VehicleEvent? @relation(
-    fields: [vehicleEventId],
-    references: [id],
-    onDelete: SetNull
-  )
+  vehicleEvent VehicleEvent? @relation(fields: [vehicleEventId], references: [id], onDelete: SetNull)
 
   comments  FeedComment[]
   reactions FeedPostReaction[]
@@ -694,17 +567,9 @@ model FeedComment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  post FeedPost @relation(
-    fields: [postId],
-    references: [id],
-    onDelete: Cascade
-  )
+  post FeedPost @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  author User @relation(
-    fields: [authorId],
-    references: [id],
-    onDelete: Restrict
-  )
+  author User @relation(fields: [authorId], references: [id], onDelete: Restrict)
 
   reactions FeedCommentReaction[]
 
@@ -722,17 +587,9 @@ model FeedPostReaction {
   type      FeedReactionType
   createdAt DateTime         @default(now())
 
-  post FeedPost @relation(
-    fields: [postId],
-    references: [id],
-    onDelete: Cascade
-  )
+  post FeedPost @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  user User @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: Cascade
-  )
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([postId, userId, type])
   @@index([postId])
@@ -747,17 +604,9 @@ model FeedCommentReaction {
   type      FeedReactionType
   createdAt DateTime         @default(now())
 
-  comment FeedComment @relation(
-    fields: [commentId],
-    references: [id],
-    onDelete: Cascade
-  )
+  comment FeedComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
-  user User @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: Cascade
-  )
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([commentId, userId, type])
   @@index([commentId])
@@ -787,17 +636,9 @@ model AuditLog {
 
   createdAt DateTime @default(now())
 
-  company Company @relation(
-    fields: [companyId],
-    references: [id],
-    onDelete: Restrict
-  )
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
-  user User? @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: SetNull
-  )
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([companyId])
   @@index([userId])

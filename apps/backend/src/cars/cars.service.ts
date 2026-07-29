@@ -2,69 +2,115 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateCarDto } from './dto/create-car.dto';
 import { CreateBatteryCheckDto } from './dto/create-battery-check.dto';
-import { Car, CarStatus } from '@prisma/client';
+import {
+  Car,
+  CarLifecycleStatus,
+} from '../../generated/prisma/client';
 import { getBatteryStatus, getDaysLeft } from './utils/battery.util';
+import { CarListItemResponseDto } from './dto/car-list-item-response.dto';
+import { CarDetailsResponseDto } from './dto/car-details-response.dto';
+import { BatteryCheckResponseDto } from './dto/battery-check-response.dto';
 
 @Injectable()
 export class CarsService {
   constructor(private prismaService: PrismaService) {}
 
-  findAll() {
-    return this.prismaService.car.findMany({
-      include: {
-        model: {
-          include: { brand: true },
-        },
-        color: true,
-        site: true,
-      },
-    });
-  }
-
-  create(createCarDto: CreateCarDto) {
-    const nextBatteryCheckAt = new Date();
-    nextBatteryCheckAt.setDate(nextBatteryCheckAt.getDate() + 30);
-    return this.prismaService.car.create({
-      data: {
-        vin: createCarDto.vin,
-        siteId: createCarDto.siteId,
-        modelId: createCarDto.modelId,
-        colorId: createCarDto.colorId,
-        arrivalId: createCarDto.arrivalId,
-        ...(createCarDto.comment && { comment: createCarDto.comment }),
-        nextBatteryCheckAt,
-      },
-    });
-  }
-
-  getCarbyId(carId: number) {
-    return this.prismaService.car.findUnique({
-      where: {
-        id: carId,
-      },
-      include: {
-        model: {
-          include: { brand: true },
-        },
-        color: true,
-        site: true,
-        checks: {
-          orderBy: {
-            checkedAt: 'desc',
+  async findAll(userId: string): Promise<CarListItemResponseDto[]> {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      select: {
+        companyId: true,
+        locationAccesses: {
+          select: {
+            locationId: true,
           },
         },
       },
     });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const cars = await this.prismaService.car.findMany({
+      where: {
+        companyId: user.companyId,
+        ownerLocationId: {
+          in: user.locationAccesses.map((access) => access.locationId),
+        },
+      },
+      select: {
+        id: true,
+        vin: true,
+        shortVin: true,
+        brand: true,
+        model: true,
+        color: true,
+        arrivedOn: true,
+        lifecycleStatus: true,
+        isBlocked: true,
+        ownerLocationId: true,
+        currentSiteId: true,
+      },
+    });
+
+    return cars.map((car) => ({
+      ...car,
+      arrivedOn: car.arrivedOn.toISOString().slice(0, 10),
+    }));
   }
 
-  async createBatteryCheck(carId: number, dto: CreateBatteryCheckDto) {
-    const car = await this.prismaService.car.findUnique({
+  async getCarById(
+    carId: string,
+    userId: string,
+  ): Promise<CarDetailsResponseDto> {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      select: {
+        companyId: true,
+        locationAccesses: {
+          select: {
+            locationId: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const car = await this.prismaService.car.findFirst({
       where: {
         id: carId,
+        companyId: user.companyId,
+        ownerLocationId: {
+          in: user.locationAccesses.map((access) => access.locationId),
+        },
+      },
+      select: {
+        id: true,
+        vin: true,
+        shortVin: true,
+        brand: true,
+        model: true,
+        color: true,
+        arrivedOn: true,
+        lifecycleStatus: true,
+        isBlocked: true,
+        blockedReason: true,
+        blockedAt: true,
+        ownerLocationId: true,
+        currentSiteId: true,
+        arrivalSiteId: true,
+        archivedReason: true,
+        archivedAt: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -72,31 +118,78 @@ export class CarsService {
       throw new NotFoundException('Car not found');
     }
 
-    const lastBatteryCheckAt = new Date();
+    return {
+      ...car,
+      arrivedOn: car.arrivedOn.toISOString().slice(0, 10),
+      blockedAt: car.blockedAt?.toISOString() ?? null,
+      archivedAt: car.archivedAt?.toISOString() ?? null,
+      createdAt: car.createdAt.toISOString(),
+      updatedAt: car.updatedAt.toISOString(),
+    };
+  }
 
-    const nextBatteryCheckAt = new Date(lastBatteryCheckAt);
-    nextBatteryCheckAt.setDate(nextBatteryCheckAt.getDate() + 30);
-
-    return this.prismaService.$transaction(async (tx) => {
-      const batteryCheck = await tx.batteryCheck.create({
-        data: {
-          ...dto,
-          carId,
+  async createBatteryCheck(
+    carId: string,
+    dto: CreateBatteryCheckDto,
+    userId: string,
+  ): Promise<BatteryCheckResponseDto> {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      select: {
+        companyId: true,
+        locationAccesses: {
+          select: {
+            locationId: true,
+          },
         },
-      });
-
-      await tx.car.update({
-        where: {
-          id: carId,
-        },
-        data: {
-          batteryLastCheckAt: lastBatteryCheckAt,
-          nextBatteryCheckAt,
-        },
-      });
-
-      return batteryCheck;
+      },
     });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const car = await this.prismaService.car.findFirst({
+      where: {
+        id: carId,
+        companyId: user.companyId,
+        ownerLocationId: {
+          in: user.locationAccesses.map((access) => access.locationId),
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!car) {
+      throw new NotFoundException('Car not found');
+    }
+
+    const batteryCheck = await this.prismaService.batteryCheck.create({
+      data: {
+        carId,
+        checkedById: userId,
+        checkedOn: new Date(),
+        voltage: dto.voltage,
+        comment: dto.comment,
+      },
+      select: {
+        id: true,
+        carId: true,
+        checkedById: true,
+        checkedOn: true,
+        voltage: true,
+        comment: true,
+        createdAt: true,
+      },
+    });
+
+    return {
+      ...batteryCheck,
+      checkedOn: batteryCheck.checkedOn.toISOString().slice(0, 10),
+      voltage:
+        batteryCheck.voltage === null ? null : Number(batteryCheck.voltage),
+      createdAt: batteryCheck.createdAt.toISOString(),
+    };
   }
 
   private mapTask(car: Car) {
@@ -118,7 +211,7 @@ export class CarsService {
     const cars = await this.prismaService.car.findMany({
       where: {
         status: {
-          not: CarStatus.ISSUED,
+          not: CarLifecycleStatus.ISSUED,
         },
         OR: [
           {
@@ -153,7 +246,10 @@ export class CarsService {
     });
 
     if (!car) throw new NotFoundException('Car not found');
-    if (car.status !== CarStatus.ARRIVED && car.status !== CarStatus.PSO) {
+    if (
+      car.status !== CarLifecycleStatus.ARRIVED &&
+      car.status !== CarLifecycleStatus.PSO
+    ) {
       throw new BadRequestException(
         'Car is not in a valid status for PSO completion',
       );
@@ -165,7 +261,7 @@ export class CarsService {
       },
       data: {
         psoCompletedAt: today,
-        status: CarStatus.READY,
+        status: CarLifecycleStatus.READY,
       },
     });
   }
@@ -178,7 +274,7 @@ export class CarsService {
       },
     });
     if (!car) throw new NotFoundException('Car not found');
-    if (car.status === CarStatus.ISSUED)
+    if (car.status === CarLifecycleStatus.ISSUED)
       throw new BadRequestException('Car is already issued');
     if (car.psoCompletedAt === null)
       throw new BadRequestException('Car pso not complete');
@@ -188,7 +284,7 @@ export class CarsService {
         id: carId,
       },
       data: {
-        status: CarStatus.ISSUED,
+        status: CarLifecycleStatus.ISSUED,
         issuedAt: today,
       },
     });
