@@ -1,18 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AuthService } from './auth.service';
-import { TokenService } from './token.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { Test, TestingModule } from '@nestjs/testing';
 import { jest as jestRuntime } from '@jest/globals';
 import * as bcrypt from 'bcrypt';
+import { PrismaService } from '../prisma/prisma.service';
+import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 
 jestRuntime.mock('bcrypt');
 
 describe('AuthService', () => {
   let service: AuthService;
 
-  const mockPrisma = {
+  const mockPrisma: any = {
     user: {
       findUnique: jestRuntime.fn(),
       findUniqueOrThrow: jestRuntime.fn(),
@@ -25,12 +25,30 @@ describe('AuthService', () => {
     },
   };
 
-  const mockTokenService = {
+  const mockTokenService: any = {
     createAccessToken: jestRuntime.fn(),
     createRefreshToken: jestRuntime.fn(),
     verifyRefreshToken: jestRuntime.fn(),
     refreshExpiresInMs: 7 * 24 * 60 * 60 * 1000,
     accessExpiresInMs: 15 * 60 * 1000,
+  };
+
+  const publicUser = {
+    id: 'user-1',
+    companyId: 'company-1',
+    username: 'admin',
+    firstName: 'Admin',
+    lastName: 'User',
+    roles: ['SYSTEM_OWNER'],
+  };
+
+  const databaseUser = {
+    ...publicUser,
+    passwordHash: 'hashed_password',
+    isActive: true,
+    roles: [{ role: 'SYSTEM_OWNER' }],
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   beforeEach(async () => {
@@ -53,92 +71,110 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('should create session and return access token', async () => {
-      mockPrisma.user.findUnique.mockResolvedValue({
-        id: 'user-1',
-        username: 'admin',
-        passwordHash: 'hashed_password',
-        role: 'ADMIN',
-        firstName: 'Admin',
-        lastName: 'User',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+    it('loads a company user with roles and creates a session', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(databaseUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       mockPrisma.authSession.create.mockResolvedValue({
         id: 'session-1',
-        userId: 'user-1',
-        refreshTokenHash: 'placeholder',
-        expiresAt: new Date(),
-        revokedAt: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       });
-      mockTokenService.createRefreshToken.mockResolvedValue('refreshed_token');
+      mockTokenService.createRefreshToken.mockResolvedValue('refresh_token');
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashed_refresh');
       mockPrisma.authSession.update.mockResolvedValue({});
       mockTokenService.createAccessToken.mockResolvedValue('access_token');
 
       const result = await service.login({
+        companyId: 'company-1',
         username: 'admin',
         password: 'password',
       });
 
-      expect(result.accessToken).toBe('access_token');
-      expect(result.refreshToken).toBe('refreshed_token');
-      expect(result.user).toEqual({
-        id: 'user-1',
-        username: 'admin',
-        firstName: 'Admin',
-        lastName: 'User',
-        role: 'ADMIN',
+      expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
+        where: {
+          companyId_username: {
+            companyId: 'company-1',
+            username: 'admin',
+          },
+        },
+        include: {
+          roles: {
+            select: {
+              role: true,
+            },
+          },
+        },
+      });
+      expect(mockTokenService.createAccessToken).toHaveBeenCalledWith(
+        publicUser,
+      );
+      expect(result).toEqual({
+        accessToken: 'access_token',
+        refreshToken: 'refresh_token',
+        refreshCookieName: 'cartech_refresh_token',
+        user: publicUser,
       });
     });
 
-    it('should throw UnauthorizedException for invalid password', async () => {
+    it('rejects an inactive user', async () => {
       mockPrisma.user.findUnique.mockResolvedValue({
-        id: 'u1',
-        username: 'admin',
-        passwordHash: 'hash',
-        role: 'ADMIN',
+        ...databaseUser,
+        isActive: false,
       });
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(
-        service.login({ username: 'admin', password: 'wrong' }),
+        service.login({
+          companyId: 'company-1',
+          username: 'admin',
+          password: 'password',
+        }),
       ).rejects.toThrow(UnauthorizedException);
     });
 
-    it('should throw UnauthorizedException for non-existent user', async () => {
+    it('rejects an invalid password', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(databaseUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+
+      await expect(
+        service.login({
+          companyId: 'company-1',
+          username: 'admin',
+          password: 'wrong',
+        }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('rejects an unknown user', async () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.login({ username: 'unknown', password: 'pwd' }),
+        service.login({
+          companyId: 'company-1',
+          username: 'unknown',
+          password: 'password',
+        }),
       ).rejects.toThrow(UnauthorizedException);
     });
   });
 
   describe('refresh', () => {
-    it('should rotate refresh token and update hash', async () => {
+    const validSession = {
+      id: 'session-1',
+      userId: 'user-1',
+      refreshTokenHash: 'old_hash',
+      expiresAt: new Date(Date.now() + 86_400_000),
+      revokedAt: null,
+      user: databaseUser,
+    };
+
+    beforeEach(() => {
       mockTokenService.verifyRefreshToken.mockResolvedValue({
         sub: 'user-1',
         sessionId: 'session-1',
         type: 'refresh',
       });
-      mockPrisma.authSession.findUnique.mockResolvedValue({
-        id: 'session-1',
-        userId: 'user-1',
-        refreshTokenHash: 'old_hash',
-        expiresAt: new Date(Date.now() + 86400000),
-        revokedAt: null,
-        user: {
-          id: 'user-1',
-          username: 'admin',
-          role: 'ADMIN',
-          firstName: 'Admin',
-          lastName: 'User',
-        },
-      });
+    });
+
+    it('rotates the refresh token and returns current roles', async () => {
+      mockPrisma.authSession.findUnique.mockResolvedValue(validSession);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       mockTokenService.createRefreshToken.mockResolvedValue(
         'new_refresh_token',
@@ -149,24 +185,42 @@ describe('AuthService', () => {
 
       const result = await service.refresh('old_token');
 
-      expect(result.accessToken).toBe('new_access_token');
-      expect(result.refreshToken).toBe('new_refresh_token');
+      expect(mockPrisma.authSession.findUnique).toHaveBeenCalledWith({
+        where: { id: 'session-1' },
+        include: {
+          user: {
+            include: {
+              roles: {
+                select: {
+                  role: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      expect(result.user).toEqual(publicUser);
+      expect(mockTokenService.createAccessToken).toHaveBeenCalledWith(
+        publicUser,
+      );
     });
 
-    it('should revoke session on token reuse and throw 401', async () => {
-      mockTokenService.verifyRefreshToken.mockResolvedValue({
-        sub: 'user-1',
-        sessionId: 'session-1',
-        type: 'refresh',
-      });
+    it('rejects an inactive session user', async () => {
       mockPrisma.authSession.findUnique.mockResolvedValue({
-        id: 'session-1',
-        userId: 'user-1',
-        refreshTokenHash: 'old_hash',
-        expiresAt: new Date(Date.now() + 86400000),
-        revokedAt: null,
-        user: { id: 'user-1', username: 'admin', role: 'ADMIN' },
+        ...validSession,
+        user: {
+          ...databaseUser,
+          isActive: false,
+        },
       });
+
+      await expect(service.refresh('old_token')).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('revokes the session when token reuse is detected', async () => {
+      mockPrisma.authSession.findUnique.mockResolvedValue(validSession);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(service.refresh('reused_token')).rejects.toThrow(
@@ -180,7 +234,7 @@ describe('AuthService', () => {
   });
 
   describe('logout', () => {
-    it('should revoke session when given valid token', async () => {
+    it('revokes a valid session', async () => {
       mockTokenService.verifyRefreshToken.mockResolvedValue({
         sub: 'user-1',
         sessionId: 'session-1',
@@ -196,30 +250,18 @@ describe('AuthService', () => {
       });
     });
 
-    it('should not throw if no refresh token provided', async () => {
+    it('does nothing when no token is provided', async () => {
       await expect(service.logout(undefined)).resolves.not.toThrow();
     });
   });
 
   describe('getMe', () => {
-    it('should return user without passwordHash', async () => {
-      mockPrisma.user.findUniqueOrThrow.mockResolvedValue({
-        id: 'user-1',
-        username: 'admin',
-        firstName: 'Admin',
-        lastName: 'User',
-        role: 'ADMIN',
-      });
+    it('returns the public user contract with roles', async () => {
+      mockPrisma.user.findUniqueOrThrow.mockResolvedValue(databaseUser);
 
       const result = await service.getMe('user-1');
 
-      expect(result).toEqual({
-        id: 'user-1',
-        username: 'admin',
-        firstName: 'Admin',
-        lastName: 'User',
-        role: 'ADMIN',
-      });
+      expect(result).toEqual(publicUser);
       expect(result).not.toHaveProperty('passwordHash');
     });
   });

@@ -1,244 +1,199 @@
 import {
-  BadRequestException,
+  ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
+import type { Prisma } from '../../generated/prisma/client';
+import {
+  CarLifecycleStatus,
+  VehicleEventType,
+} from '../../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateArrivalDto } from './dto/create-arrival.dto';
-import { CarModel, Color, Prisma } from '@prisma/client';
+import {
+  ArrivedCarResponseDto,
+  CreateArrivalResponseDto,
+} from './dto/arrival-response.dto';
 
-type SiteWithBrands = Prisma.SiteGetPayload<{
-  include: { brands: true };
-}>;
-
-interface ArrivalValidationContext {
-  existingCars: { vin: string }[];
-  sitesMap: Map<number, SiteWithBrands>;
-  modelsMap: Map<number, CarModel>;
-  colorsMap: Map<number, Color>;
+export interface ArrivalAuthContext {
+  userId: string;
+  companyId: string;
 }
 
-const ARRIVAL_INCLUDE = {
-  cars: {
-    include: {
-      model: {
-        include: { brand: true },
-      },
-      color: true,
-      site: true,
-    },
-  },
-} satisfies Prisma.ArrivalInclude;
+const ARRIVED_CAR_SELECT = {
+  id: true,
+  vin: true,
+  shortVin: true,
+  brand: true,
+  model: true,
+  color: true,
+  arrivedOn: true,
+  lifecycleStatus: true,
+  ownerLocationId: true,
+  currentSiteId: true,
+  arrivalSiteId: true,
+  createdAt: true,
+} satisfies Prisma.CarSelect;
+
+type ArrivedCarRecord = Prisma.CarGetPayload<{
+  select: typeof ARRIVED_CAR_SELECT;
+}>;
 
 @Injectable()
 export class ArrivalsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.arrival.findMany({
-      include: ARRIVAL_INCLUDE,
-      orderBy: {
-        arrivalDate: 'desc',
-      },
-    });
-  }
-
-  async findOne(id: string) {
-    const arrival = await this.prisma.arrival.findUnique({
-      where: { id },
-      include: ARRIVAL_INCLUDE,
-    });
-    if (!arrival) {
-      throw new NotFoundException(`Arrival with id ${id} not found`);
-    }
-    return arrival;
-  }
-
-  async create(dto: CreateArrivalDto) {
-    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      await this.validate(dto, tx);
-
-      const arrival = await this.createArrival(tx, dto);
-
-      await this.createCars(tx, arrival.id, dto.cars, dto.arrivalDate);
-
-      return this.getArrival(tx, arrival.id);
-    });
-  }
-
-  private async validate(
+  async create(
     dto: CreateArrivalDto,
-    tx: Prisma.TransactionClient,
-  ): Promise<void> {
-    this.validateDuplicateVins(dto.cars);
+    auth: ArrivalAuthContext,
+  ): Promise<CreateArrivalResponseDto> {
+    this.validateDuplicateVins(dto);
 
-    const context = await this.loadValidationContext(dto.cars, tx);
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        const [user, site, existingCars] = await Promise.all([
+          tx.user.findFirst({
+            where: {
+              id: auth.userId,
+              companyId: auth.companyId,
+              isActive: true,
+            },
+            select: {
+              locationAccesses: {
+                select: {
+                  locationId: true,
+                },
+              },
+            },
+          }),
+          tx.site.findFirst({
+            where: {
+              id: dto.arrivalSiteId,
+              isActive: true,
+              location: {
+                companyId: auth.companyId,
+                isActive: true,
+              },
+            },
+            select: {
+              id: true,
+              locationId: true,
+            },
+          }),
+          tx.car.findMany({
+            where: {
+              companyId: auth.companyId,
+              vin: {
+                in: dto.cars.map(({ vin }) => vin),
+              },
+            },
+            select: {
+              vin: true,
+            },
+          }),
+        ]);
 
-    this.validateExistingVins(context.existingCars);
-    this.validateSites(dto.cars, context.sitesMap);
-    this.validateModels(dto.cars, context.modelsMap);
-    this.validateColors(dto.cars, context.colorsMap);
-    this.validateBrandPermissions(dto.cars, context.sitesMap);
-  }
+        if (!user) {
+          throw new UnauthorizedException('Active user not found');
+        }
 
-  private validateDuplicateVins(cars: CreateArrivalDto['cars']): void {
-    const vins = cars.map((c) => c.vin);
-    const uniqueVins = new Set(vins);
-    if (uniqueVins.size !== vins.length) {
-      throw new BadRequestException('Duplicate VINs found in arrival request');
-    }
-  }
+        if (!site) {
+          throw new NotFoundException('Arrival site not found');
+        }
 
-  private async loadValidationContext(
-    cars: CreateArrivalDto['cars'],
-    tx: Prisma.TransactionClient,
-  ): Promise<ArrivalValidationContext> {
-    const vins = cars.map((c) => c.vin);
-    const siteIds = Array.from(new Set(cars.map((c) => c.siteId)));
-    const modelIds = Array.from(new Set(cars.map((c) => c.modelId)));
-    const colorIds = Array.from(new Set(cars.map((c) => c.colorId)));
-
-    const [existingCars, sites, models, colors] = await Promise.all([
-      tx.car.findMany({
-        where: { vin: { in: vins } },
-        select: { vin: true },
-      }),
-      tx.site.findMany({
-        where: { id: { in: siteIds } },
-        include: { brands: true },
-      }),
-      tx.carModel.findMany({
-        where: { id: { in: modelIds } },
-      }),
-      tx.color.findMany({
-        where: { id: { in: colorIds } },
-      }),
-    ]);
-
-    return {
-      existingCars,
-      sitesMap: new Map(sites.map((s) => [s.id, s])),
-      modelsMap: new Map(models.map((m) => [m.id, m])),
-      colorsMap: new Map(colors.map((c) => [c.id, c])),
-    };
-  }
-
-  private validateExistingVins(existingCars: { vin: string }[]): void {
-    if (existingCars.length > 0) {
-      throw new BadRequestException(
-        `Cars with VINs already exist: ${existingCars.map((c) => c.vin).join(', ')}`,
-      );
-    }
-  }
-
-  private validateSites(
-    cars: CreateArrivalDto['cars'],
-    sitesMap: Map<number, SiteWithBrands>,
-  ): void {
-    for (const carDto of cars) {
-      if (!sitesMap.has(carDto.siteId)) {
-        throw new NotFoundException(`Site with id ${carDto.siteId} not found`);
-      }
-    }
-  }
-
-  private validateModels(
-    cars: CreateArrivalDto['cars'],
-    modelsMap: Map<number, CarModel>,
-  ): void {
-    for (const carDto of cars) {
-      const model = modelsMap.get(carDto.modelId);
-      if (!model) {
-        throw new NotFoundException(
-          `CarModel with id ${carDto.modelId} not found`,
+        const hasLocationAccess = user.locationAccesses.some(
+          ({ locationId }) => locationId === site.locationId,
         );
-      }
-      if (model.brandId !== carDto.brandId) {
-        throw new BadRequestException(
-          `Model id ${carDto.modelId} does not belong to brand id ${carDto.brandId}`,
-        );
-      }
-    }
-  }
 
-  private validateColors(
-    cars: CreateArrivalDto['cars'],
-    colorsMap: Map<number, Color>,
-  ): void {
-    for (const carDto of cars) {
-      if (!colorsMap.has(carDto.colorId)) {
-        throw new NotFoundException(
-          `Color with id ${carDto.colorId} not found`,
-        );
-      }
-    }
-  }
-
-  private validateBrandPermissions(
-    cars: CreateArrivalDto['cars'],
-    sitesMap: Map<number, SiteWithBrands>,
-  ): void {
-    for (const carDto of cars) {
-      const site = sitesMap.get(carDto.siteId);
-      if (site) {
-        const brandAllowed = site.brands.some(
-          (sb) => sb.brandId === carDto.brandId,
-        );
-        if (!brandAllowed) {
-          throw new BadRequestException(
-            `Brand id ${carDto.brandId} is not allowed on site id ${carDto.siteId}`,
+        if (!hasLocationAccess) {
+          throw new ForbiddenException(
+            'Arrival site is outside user location scope',
           );
         }
+
+        if (existingCars.length > 0) {
+          throw new ConflictException(
+            `Cars with VINs already exist: ${existingCars
+              .map(({ vin }) => vin)
+              .join(', ')}`,
+          );
+        }
+
+        const arrivedOn = new Date(dto.arrivedOn);
+        const createdCars: ArrivedCarRecord[] = [];
+
+        for (const carDto of dto.cars) {
+          const car = await tx.car.create({
+            data: {
+              companyId: auth.companyId,
+              ownerLocationId: site.locationId,
+              currentSiteId: site.id,
+              arrivalSiteId: site.id,
+              createdById: auth.userId,
+              vin: carDto.vin,
+              shortVin: carDto.shortVin,
+              brand: carDto.brand,
+              model: carDto.model,
+              color: carDto.color ?? null,
+              arrivedOn,
+              lifecycleStatus: CarLifecycleStatus.ACTIVE,
+            },
+            select: ARRIVED_CAR_SELECT,
+          });
+
+          await tx.vehicleEvent.create({
+            data: {
+              companyId: auth.companyId,
+              carId: car.id,
+              locationId: site.locationId,
+              performedById: auth.userId,
+              type: VehicleEventType.CAR_ARRIVED,
+              title: 'Автомобиль принят',
+            },
+          });
+
+          createdCars.push(car);
+        }
+
+        return {
+          count: createdCars.length,
+          cars: createdCars.map((car) => this.toResponse(car)),
+        };
+      });
+    } catch (error: unknown) {
+      if (this.isUniqueConstraintError(error)) {
+        throw new ConflictException('Car with this VIN already exists');
       }
+
+      throw error;
     }
   }
 
-  private async createArrival(
-    tx: Prisma.TransactionClient,
-    dto: CreateArrivalDto,
-  ) {
-    return tx.arrival.create({
-      data: {
-        truckNumber: dto.truckNumber,
-        arrivalDate: new Date(dto.arrivalDate),
-        comment: dto.comment,
-      },
-    });
-  }
+  private validateDuplicateVins(dto: CreateArrivalDto): void {
+    const vins = dto.cars.map(({ vin }) => vin);
 
-  private async createCars(
-    tx: Prisma.TransactionClient,
-    arrivalId: string,
-    carsDto: CreateArrivalDto['cars'],
-    arrivalDateStr: string,
-  ): Promise<void> {
-    const arrivalDate = new Date(arrivalDateStr);
-    const nextBatteryCheckAt = new Date(arrivalDate);
-    nextBatteryCheckAt.setDate(nextBatteryCheckAt.getDate() + 30);
-
-    const carsData = carsDto.map((carDto) => ({
-      vin: carDto.vin,
-      siteId: carDto.siteId,
-      modelId: carDto.modelId,
-      colorId: carDto.colorId,
-      comment: carDto.comment,
-      arrivalId,
-      nextBatteryCheckAt,
-    }));
-
-    await tx.car.createMany({
-      data: carsData,
-    });
-  }
-
-  private async getArrival(tx: Prisma.TransactionClient, arrivalId: string) {
-    const arrival = await tx.arrival.findUnique({
-      where: { id: arrivalId },
-      include: ARRIVAL_INCLUDE,
-    });
-    if (!arrival) {
-      throw new NotFoundException(`Arrival with id ${arrivalId} not found`);
+    if (new Set(vins).size !== vins.length) {
+      throw new ConflictException('Duplicate VINs in arrival request');
     }
-    return arrival;
+  }
+
+  private isUniqueConstraintError(error: unknown): boolean {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      error.code === 'P2002'
+    );
+  }
+
+  private toResponse(car: ArrivedCarRecord): ArrivedCarResponseDto {
+    return {
+      ...car,
+      arrivedOn: car.arrivedOn.toISOString().slice(0, 10),
+      lifecycleStatus: 'ACTIVE',
+      createdAt: car.createdAt.toISOString(),
+    };
   }
 }

@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from '@prisma/client';
+import { PrismaClient, UserRole } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcrypt';
@@ -14,119 +14,100 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('🌱 Начинаем забивать тестовые данные (seeding)...');
 
-  // Seeding admin user
+  let company = await prisma.company.findFirst({
+    where: { name: 'CarTech Demo' },
+  });
+
+  if (!company) {
+    company = await prisma.company.create({
+      data: { name: 'CarTech Demo' },
+    });
+  }
+
+  const location = await prisma.location.upsert({
+    where: {
+      companyId_code: {
+        companyId: company.id,
+        code: 'SPB',
+      },
+    },
+    update: {
+      name: 'Санкт-Петербург',
+      isActive: true,
+    },
+    create: {
+      companyId: company.id,
+      code: 'SPB',
+      name: 'Санкт-Петербург',
+    },
+  });
+
+  await prisma.site.upsert({
+    where: {
+      locationId_name: {
+        locationId: location.id,
+        name: 'Площадка Парнас',
+      },
+    },
+    update: { isActive: true },
+    create: {
+      locationId: location.id,
+      name: 'Площадка Парнас',
+    },
+  });
+
   const hashedPassword = await bcrypt.hash('admin123', 10);
-  await prisma.user.upsert({
-    where: { username: 'admin' },
+  const admin = await prisma.user.upsert({
+    where: {
+      companyId_username: {
+        companyId: company.id,
+        username: 'admin',
+      },
+    },
     update: {
       passwordHash: hashedPassword,
-      role: UserRole.ADMIN,
       firstName: 'Админ',
       lastName: 'Админов',
+      isActive: true,
     },
     create: {
+      companyId: company.id,
       username: 'admin',
       passwordHash: hashedPassword,
-      role: UserRole.ADMIN,
       firstName: 'Админ',
       lastName: 'Админов',
     },
   });
-  console.log('👤 Seed-пользователь admin успешно создан/обновлен.');
 
-  await prisma.location.upsert({
-    where: { name: 'Санкт-Петербург' },
+  await prisma.userRoleAssignment.upsert({
+    where: {
+      userId_role: {
+        userId: admin.id,
+        role: UserRole.SYSTEM_OWNER,
+      },
+    },
     update: {},
     create: {
-      name: 'Санкт-Петербург',
-      sites: {
-        create: [{ name: 'Площадка Парнас' }, { name: 'Площадка Купчино' }],
-      },
+      userId: admin.id,
+      role: UserRole.SYSTEM_OWNER,
     },
   });
 
-  await prisma.brand.upsert({
-    where: { name: 'Geely' },
+  await prisma.userLocationAccess.upsert({
+    where: {
+      userId_locationId: {
+        userId: admin.id,
+        locationId: location.id,
+      },
+    },
     update: {},
     create: {
-      name: 'Geely',
-      models: {
-        create: [{ name: 'Monjaro' }, { name: 'Coolray' }, { name: 'Tugella' }],
-      },
+      userId: admin.id,
+      locationId: location.id,
     },
   });
 
-  await prisma.brand.upsert({
-    where: { name: 'Haval' },
-    update: {},
-    create: {
-      name: 'Haval',
-      models: {
-        create: [{ name: 'Jolion' }, { name: 'F7x' }, { name: 'Dargo' }],
-      },
-    },
-  });
-
-  const colors = ['Белый', 'Черный', 'Серый металлик', 'Синий', 'Красный'];
-  for (const colorName of colors) {
-    await prisma.color.upsert({
-      where: { name: colorName },
-      update: {},
-      create: { name: colorName },
-    });
-  }
-
-  const siteParnas = await prisma.site.findFirst({
-    where: { name: 'Площадка Парнас' },
-  });
-
-  const monjaroModel = await prisma.carModel.findFirst({
-    where: { name: 'Monjaro' },
-  });
-
-  const blackColor = await prisma.color.findFirst({
-    where: { name: 'Черный' },
-  });
-
-  if (siteParnas && monjaroModel && blackColor) {
-    const truckNumber = 'Автовоз №42';
-    let arrival = await prisma.arrival.findFirst({
-      where: { truckNumber },
-    });
-
-    if (!arrival) {
-      arrival = await prisma.arrival.create({
-        data: {
-          truckNumber,
-          arrivalDate: new Date(),
-          comment: 'Первая тестовая партия машин',
-        },
-      });
-    }
-
-    const vin = 'LV234567890123456';
-    const existingCar = await prisma.car.findUnique({
-      where: { vin },
-    });
-
-    if (!existingCar) {
-      await prisma.car.create({
-        data: {
-          vin,
-          modelId: monjaroModel.id,
-          colorId: blackColor.id,
-          siteId: siteParnas.id,
-          arrivalId: arrival.id,
-          checks: {
-            create: {
-              voltage: 12.6,
-              comment: 'Заводская проверка при приеме',
-            },
-          },
-        },
-      });
-    }
-  }
+  console.log(`👤 Seed-пользователь admin создан для companyId=${company.id}.`);
 
   console.log('✅ База успешно заполнена тестовыми данными!');
 }

@@ -1,89 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  CarLifecycleStatus,
+  PsoStatus,
+  VehicleEventType,
+} from '../../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
-import { CarStatus } from '@prisma/client';
-import { BatteryStatus } from '../cars/enums/battery-status.enum';
-import { getBatteryStatus, getDaysLeft } from '../cars/utils/battery.util';
+import { DashboardResponseDto } from './dto/dashboard-response.dto';
 
 @Injectable()
 export class DashboardService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async getDashboard() {
-    const today = new Date();
-
-    const [carsOnStock, needPso, carsForBattery, issuedToday] =
-      await Promise.all([
-        this.prismaService.car.count({
-          where: {
-            status: { not: CarStatus.ISSUED },
-          },
-        }),
-
-        this.prismaService.car.count({
-          where: {
-            status: { not: CarStatus.ISSUED },
-            psoCompletedAt: null,
-          },
-        }),
-
-        this.prismaService.car.findMany({
-          where: {
-            status: { not: CarStatus.ISSUED },
-            nextBatteryCheckAt: {
-              not: null,
-            },
-          },
-          select: {
-            nextBatteryCheckAt: true,
-          },
-        }),
-
-        this.prismaService.car.count({
-          where: {
-            issuedAt: {
-              gte: new Date(
-                today.getFullYear(),
-                today.getMonth(),
-                today.getDate(),
-              ),
-            },
-          },
-        }),
-      ]);
-
-    const batteryStats = {
-      warning: 0,
-      critical: 0,
-      overdue: 0,
-    };
-
-    carsForBattery.forEach((car) => {
-      if (!car.nextBatteryCheckAt) return;
-
-      const daysLeft = getDaysLeft(car.nextBatteryCheckAt);
-
-      const status = getBatteryStatus(daysLeft);
-
-      switch (status) {
-        case BatteryStatus.WARNING:
-          batteryStats.warning++;
-          break;
-
-        case BatteryStatus.CRITICAL:
-          batteryStats.critical++;
-          break;
-
-        case BatteryStatus.OVERDUE:
-          batteryStats.overdue++;
-          break;
-      }
+  async getDashboard(userId: string): Promise<DashboardResponseDto> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        companyId: true,
+        locationAccesses: { select: { locationId: true } },
+      },
     });
 
-    return {
-      carsOnStock,
-      needPso,
-      battery: batteryStats,
-      issuedToday,
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const locationIds = user.locationAccesses.map(
+      (access) => access.locationId,
+    );
+    const carScope = {
+      companyId: user.companyId,
+      ownerLocationId: { in: locationIds },
     };
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const [carsOnStock, needPso, issuedToday] = await Promise.all([
+      this.prisma.car.count({
+        where: {
+          ...carScope,
+          lifecycleStatus: CarLifecycleStatus.ACTIVE,
+        },
+      }),
+      this.prisma.car.count({
+        where: {
+          ...carScope,
+          lifecycleStatus: CarLifecycleStatus.ACTIVE,
+          pso: { is: { status: PsoStatus.PENDING } },
+        },
+      }),
+      this.prisma.vehicleEvent.count({
+        where: {
+          companyId: user.companyId,
+          locationId: { in: locationIds },
+          type: VehicleEventType.CAR_ISSUED,
+          occurredAt: { gte: startOfToday },
+        },
+      }),
+    ]);
+
+    return { carsOnStock, needPso, issuedToday };
   }
 }

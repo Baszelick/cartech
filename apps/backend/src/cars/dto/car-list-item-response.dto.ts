@@ -1,76 +1,54 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { CarLifecycleStatus } from '../../../generated/prisma/enums';
 
 export class CarListItemResponseDto {
   @ApiProperty({
     format: 'uuid',
     example: '8d4cb819-393b-4a72-947b-53f53a67f20b',
-    description: 'Идентификатор автомобиля',
   })
   id: string;
 
-  @ApiProperty({
-    example: 'XW8ED41P21K123456',
-    description: 'Полный VIN автомобиля',
-  })
+  @ApiProperty({ example: 'XW8ED41P21K123456' })
   vin: string;
 
   @ApiProperty({
     example: '123456',
-    description: 'Короткий VIN автомобиля',
+    description: 'Explicit short VIN representation stored for the car.',
   })
   shortVin: string;
 
-  @ApiProperty({
-    example: 'Jetour',
-    description: 'Марка автомобиля',
-  })
+  @ApiProperty({ example: 'Jetour' })
   brand: string;
 
-  @ApiProperty({
-    example: 'X70 Plus',
-    description: 'Модель автомобиля',
-  })
+  @ApiProperty({ example: 'X70 Plus' })
   model: string;
 
-  @ApiProperty({
-    example: 'Белый',
-    nullable: true,
-    description: 'Цвет автомобиля',
-  })
+  @ApiPropertyOptional({ example: 'White', nullable: true })
   color: string | null;
 
-  @ApiProperty({
-    type: String,
-    format: 'date',
-    example: '2026-07-29',
-    description: 'Дата поступления автомобиля',
-  })
+  @ApiProperty({ format: 'date', example: '2026-07-29' })
   arrivedOn: string;
 
   @ApiProperty({
-    enum: ['ACTIVE', 'ISSUED', 'ARCHIVED'],
-    example: 'ACTIVE',
-    description: 'Статус жизненного цикла автомобиля',
+    enum: CarLifecycleStatus,
+    example: CarLifecycleStatus.ACTIVE,
+    description:
+      'Car lifecycle: ACTIVE is operational, ISSUED is handed over, ARCHIVED is retained outside active operations.',
   })
-  lifecycleStatus: 'ACTIVE' | 'ISSUED' | 'ARCHIVED';
+  lifecycleStatus: CarLifecycleStatus;
 
-  @ApiProperty({
-    example: false,
-    description: 'Признак блокировки автомобиля',
-  })
+  @ApiProperty({ example: false })
   isBlocked: boolean;
 
   @ApiProperty({
     format: 'uuid',
     example: 'cb9b2fec-7878-4dac-a87b-426df4754567',
-    description: 'Идентификатор локации-владельца',
   })
   ownerLocationId: string;
 
   @ApiProperty({
     format: 'uuid',
     example: '6fb95e2c-9440-4d9b-82a2-780af81be53c',
-    description: 'Идентификатор текущей площадки',
   })
   currentSiteId: string;
 }

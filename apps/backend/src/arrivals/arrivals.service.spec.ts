@@ -1,72 +1,84 @@
-import { jest as jestRuntime } from '@jest/globals';
-import { Test, TestingModule } from '@nestjs/testing';
 import {
   ConflictException,
   ForbiddenException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { jest as jestRuntime } from '@jest/globals';
+import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service';
 import { ArrivalsService } from './arrivals.service';
 
 interface MockTx {
-  userLocationAccess: { findFirst: jest.Mock };
-  site: { findMany: jest.Mock };
+  user: { findFirst: jest.Mock };
+  site: { findFirst: jest.Mock };
   car: { findMany: jest.Mock; create: jest.Mock };
+  vehicleEvent: { create: jest.Mock };
 }
 
 function createMockTx(): MockTx {
   return {
-    userLocationAccess: { findFirst: jestRuntime.fn() },
-    site: { findMany: jestRuntime.fn() },
-    car: { findMany: jestRuntime.fn(), create: jestRuntime.fn() },
+    user: { findFirst: jestRuntime.fn() },
+    site: { findFirst: jestRuntime.fn() },
+    car: {
+      findMany: jestRuntime.fn(),
+      create: jestRuntime.fn(),
+    },
+    vehicleEvent: { create: jestRuntime.fn() },
   };
 }
 
 describe('ArrivalsService', () => {
   let service: ArrivalsService;
-  let prisma: jest.Mocked<PrismaService>;
-  let mockPrisma: jest.Mocked<PrismaService>;
+  let mockPrisma: { $transaction: jest.Mock };
 
-  const mockAuth = { companyId: 'company-1', userId: 'user-1' };
-  const mockLocationAccess = {
-    id: 'loc-access-1',
+  const auth = {
     userId: 'user-1',
-    locationId: 'loc-1',
-    createdAt: new Date(),
-  };
-  const mockSite = { id: 'site-1', locationId: 'loc-1' };
-  const mockCar = {
-    id: 'car-1',
-    vin: 'XW8ED41P21K123456',
-    shortVin: '123456',
-    brand: 'Toyota',
-    model: 'Camry',
-    color: null,
     companyId: 'company-1',
-    createdById: 'user-1',
-    ownerLocationId: 'loc-1',
-    currentSiteId: 'site-1',
-    arrivalSiteId: 'site-1',
-    arrivedOn: new Date(),
-    lifecycleStatus: 'ACTIVE' as const,
   };
 
-  const createDto = {
+  const dto = {
+    arrivalSiteId: '6fb95e2c-9440-4d9b-82a2-780af81be53c',
+    arrivedOn: '2026-07-29',
     cars: [
       {
         vin: 'XW8ED41P21K123456',
+        shortVin: '123456',
         brand: 'Toyota',
         model: 'Camry',
         color: undefined,
-        arrivalSiteId: 'site-1',
       },
     ],
+  };
+
+  const activeUser = {
+    locationAccesses: [{ locationId: 'location-1' }],
+  };
+
+  const arrivalSite = {
+    id: dto.arrivalSiteId,
+    locationId: 'location-1',
+  };
+
+  const createdCar = {
+    id: 'car-1',
+    vin: dto.cars[0].vin,
+    shortVin: dto.cars[0].shortVin,
+    brand: dto.cars[0].brand,
+    model: dto.cars[0].model,
+    color: null,
+    arrivedOn: new Date('2026-07-29T00:00:00.000Z'),
+    lifecycleStatus: 'ACTIVE',
+    ownerLocationId: 'location-1',
+    currentSiteId: dto.arrivalSiteId,
+    arrivalSiteId: dto.arrivalSiteId,
+    createdAt: new Date('2026-07-29T10:00:00.000Z'),
   };
 
   beforeEach(async () => {
     mockPrisma = {
       $transaction: jestRuntime.fn(),
-    } as unknown as jest.Mocked<PrismaService>;
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -76,203 +88,217 @@ describe('ArrivalsService', () => {
     }).compile();
 
     service = module.get<ArrivalsService>(ArrivalsService);
-    prisma = module.get(PrismaService);
   });
 
-  describe('create', () => {
-    function givenTx(tx: MockTx): void {
-      (prisma.$transaction as jest.Mock).mockImplementation(
-        async (callback: (tx: MockTx) => unknown) => callback(tx),
-      );
-    }
+  function runInTransaction(tx: MockTx): void {
+    mockPrisma.$transaction.mockImplementation(
+      async (callback: (transaction: MockTx) => unknown) => callback(tx),
+    );
+  }
 
-    it('creates cars with all server-generated fields', async () => {
-      const tx = createMockTx();
-      tx.userLocationAccess.findFirst.mockResolvedValue(mockLocationAccess);
-      tx.site.findMany.mockResolvedValue([mockSite]);
-      tx.car.findMany.mockResolvedValue([]);
-      tx.car.create.mockResolvedValue(mockCar);
-      givenTx(tx);
+  function prepareSuccessfulTx(tx: MockTx): void {
+    tx.user.findFirst.mockResolvedValue(activeUser);
+    tx.site.findFirst.mockResolvedValue(arrivalSite);
+    tx.car.findMany.mockResolvedValue([]);
+    tx.car.create.mockResolvedValue(createdCar);
+    tx.vehicleEvent.create.mockResolvedValue({ id: 'event-1' });
+    runInTransaction(tx);
+  }
 
-      await service.create(createDto, mockAuth);
+  it('creates scoped ACTIVE cars and CAR_ARRIVED events atomically', async () => {
+    const tx = createMockTx();
+    prepareSuccessfulTx(tx);
 
-      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-      expect(tx.car.create).toHaveBeenCalledTimes(1);
+    const result = await service.create(dto, auth);
 
-      const callData = tx.car.create.mock.calls[0][0].data;
-      expect(callData).toMatchObject({
-        companyId: 'company-1',
-        createdById: 'user-1',
-        ownerLocationId: 'loc-1',
-        currentSiteId: 'site-1',
-        arrivalSiteId: 'site-1',
-        vin: 'XW8ED41P21K123456',
-        brand: 'Toyota',
-        model: 'Camry',
-        color: null,
-        lifecycleStatus: 'ACTIVE',
-      });
-      expect(callData).toHaveProperty('arrivedOn');
-      expect(callData.shortVin).toBe('123456');
-    });
-
-    it('throws NotFoundException when technician has no location', async () => {
-      const tx = createMockTx();
-      tx.userLocationAccess.findFirst.mockResolvedValue(null);
-      givenTx(tx);
-
-      await expect(service.create(createDto, mockAuth)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-      expect(tx.car.create).not.toHaveBeenCalled();
-    });
-
-    it('throws NotFoundException when site not found in company', async () => {
-      const tx = createMockTx();
-      tx.userLocationAccess.findFirst.mockResolvedValue(mockLocationAccess);
-      tx.site.findMany.mockResolvedValue([]);
-      givenTx(tx);
-
-      await expect(service.create(createDto, mockAuth)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-      expect(tx.car.create).not.toHaveBeenCalled();
-    });
-
-    it('throws ForbiddenException when site outside technician location', async () => {
-      const tx = createMockTx();
-      tx.userLocationAccess.findFirst.mockResolvedValue(mockLocationAccess);
-      tx.site.findMany.mockResolvedValue([
-        { ...mockSite, locationId: 'loc-other' },
-      ]);
-      givenTx(tx);
-
-      await expect(service.create(createDto, mockAuth)).rejects.toThrow(
-        ForbiddenException,
-      );
-      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-      expect(tx.car.create).not.toHaveBeenCalled();
-    });
-
-    it('throws ConflictException for duplicate VINs in request', async () => {
-      const tx = createMockTx();
-      tx.userLocationAccess.findFirst.mockResolvedValue(mockLocationAccess);
-      tx.site.findMany.mockResolvedValue([mockSite]);
-      givenTx(tx);
-
-      const dtoWithDuplicates = {
-        cars: [createDto.cars[0], { ...createDto.cars[0] }],
-      };
-
-      await expect(service.create(dtoWithDuplicates, mockAuth)).rejects.toThrow(
-        ConflictException,
-      );
-      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-      expect(tx.car.findMany).not.toHaveBeenCalled();
-      expect(tx.car.create).not.toHaveBeenCalled();
-    });
-
-    it('throws ConflictException for existing VIN in database', async () => {
-      const tx = createMockTx();
-      tx.userLocationAccess.findFirst.mockResolvedValue(mockLocationAccess);
-      tx.site.findMany.mockResolvedValue([mockSite]);
-      tx.car.findMany.mockResolvedValue([{ vin: 'XW8ED41P21K123456' }]);
-      givenTx(tx);
-
-      await expect(service.create(createDto, mockAuth)).rejects.toThrow(
-        ConflictException,
-      );
-      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-      expect(tx.car.create).not.toHaveBeenCalled();
-    });
-
-    it('uses company-scoped VIN check', async () => {
-      const tx = createMockTx();
-      tx.userLocationAccess.findFirst.mockResolvedValue(mockLocationAccess);
-      tx.site.findMany.mockResolvedValue([mockSite]);
-      tx.car.findMany.mockResolvedValue([]);
-      tx.car.create.mockResolvedValue(mockCar);
-      givenTx(tx);
-
-      await service.create(createDto, mockAuth);
-
-      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-      expect(tx.car.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({ companyId: 'company-1' }),
-        }),
-      );
-    });
-
-    it('assigns the same arrivedOn timestamp to all cars in a batch', async () => {
-      const tx = createMockTx();
-      const firstSite = { id: 'site-1', locationId: 'loc-1' };
-      const secondSite = { id: 'site-2', locationId: 'loc-1' };
-
-      tx.userLocationAccess.findFirst.mockResolvedValue(mockLocationAccess);
-      tx.site.findMany.mockResolvedValue([firstSite, secondSite]);
-      tx.car.findMany.mockResolvedValue([]);
-      tx.car.create.mockResolvedValue(mockCar);
-      givenTx(tx);
-
-      const batchDto = {
-        cars: [
-          {
-            ...createDto.cars[0],
-            vin: 'VIN00000000000001',
-            arrivalSiteId: 'site-1',
+    expect(mockPrisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(tx.user.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: auth.userId,
+        companyId: auth.companyId,
+        isActive: true,
+      },
+      select: {
+        locationAccesses: {
+          select: {
+            locationId: true,
           },
+        },
+      },
+    });
+    expect(tx.site.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: dto.arrivalSiteId,
+        isActive: true,
+        location: {
+          companyId: auth.companyId,
+          isActive: true,
+        },
+      },
+      select: {
+        id: true,
+        locationId: true,
+      },
+    });
+    expect(tx.car.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          companyId: auth.companyId,
+          ownerLocationId: arrivalSite.locationId,
+          currentSiteId: arrivalSite.id,
+          arrivalSiteId: arrivalSite.id,
+          createdById: auth.userId,
+          vin: dto.cars[0].vin,
+          shortVin: dto.cars[0].shortVin,
+          brand: dto.cars[0].brand,
+          model: dto.cars[0].model,
+          color: null,
+          arrivedOn: expect.any(Date),
+          lifecycleStatus: 'ACTIVE',
+        },
+      }),
+    );
+    expect(tx.vehicleEvent.create).toHaveBeenCalledWith({
+      data: {
+        companyId: auth.companyId,
+        carId: createdCar.id,
+        locationId: arrivalSite.locationId,
+        performedById: auth.userId,
+        type: 'CAR_ARRIVED',
+        title: 'Автомобиль принят',
+      },
+    });
+    expect(result).toEqual({
+      count: 1,
+      cars: [
+        {
+          ...createdCar,
+          arrivedOn: '2026-07-29',
+          lifecycleStatus: 'ACTIVE',
+          createdAt: '2026-07-29T10:00:00.000Z',
+        },
+      ],
+    });
+  });
+
+  it('uses one arrival date for every car in a batch', async () => {
+    const tx = createMockTx();
+    prepareSuccessfulTx(tx);
+    tx.car.create.mockResolvedValueOnce(createdCar).mockResolvedValueOnce({
+      ...createdCar,
+      id: 'car-2',
+      vin: 'XW8ED41P21K654321',
+    });
+
+    await service.create(
+      {
+        ...dto,
+        cars: [
+          dto.cars[0],
           {
-            ...createDto.cars[0],
-            vin: 'VIN00000000000002',
-            arrivalSiteId: 'site-2',
+            ...dto.cars[0],
+            vin: 'XW8ED41P21K654321',
+            shortVin: '654321',
           },
         ],
-      };
+      },
+      auth,
+    );
 
-      await service.create(batchDto, mockAuth);
+    const firstDate = tx.car.create.mock.calls[0][0].data.arrivedOn;
+    const secondDate = tx.car.create.mock.calls[1][0].data.arrivedOn;
 
-      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-      expect(tx.car.create).toHaveBeenCalledTimes(2);
+    expect(firstDate).toBe(secondDate);
+    expect(tx.vehicleEvent.create).toHaveBeenCalledTimes(2);
+  });
 
-      const firstCall = tx.car.create.mock.calls[0][0];
-      const secondCall = tx.car.create.mock.calls[1][0];
+  it('rejects duplicate VINs before starting a transaction', async () => {
+    await expect(
+      service.create(
+        {
+          ...dto,
+          cars: [dto.cars[0], { ...dto.cars[0] }],
+        },
+        auth,
+      ),
+    ).rejects.toThrow(ConflictException);
 
-      expect(firstCall.data.arrivedOn).toBe(secondCall.data.arrivedOn);
-      expect(firstCall.data.vin).toBe('VIN00000000000001');
-      expect(firstCall.data.arrivalSiteId).toBe('site-1');
-      expect(firstCall.data.currentSiteId).toBe('site-1');
-      expect(secondCall.data.vin).toBe('VIN00000000000002');
-      expect(secondCall.data.arrivalSiteId).toBe('site-2');
-      expect(secondCall.data.currentSiteId).toBe('site-2');
+    expect(mockPrisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('rejects an inactive or missing user', async () => {
+    const tx = createMockTx();
+    tx.user.findFirst.mockResolvedValue(null);
+    tx.site.findFirst.mockResolvedValue(arrivalSite);
+    tx.car.findMany.mockResolvedValue([]);
+    runInTransaction(tx);
+
+    await expect(service.create(dto, auth)).rejects.toThrow(
+      UnauthorizedException,
+    );
+    expect(tx.car.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects a site outside the user company', async () => {
+    const tx = createMockTx();
+    tx.user.findFirst.mockResolvedValue(activeUser);
+    tx.site.findFirst.mockResolvedValue(null);
+    tx.car.findMany.mockResolvedValue([]);
+    runInTransaction(tx);
+
+    await expect(service.create(dto, auth)).rejects.toThrow(NotFoundException);
+    expect(tx.car.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects a site outside the user location scope', async () => {
+    const tx = createMockTx();
+    tx.user.findFirst.mockResolvedValue({
+      locationAccesses: [{ locationId: 'location-other' }],
     });
+    tx.site.findFirst.mockResolvedValue(arrivalSite);
+    tx.car.findMany.mockResolvedValue([]);
+    runInTransaction(tx);
 
-    it('propagates transaction errors unchanged', async () => {
-      const tx = createMockTx();
-      const databaseError = new Error('DB_CONSTRAINT_FAILED');
+    await expect(service.create(dto, auth)).rejects.toThrow(ForbiddenException);
+    expect(tx.car.create).not.toHaveBeenCalled();
+  });
 
-      tx.userLocationAccess.findFirst.mockResolvedValue(mockLocationAccess);
-      tx.site.findMany.mockResolvedValue([mockSite]);
-      tx.car.findMany.mockResolvedValue([]);
-      tx.car.create
-        .mockResolvedValueOnce(mockCar)
-        .mockRejectedValueOnce(databaseError);
-      givenTx(tx);
+  it('checks existing VINs inside the authenticated company', async () => {
+    const tx = createMockTx();
+    tx.user.findFirst.mockResolvedValue(activeUser);
+    tx.site.findFirst.mockResolvedValue(arrivalSite);
+    tx.car.findMany.mockResolvedValue([{ vin: dto.cars[0].vin }]);
+    runInTransaction(tx);
 
-      const batchDto = {
-        cars: [
-          { ...createDto.cars[0], vin: 'VIN00000000000001' },
-          { ...createDto.cars[0], vin: 'VIN00000000000002' },
-        ],
-      };
-
-      await expect(service.create(batchDto, mockAuth)).rejects.toBe(
-        databaseError,
-      );
-      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-      expect(tx.car.create).toHaveBeenCalledTimes(2);
+    await expect(service.create(dto, auth)).rejects.toThrow(ConflictException);
+    expect(tx.car.findMany).toHaveBeenCalledWith({
+      where: {
+        companyId: auth.companyId,
+        vin: {
+          in: [dto.cars[0].vin],
+        },
+      },
+      select: {
+        vin: true,
+      },
     });
+    expect(tx.car.create).not.toHaveBeenCalled();
+  });
+
+  it('maps a database unique constraint to ConflictException', async () => {
+    const tx = createMockTx();
+    prepareSuccessfulTx(tx);
+    tx.car.create.mockRejectedValue({ code: 'P2002' });
+
+    await expect(service.create(dto, auth)).rejects.toThrow(ConflictException);
+  });
+
+  it('propagates non-unique transaction errors', async () => {
+    const tx = createMockTx();
+    const databaseError = new Error('DATABASE_UNAVAILABLE');
+    prepareSuccessfulTx(tx);
+    tx.car.create.mockRejectedValue(databaseError);
+
+    await expect(service.create(dto, auth)).rejects.toBe(databaseError);
   });
 });

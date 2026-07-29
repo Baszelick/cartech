@@ -1,7 +1,10 @@
+import type { UserRole } from '../../../generated/prisma/client';
+
 export interface AccessTokenPayload {
   sub: string;
+  companyId: string;
   username: string;
-  role: string;
+  roles: UserRole[];
   type: 'access';
 }
 

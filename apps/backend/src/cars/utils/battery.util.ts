@@ -9,10 +9,7 @@ export function getBatteryStatus(daysLeft: number): BatteryStatus {
 
 export function getDaysLeft(nextBatteryCheckAt: Date): number {
   const today = new Date();
-
+  today.setHours(0, 0, 0, 0);
   const diff = nextBatteryCheckAt.getTime() - today.getTime();
-
-  const MS_IN_DAY = 24 * 60 * 60 * 1000;
-
-  return Math.ceil(diff / MS_IN_DAY);
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
 }

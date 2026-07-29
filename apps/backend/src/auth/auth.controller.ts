@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Res,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import type { Response, Request } from 'express';
@@ -18,12 +19,20 @@ import {
   ApiOkResponse,
   ApiUnauthorizedResponse,
   ApiBearerAuth,
+  ApiBadRequestResponse,
+  ApiCookieAuth,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { TokenService } from './token.service';
 import type { AuthenticatedRequest } from './interfaces/authenticated-request.interface';
+import {
+  AuthSessionResponseDto,
+  AuthUserResponseDto,
+} from './dto/auth-response.dto';
+import { HttpErrorResponseDto } from '../common/dto/http-error-response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -70,15 +79,23 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Вход в систему',
+    summary: 'Sign in',
     description:
-      'Аутентификация пользователя по username/password. Возвращает JWT-токен и данные пользователя.',
+      'Authenticates a user within a company, returns an access token, and sets the refresh token in an HttpOnly cookie.',
   })
   @ApiBody({ type: LoginDto })
   @ApiOkResponse({
-    description: 'Успешная аутентификация. Возвращает accessToken и user.',
+    description: 'Authentication succeeded.',
+    type: AuthSessionResponseDto,
   })
-  @ApiUnauthorizedResponse({ description: 'Неверные учетные данные.' })
+  @ApiBadRequestResponse({
+    description: 'Request validation failed.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid credentials or inactive user.',
+    type: HttpErrorResponseDto,
+  })
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
@@ -94,15 +111,18 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Обновление токена',
+    summary: 'Refresh the session',
     description:
-      'Обновляет access token с помощью refresh token из HttpOnly cookie.',
+      'Rotates the refresh token from the HttpOnly cookie and returns a new access token.',
   })
+  @ApiCookieAuth('refreshToken')
   @ApiOkResponse({
-    description: 'Успешное обновление. Возвращает новый accessToken и user.',
+    description: 'Session refreshed.',
+    type: AuthSessionResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'Неверный или истекший refresh token.',
+    description: 'Refresh cookie is missing, invalid, expired, or reused.',
+    type: HttpErrorResponseDto,
   })
   async refresh(
     @Req() req: Request,
@@ -112,7 +132,7 @@ export class AuthController {
       req.cookies?.[this.refreshCookieName];
     if (!refreshToken) {
       this.clearRefreshCookie(res);
-      return { statusCode: 401, message: 'Refresh token not found' };
+      throw new UnauthorizedException('Refresh token not found');
     }
     const result = await this.authService.refresh(refreshToken);
     this.setRefreshCookie(res, result.refreshToken);
@@ -125,9 +145,12 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
-    summary: 'Выход из системы',
-    description: 'Отзывает текущую сессию и очищает refresh cookie.',
+    summary: 'Sign out',
+    description:
+      'Revokes the current session when a refresh cookie is present and clears the cookie.',
   })
+  @ApiCookieAuth('refreshToken')
+  @ApiNoContentResponse({ description: 'Session ended and cookie cleared.' })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken: string | undefined =
       req.cookies?.[this.refreshCookieName];
@@ -139,11 +162,17 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Текущий пользователь',
-    description: 'Возвращает данные аутентифицированного пользователя.',
+    summary: 'Get the current user',
+    description: 'Returns the authenticated user and assigned roles.',
   })
-  @ApiOkResponse({ description: 'Данные пользователя.' })
-  @ApiUnauthorizedResponse({ description: 'Не авторизован.' })
+  @ApiOkResponse({
+    description: 'Current user.',
+    type: AuthUserResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid.',
+    type: HttpErrorResponseDto,
+  })
   async getMe(@Req() req: AuthenticatedRequest) {
     const userData = await this.authService.getMe(req.user.userId);
     return userData;

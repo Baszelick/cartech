@@ -4,14 +4,29 @@ import { PrismaService } from '../prisma/prisma.service';
 import { TokenService } from './token.service';
 import { LoginDto } from './dto/login.dto';
 import bcrypt from 'bcrypt';
+import type { UserRole } from '../../generated/prisma/client';
 
 export const publicUserSelect = {
   id: true,
+  companyId: true,
   username: true,
   firstName: true,
   lastName: true,
-  role: true,
+  roles: {
+    select: {
+      role: true,
+    },
+  },
 } as const;
+
+interface PublicUserSource {
+  id: string;
+  companyId: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  roles: Array<{ role: UserRole }>;
+}
 
 @Injectable()
 export class AuthService {
@@ -28,13 +43,25 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const { username, password } = loginDto;
+    const { companyId, username, password } = loginDto;
 
     const user = await this.prisma.user.findUnique({
-      where: { username },
+      where: {
+        companyId_username: {
+          companyId,
+          username,
+        },
+      },
+      include: {
+        roles: {
+          select: {
+            role: true,
+          },
+        },
+      },
     });
 
-    if (!user) {
+    if (!user || !user.isActive) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -67,19 +94,14 @@ export class AuthService {
       data: { refreshTokenHash },
     });
 
-    const accessToken = await this.tokenService.createAccessToken(user);
+    const publicUser = this.toPublicUser(user);
+    const accessToken = await this.tokenService.createAccessToken(publicUser);
 
     return {
       accessToken,
       refreshToken,
       refreshCookieName: this.refreshCookieName,
-      user: {
-        id: user.id,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
+      user: publicUser,
     };
   }
 
@@ -88,13 +110,24 @@ export class AuthService {
 
     const session = await this.prisma.authSession.findUnique({
       where: { id: payload.sessionId },
-      include: { user: true },
+      include: {
+        user: {
+          include: {
+            roles: {
+              select: {
+                role: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (
       !session ||
       session.revokedAt !== null ||
-      session.expiresAt < new Date()
+      session.expiresAt < new Date() ||
+      !session.user.isActive
     ) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
@@ -134,19 +167,14 @@ export class AuthService {
       },
     });
 
-    const accessToken = await this.tokenService.createAccessToken(session.user);
+    const publicUser = this.toPublicUser(session.user);
+    const accessToken = await this.tokenService.createAccessToken(publicUser);
 
     return {
       accessToken,
       refreshToken: newRefreshToken,
       refreshCookieName: this.refreshCookieName,
-      user: {
-        id: session.user.id,
-        username: session.user.username,
-        firstName: session.user.firstName,
-        lastName: session.user.lastName,
-        role: session.user.role,
-      },
+      user: publicUser,
     };
   }
 
@@ -175,6 +203,17 @@ export class AuthService {
       select: publicUserSelect,
     });
 
-    return user;
+    return this.toPublicUser(user);
+  }
+
+  private toPublicUser(user: PublicUserSource) {
+    return {
+      id: user.id,
+      companyId: user.companyId,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      roles: user.roles.map(({ role }) => role),
+    };
   }
 }

@@ -5,6 +5,7 @@ import {
   AccessTokenPayload,
   RefreshTokenPayload,
 } from './interfaces/jwt-payload.interface';
+import type { UserRole } from '../../generated/prisma/client';
 
 interface TokenConfig {
   secret: string;
@@ -66,13 +67,15 @@ export class TokenService {
 
   async createAccessToken(user: {
     id: string;
+    companyId: string;
     username: string;
-    role: string;
+    roles: UserRole[];
   }): Promise<string> {
     const payload: AccessTokenPayload = {
       sub: user.id,
+      companyId: user.companyId,
       username: user.username,
-      role: user.role,
+      roles: user.roles,
       type: 'access',
     };
 

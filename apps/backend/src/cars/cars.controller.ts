@@ -3,120 +3,129 @@ import {
   Controller,
   Get,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
   ApiBearerAuth,
-  ApiOkResponse,
+  ApiBadRequestResponse,
+  ApiBody,
   ApiCreatedResponse,
   ApiNotFoundResponse,
-  ApiBadRequestResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CarsService } from './cars.service';
-import { CreateBatteryCheckDto } from './dto/create-battery-check.dto';
-import { BatteryCheckResponseDto } from './dto/battery-check-response.dto';
-import { CarListItemResponseDto } from './dto/car-list-item-response.dto';
-import { CarDetailsResponseDto } from './dto/car-details-response.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { BatteryCheckResponseDto } from './dto/battery-check-response.dto';
+import { CarDetailsResponseDto } from './dto/car-details-response.dto';
+import { CarListItemResponseDto } from './dto/car-list-item-response.dto';
+import { CreateBatteryCheckDto } from './dto/create-battery-check.dto';
+import { BatteryOperationsService } from './operations/battery-operations.service';
+import { CarQueryService } from './operations/car-query.service';
+import { HttpErrorResponseDto } from '../common/dto/http-error-response.dto';
 
 @ApiTags('Cars')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('cars')
 export class CarsController {
-  constructor(private carsService: CarsService) {}
+  constructor(
+    private readonly carQueries: CarQueryService,
+    private readonly batteryOperations: BatteryOperationsService,
+  ) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: 'Список автомобилей',
+    summary: 'List accessible cars',
     description:
-      'Возвращает автомобили компании в доступных пользователю локациях.',
+      'Returns cars in the authenticated user company and owner locations.',
   })
   @ApiOkResponse({
-    description: 'Список доступных автомобилей.',
+    description: 'Cars in the authenticated user company and locations.',
     type: CarListItemResponseDto,
     isArray: true,
   })
-  @ApiUnauthorizedResponse({ description: 'Пользователь не авторизован.' })
+  @ApiUnauthorizedResponse({
+    description: 'Authentication is required.',
+    type: HttpErrorResponseDto,
+  })
   findAll(@Req() request: AuthenticatedRequest) {
-    return this.carsService.findAll(request.user.userId);
+    return this.carQueries.findAll(request.user.userId);
   }
 
   @Post(':id/battery-check')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: 'Добавить проверку аккумулятора',
+    summary: 'Record a completed battery check',
     description:
-      'Создаёт запись проверки аккумулятора для доступного пользователю автомобиля.',
+      'Records a BatteryCheck fact for a car available in the authenticated user scope.',
   })
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+    example: '8d4cb819-393b-4a72-947b-53f53a67f20b',
+  })
+  @ApiBody({ type: CreateBatteryCheckDto })
   @ApiCreatedResponse({
-    description: 'Проверка создана.',
+    description: 'Battery check recorded.',
     type: BatteryCheckResponseDto,
   })
-  @ApiNotFoundResponse({ description: 'Автомобиль не найден.' })
-  @ApiUnauthorizedResponse({ description: 'Пользователь не авторизован.' })
+  @ApiBadRequestResponse({
+    description: 'Invalid UUID or request body.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Car not found or unavailable.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Authentication is required.',
+    type: HttpErrorResponseDto,
+  })
   createBatteryCheck(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: CreateBatteryCheckDto,
     @Req() request: AuthenticatedRequest,
   ) {
-    return this.carsService.createBatteryCheck(
-      id,
-      dto,
-      request.user.userId,
-    );
-  }
-
-  @Get('tasks')
-  @ApiOperation({ summary: 'Задачи (PSO + батареи)', description: 'Возвращает автомобили, которым требуется ПСО или проверка аккумулятора.' })
-  @ApiOkResponse({ description: 'Список задач.' })
-  findTasks() {
-    return this.carsService.findTasks();
-  }
-
-  @Post(':id/pso')
-  @ApiOperation({ summary: 'Завершить ПСО', description: 'Переводит автомобиль в статус READY, записывает дату выполнения ПСО.' })
-  @ApiOkResponse({ description: 'ПСО завершено.' })
-  @ApiNotFoundResponse({ description: 'Автомобиль не найден.' })
-  @ApiBadRequestResponse({ description: 'Автомобиль не в статусе ARRIVED или PSO.' })
-  completePso(@Param('id', ParseIntPipe) id: number) {
-    return this.carsService.completePso(id);
-  }
-
-  @Post(':id/issue')
-  @ApiOperation({ summary: 'Выдать автомобиль', description: 'Переводит автомобиль в статус ISSUED, записывает дату выдачи. ПСО должно быть завершено.' })
-  @ApiOkResponse({ description: 'Автомобиль выдан.' })
-  @ApiNotFoundResponse({ description: 'Автомобиль не найден.' })
-  @ApiBadRequestResponse({ description: 'ПСО не завершён или автомобиль уже выдан.' })
-  issue(@Param('id', ParseIntPipe) id: number) {
-    return this.carsService.issueCar(id);
+    return this.batteryOperations.createCheck(id, dto, request.user.userId);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: 'Детали автомобиля',
+    summary: 'Get accessible car details',
     description:
-      'Возвращает доступный пользователю автомобиль по идентификатору.',
+      'Returns one car when it belongs to the authenticated user company and owner locations.',
+  })
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+    example: '8d4cb819-393b-4a72-947b-53f53a67f20b',
   })
   @ApiOkResponse({
-    description: 'Автомобиль найден.',
+    description: 'Car details.',
     type: CarDetailsResponseDto,
   })
-  @ApiNotFoundResponse({ description: 'Автомобиль не найден.' })
-  @ApiUnauthorizedResponse({ description: 'Пользователь не авторизован.' })
+  @ApiBadRequestResponse({
+    description: 'Invalid car UUID.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Car not found or unavailable.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Authentication is required.',
+    type: HttpErrorResponseDto,
+  })
   getOne(
     @Param('id', ParseUUIDPipe) id: string,
     @Req() request: AuthenticatedRequest,
   ) {
-    return this.carsService.getCarById(id, request.user.userId);
+    return this.carQueries.findById(id, request.user.userId);
   }
 }

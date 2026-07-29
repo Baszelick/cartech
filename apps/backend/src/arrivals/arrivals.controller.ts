@@ -1,36 +1,68 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiOkResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiBadRequestResponse } from '@nestjs/swagger';
-import { ArrivalsService } from './arrivals.service';
-import { CreateArrivalDto } from './dto/create-arrival.dto';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { HttpErrorResponseDto } from '../common/dto/http-error-response.dto';
+import { ArrivalsService } from './arrivals.service';
+import { CreateArrivalResponseDto } from './dto/arrival-response.dto';
+import { CreateArrivalDto } from './dto/create-arrival.dto';
 
 @ApiTags('Arrivals')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('arrivals')
+@Controller('operations/arrivals')
 export class ArrivalsController {
   constructor(private readonly arrivalsService: ArrivalsService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Список всех поступлений', description: 'Возвращает все поступления автовозов с автомобилями.' })
-  @ApiOkResponse({ description: 'Список поступлений.' })
-  findAll() {
-    return this.arrivalsService.findAll();
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Поступление по ID', description: 'Возвращает детали поступления с автомобилями.' })
-  @ApiOkResponse({ description: 'Поступление найдено.' })
-  @ApiNotFoundResponse({ description: 'Поступление не найдено.' })
-  findOne(@Param('id') id: string) {
-    return this.arrivalsService.findOne(id);
-  }
-
   @Post()
-  @ApiOperation({ summary: 'Создать поступление', description: 'Создаёт новое поступление автовоза с автомобилями. Валидирует VIN, площадки, бренды, модели и цвета.' })
-  @ApiCreatedResponse({ description: 'Поступление создано.' })
-  @ApiBadRequestResponse({ description: 'Ошибка валидации (дубликат VIN, неверный бренд для площадки и т.д.).' })
-  create(@Body() dto: CreateArrivalDto) {
-    return this.arrivalsService.create(dto);
+  @ApiOperation({
+    summary: 'Accept arriving cars',
+    description:
+      'Atomically creates cars and CAR_ARRIVED events at an accessible active site. No Arrival entity is created.',
+  })
+  @ApiBody({ type: CreateArrivalDto })
+  @ApiCreatedResponse({
+    description: 'All cars and arrival events were created.',
+    type: CreateArrivalResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Request validation failed.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User is unauthenticated, missing, or inactive.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'User has no access to the arrival site location.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Active site was not found in the user company.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiConflictResponse({
+    description: 'VIN is duplicated in the request or company.',
+    type: HttpErrorResponseDto,
+  })
+  create(
+    @Body() dto: CreateArrivalDto,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<CreateArrivalResponseDto> {
+    return this.arrivalsService.create(dto, {
+      userId: request.user.userId,
+      companyId: request.user.companyId,
+    });
   }
 }

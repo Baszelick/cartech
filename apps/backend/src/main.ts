@@ -28,6 +28,11 @@ async function bootstrap() {
     )
     .setVersion('1.0')
     .addBearerAuth()
+    .addCookieAuth(
+      'cartech_refresh_token',
+      { type: 'apiKey', in: 'cookie' },
+      'refreshToken',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
