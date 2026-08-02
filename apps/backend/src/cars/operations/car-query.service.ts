@@ -34,9 +34,14 @@ export class CarQueryService {
         currentSiteId: true,
       },
     });
+    const duplicateShortVins = await this.findDuplicateShortVins(
+      user.companyId,
+      cars.map((car) => car.shortVin),
+    );
 
     return cars.map((car) => ({
       ...car,
+      hasShortVinDuplicate: duplicateShortVins.has(car.shortVin),
       arrivedOn: car.arrivedOn.toISOString().slice(0, 10),
     }));
   }
@@ -77,15 +82,44 @@ export class CarQueryService {
     });
 
     if (!car) throw new NotFoundException('Car not found');
+    const duplicateCount = await this.prisma.car.count({
+      where: {
+        companyId: user.companyId,
+        shortVin: car.shortVin,
+        id: { not: car.id },
+      },
+    });
 
     return {
       ...car,
+      hasShortVinDuplicate: duplicateCount > 0,
       arrivedOn: car.arrivedOn.toISOString().slice(0, 10),
       blockedAt: car.blockedAt?.toISOString() ?? null,
       archivedAt: car.archivedAt?.toISOString() ?? null,
       createdAt: car.createdAt.toISOString(),
       updatedAt: car.updatedAt.toISOString(),
     };
+  }
+
+  private async findDuplicateShortVins(
+    companyId: string,
+    shortVins: string[],
+  ): Promise<Set<string>> {
+    if (shortVins.length === 0) return new Set();
+
+    const groups = await this.prisma.car.groupBy({
+      by: ['shortVin'],
+      where: {
+        companyId,
+        shortVin: { in: [...new Set(shortVins)] },
+      },
+      _count: { id: true },
+      having: {
+        id: { _count: { gt: 1 } },
+      },
+    });
+
+    return new Set(groups.map(({ shortVin }) => shortVin));
   }
 
   private async findUserScope(userId: string) {

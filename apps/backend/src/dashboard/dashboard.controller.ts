@@ -12,7 +12,7 @@ import { DashboardService } from './dashboard.service';
 import { DashboardResponseDto } from './dto/dashboard-response.dto';
 import { HttpErrorResponseDto } from '../common/dto/http-error-response.dto';
 
-@ApiTags('Dashboard')
+@ApiTags('Дашборд')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('dashboard')
@@ -21,17 +21,17 @@ export class DashboardController {
 
   @Get()
   @ApiOperation({
-    summary: 'Get the operational dashboard summary',
+    summary: 'Получить сводку операционного дашборда',
     description:
-      'Returns confirmed operational metrics within the authenticated user company and locations.',
+      'Возвращает подтверждённые операционные метрики в рамках компании и доступных локаций аутентифицированного пользователя.',
   })
   @ApiOkResponse({
     description:
-      'Metrics scoped to the authenticated user company and locations.',
+      'Метрики в рамках компании и доступных локаций аутентифицированного пользователя.',
     type: DashboardResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'Authentication is required.',
+    description: 'Требуется аутентификация.',
     type: HttpErrorResponseDto,
   })
   getDashboard(@Req() request: AuthenticatedRequest) {

@@ -2,7 +2,7 @@
 
 > Рабочий трекер ближайших задач. Источник фактического состояния: `docs/PROJECT_AUDIT.md`.
 
-Последнее обновление: 2026-07-29
+Последнее обновление: 2026-08-01
 
 ---
 
@@ -44,9 +44,9 @@ Blockers:
 
 ## Current Focus
 
-**Следующий шаг — согласование оставшихся Cars workflows.**
+**Frontend foundation подтверждена; следующий шаг — typed integration с Backend MVP API.**
 
-Backend compile, текущий Jest-набор и Swagger contract проходят. Следующие задачи требуют решений по PSO, Battery Tasks и issue workflow, а также проверки database baseline на disposable PostgreSQL.
+Angular/Nx workflow, domain-oriented структура Auth/Shell и UI lint подтверждены.
 
 ---
 
@@ -60,8 +60,8 @@ Backend compile, текущий Jest-набор и Swagger contract проход
 - [x] `brand`, `model`, `color` определены как snapshot-поля Car.
 - [x] Роли хранятся как набор `UserRoleAssignment`; scalar `user.role` исключён из целевой модели.
 - [x] Зафиксированы `ACTIVE`, `ISSUED`, `ARCHIVED` и допустимые lifecycle-переходы.
-- [-] Структура PSO и влияние на выдачу определены; момент создания и правило `deadlineOn` открыты.
-- [-] Назначение `BatteryCheck` определено; периодичность, overdue и модель планирования открыты.
+- [x] Pso создаётся при приёмке со статусом `PENDING`; `deadlineOn = arrivedOn + 3` календарных дня.
+- [x] Battery scheduling подтверждён: 30-дневные периоды от `arrivedOn`, окно за 3 дня, одна проверка закрывает один период.
 - [x] ADR и business rules синхронизированы с целевой моделью.
 
 ### Отчёт Phase 0
@@ -88,7 +88,7 @@ Notes:
 
 Blockers:
 
-- Не определены PSO deadline policy, Battery Tasks policy, role permission matrix и правило `shortVin`.
+- Подтверждённых blockers в Phase 0 нет.
 
 ---
 
@@ -100,7 +100,7 @@ Blockers:
 
 ### 1. Prisma foundation
 
-**Статус:** `[-]` Clean baseline создан; применение на disposable PostgreSQL не подтверждено.
+**Статус:** `[x]` Clean baseline и полный database workflow подтверждены на чистой тестовой Neon PostgreSQL.
 
 Подтвердить целевую Schema после Phase 0, выбрать единый Prisma Client import path, определить migration path от legacy database, актуализировать seed и проверить schema/migration drift на тестовой PostgreSQL базе.
 
@@ -112,6 +112,8 @@ Completed:
 - Выбран clean baseline для новых dev/test databases; legacy migrations исключаются из будущей активной цепочки.
 - Создан `migration_init` из текущей Schema.
 - Legacy SQL перенесён в `prisma/legacy-migrations`.
+- Выполнены clean reset, deploy и двойной идемпотентный seed.
+- Через публичный Arrival API подтверждено создание Car, Pso и `CAR_ARRIVED`.
 
 Changed:
 
@@ -125,10 +127,14 @@ Tests:
 - Backend TypeScript build-check запущен; Auth/seed errors отсутствуют, build блокируют Arrivals/Cars/Dashboard.
 - `prisma validate` — passed.
 - `prisma generate` — passed.
-- `prisma migrate status` — не подтверждён: Schema Engine error через pooler, `DIRECT_URL` отсутствует.
+- `prisma migrate deploy` через direct connection — passed, pending migrations отсутствуют.
 - Baseline regeneration hash — matched.
 - SQL inspection — 8 enum, 19 tables, legacy objects отсутствуют.
 - Seed standalone TypeScript check — passed.
+- Seed выполнен дважды; обязательная инфраструктура создана без дубликатов.
+- `npx nx build backend` — passed.
+- `npx nx test backend --runInBand` — 25 suites, 152 tests passed.
+- Nx serve и `/api/docs` — HTTP 200.
 
 Notes:
 
@@ -138,12 +144,12 @@ Notes:
 
 Blockers:
 
-- Нужна disposable PostgreSQL/direct connection для проверки migrate → seed.
-- Решение о переносе данных существующей legacy DB остаётся отдельным.
+- Внутри clean database foundation блокеров нет.
+- Перенос legacy-данных остаётся отдельной задачей и не входит в clean-baseline workflow.
 
 ### 2. Auth migration
 
-**Статус:** `[-]` Foundation мигрирована и unit-tested; полная backend build заблокирована другими модулями.
+**Статус:** `[-]` Auth и role guard foundation реализованы; guards ещё не подключены к будущим административным endpoints.
 
 Мигрировать login, public user contract, JWT payload, refresh flow и guards на подтверждённую модель ролей, company и location scope. Проверить active user и фактические HTTP-коды.
 
@@ -154,24 +160,27 @@ Completed:
 - Login/refresh отклоняют неактивного пользователя.
 - Refresh rotation, logout, `me` и JWT strategy приведены к новому payload.
 - Отсутствующий refresh cookie возвращает HTTP 401.
+- Permission matrix MVP зафиксирована.
+- Добавлены декларативный `@Roles(...)` и общий `RolesGuard`.
 
 Changed:
 
-- Auth service, controller, DTO, JWT interfaces/service/strategy и tests.
+- Auth service, controller, DTO, JWT interfaces/service/strategy, role guard и tests.
 
 Tests:
 
-- `auth.service.spec.ts`: 10/10 tests passed.
-- Full backend build-check: failed только на Arrivals/Cars/Dashboard legacy errors.
+- `roles.guard.spec.ts`: 7/7 tests passed.
+- Полный backend Jest: 16 suites, 67 tests passed.
+- Backend TypeScript check и Nx build проходят.
 
 Notes:
 
-- Permission matrix намеренно не реализована.
+- Role guard не подключён к существующим business endpoints.
 - Login API теперь требует `companyId`; frontend contract потребуется обновить на frontend-этапе.
 
 Blockers:
 
-- Полный backend build требует миграции Arrivals, Cars и Dashboard.
+- Внутри role guard foundation блокеров нет.
 ### 3. Arrivals migration
 
 **Статус:** `[x]` Миграция завершена и проверена.
@@ -181,10 +190,11 @@ Legacy ArrivalsModule заменён подтверждённой операци
 Completed:
 
 - Оставлен один command endpoint `POST /operations/arrivals`.
-- Операция атомарно создаёт Cars со статусом `ACTIVE` и события `CAR_ARRIVED`.
+- Операция атомарно создаёт Cars со статусом `ACTIVE`, отдельные Pso и события `CAR_ARRIVED`.
 - Company, active user, Site company и user location scope проверяются внутри transaction.
 - VIN проверяется внутри Company; дубликаты возвращают Conflict.
 - Добавлены отдельные request/response DTO и полный Swagger contract.
+- Каждая Pso создаётся как `PENDING` с дедлайном через три календарных дня от общего `arrivedOn`.
 - Удалены legacy Arrival/Brand/CarModel/Color relations и battery scheduling.
 
 Changed:
@@ -193,36 +203,40 @@ Changed:
 
 Tests:
 
-- Arrivals service/controller: 10/10 passed.
+- Arrivals и PSO focused tests: 3 suites, 17 tests passed.
+- Полный backend Jest: 19 suites, 86 tests passed.
 - Backend TypeScript check: Arrivals errors отсутствуют; Cars/Dashboard всё ещё блокируют общий build.
 
 Notes:
 
-- `shortVin` передаётся явно, поскольку правило вычисления ещё не утверждено.
+- `shortVin` передаётся явно, нормализуется и валидируется как `[A-Z0-9]{6}`.
 - Отдельная Arrival entity не создаётся.
+- Arrival response DTO не изменён; Pso читается через существующий PSO API.
 
 Blockers:
 
 - Внутри Arrivals Module блокеров нет.
-- Полный backend build блокируют Cars и Dashboard.
+- Внутри Arrivals/PSO creation блокеров нет.
 ### 4. Cars migration
 
-**Статус:** `[-]` Foundation очищен; отдельные workflows ещё не мигрированы.
+**Статус:** `[x]` Foundation, PSO, выдача и Battery workflow реализованы и проверены.
 
 - [x] `GET /cars`: UUID, company/location scope, response DTO и tests подтверждены.
 - [x] `GET /cars/:id`: UUID, scope, response DTO и tests подтверждены.
-- [x] `POST /cars/:id/battery-check`: запись факта `BatteryCheck`, user scope, DTO и tests подтверждены.
-- [x] Удалены неподтверждённые legacy endpoints `GET /cars/tasks`, `POST /cars/:id/pso` и `POST /cars/:id/issue`.
+- [x] `POST /cars/:id/battery-check`: scope, 3-дневное окно, последовательное закрытие периодов, serializable transaction, DTO и tests подтверждены.
+- [x] Удалены legacy-реализации `GET /cars/tasks`, `POST /cars/:id/pso` и `POST /cars/:id/issue`; PSO и issue затем реализованы заново по актуальным контрактам.
 - [x] Query и battery operations разделены; границы PSO и issue зафиксированы без реализации.
-- [ ] Мигрировать PSO workflow.
-- [ ] Определить и реализовать Battery Tasks.
-- [ ] Мигрировать issue workflow.
+- [x] Мигрировать PSO workflow: получение состояния и завершение существующей Pso, UUID, JWT, company/location scope, event, DTO, Swagger и tests.
+- [x] `GET /cars/tasks` возвращает PSO и вычисляемые Battery-задачи `UPCOMING`/`URGENT`/`OVERDUE`.
+- [x] Мигрировать Vehicle Issue workflow: UUID, JWT, company/location scope, PSO/block/lifecycle rules, transaction, event, DTO, Swagger и tests.
 - [x] Удалены обращения CarsModule к отсутствующим fields, relations, enum values и numeric car IDs.
 
 Completed:
 
 - Cars foundation приведён к текущему Prisma Client.
 - Совместимые операции изолированы в `CarQueryService` и `BatteryOperationsService`.
+- PSO operations изолированы в `PsoOperationsService`.
+- Выдача изолирована в `VehicleIssueOperationsService`.
 
 Changed:
 
@@ -230,21 +244,122 @@ Changed:
 
 Tests:
 
-- Cars unit tests: 3 suites, 9 tests passed.
-- Backend TypeScript check: ошибок Cars нет; остаются только ошибки Dashboard.
+- Vehicle Issue focused tests: 2 suites, 14 tests passed.
+- Полный backend Jest: 13 suites, 52 tests passed.
+- Backend TypeScript check и Nx build проходят.
 
 Notes:
 
-- Legacy battery helper временно остаётся в каталоге Cars, поскольку его импортирует Dashboard; сам CarsModule от него больше не зависит.
+- Legacy battery helper и статусы `WARNING`/`CRITICAL` удалены; Cars и Dashboard используют общий `BatteryScheduleService`.
+- Завершение Pso создаёт `PSO_COMPLETED` в одной транзакции и не меняет lifecycle автомобиля.
+- Выдача атомарно создаёт `VehicleIssue` и `CAR_ISSUED`, переводя автомобиль из `ACTIVE` в `ISSUED`.
+- Pso создаётся в arrival transaction; `deadlineOn` детерминированно рассчитывается от `arrivedOn`.
 
 Blockers:
 
-- PSO deadline policy, Battery Tasks scheduling и issue workflow требуют отдельных задач.
+- Battery scheduling реализован без отдельной Prisma-сущности планирования.
+
+### 4a. Location and Site administration
+
+**Статус:** `[x]` Read API и полный административный CRUD реализованы и проверены.
+
+- [x] `GET /locations` возвращает только назначенные пользователю локации компании из JWT.
+- [x] `GET /locations/:id/sites` проверяет company/location scope и скрывает существование недоступной локации.
+- [x] Добавлены явные `LocationResponseDto` и `SiteResponseDto`, стабильная сортировка и Swagger.
+- [x] Пустые списки доступов и площадок поддерживаются.
+- [x] `POST /locations`: JWT company scope, роли `SYSTEM_OWNER`/`OPERATIONS_MANAGER`, trim/validation, DTO, Swagger и обработка уникального code.
+- [x] Активные и неактивные Location/Site можно редактировать; Site можно создавать внутри неактивной Location.
+- [x] Реализованы `PATCH /locations/:id` и `PATCH /locations/:id/deactivate`.
+- [x] Реализованы POST/PATCH/deactivate endpoints Site.
+- [x] Деактивация использует `isActive=false`; автомобили на текущих площадках блокируют операцию с `409`.
+- [x] Company isolation, declarative roles, DTO, Swagger и focused tests подтверждены.
+
+Completed:
+
+- Создан отдельный `LocationsModule` с тонким controller и scope-логикой в service.
+- Prisma entities не используются как внешний API-контракт.
+
+Changed:
+
+- `apps/backend/src/locations`
+- `apps/backend/src/app.module.ts`
+- `apps/backend/src/swagger.contract.spec.ts`
+
+Tests:
+
+- Locations focused tests: 3 suites, 9 tests passed.
+- Полный backend Jest: 15 suites, 60 tests passed.
+- Backend TypeScript check и Nx build проходят.
+
+Notes:
+
+- `companyId` и `userId` не принимаются из query/body и передаются только из JWT.
+- TODO: реализовать CRUD для Location и Site отдельной задачей.
+- Управление UserLocationAccess реализовано в UsersModule.
+
+Blockers:
+
+- Внутри read API блокеров нет.
+
+### 4b. UserLocationAccess management
+
+**Статус:** `[x]` Read/replace API реализован и проверен.
+
+- [x] Утверждено: `SYSTEM_OWNER` и `OPERATIONS_MANAGER` могут просматривать пользователей и управлять `UserLocationAccess`.
+- [x] Утверждено: `SYSTEM_OWNER` может менять собственные доступы, `OPERATIONS_MANAGER` — не может.
+- [x] Реализован декларативный role guard foundation вне controller/service.
+- [x] Реализовать `GET /users` и `GET /users/:id` для `SYSTEM_OWNER` и `OPERATIONS_MANAGER`.
+- [x] Реализованы scoped `GET /users/:id/location-access` и транзакционный `PUT /users/:id/location-access`.
+- [x] Реализовать CRUD Location/Site.
+- [x] Реализованы `GET /users/:id/roles` и транзакционный `PUT /users/:id/roles`.
+- [x] Подтверждены ограничения `SYSTEM_OWNER`/`OPERATIONS_MANAGER`, защита последнего владельца и self-update.
+- [x] Пустой набор и дубликаты отклоняются; замена ролей удаляет все `AuthSession`.
+- [x] Добавлены DTO, Swagger 400/401/403/404/409 и focused tests.
+
+Completed:
+
+- Permission matrix зафиксирована в ADR и business rules.
+- JWT roles проверяются общим `RolesGuard`.
+- Users read API возвращает только безопасные поля пользователей текущей Company и массив ролей.
+- Location access read/replace использует company scope, полную замену и стабильный response DTO.
+
+Changed:
+
+- `apps/backend/src/auth/roles.decorator.ts`
+- `apps/backend/src/auth/roles.guard.ts`
+- `apps/backend/src/auth/roles.guard.spec.ts`
+- `apps/backend/src/users`
+- `apps/backend/src/app.module.ts`
+- `apps/backend/src/swagger.contract.spec.ts`
+- `apps/backend/src/users/user-location-access.service.ts`
+- `apps/backend/src/users/dto/update-user-location-access.dto.ts`
+- `apps/backend/src/users/dto/user-location-access-response.dto.ts`
+- `docs/DECISIONS.md`
+- `docs/BUSINESS_RULES.md`
+
+Tests:
+
+- UserLocationAccess/Swagger focused tests: 3 suites, 14 tests passed.
+- Полный backend Jest: 19 suites, 85 tests passed.
+- Nx backend build: passed.
+
+Notes:
+
+- Существующие endpoints не получили новых role restrictions.
+- UsersController использует `JwtAuthGuard` перед `RolesGuard` и class-level role metadata.
+- Дубликаты `locationIds` отклоняются; пустой массив разрешён.
+- `OPERATIONS_MANAGER` не может менять собственные доступы, `SYSTEM_OWNER` может.
+- Prisma Schema достаточна для workflow и не требует изменения.
+
+Blockers:
+
+- Внутри Users administration блокеров нет.
+
 ### 5. Dashboard migration
 
 **Статус:** `[x]` Foundation завершён и проверен.
 
-Dashboard использует только подтверждённые Car lifecycle, Pso и VehicleEvent contracts. Battery urgency исключена до определения Battery Tasks policy.
+Dashboard использует подтверждённые Car lifecycle, Pso, VehicleEvent и общий Battery scheduling contract.
 
 Completed:
 
@@ -265,14 +380,14 @@ Tests:
 
 Notes:
 
-- Battery warning/critical/overdue удалены из контракта: текущая Schema хранит только факты `BatteryCheck`.
+- [x] Battery metrics `Upcoming`, `Urgent`, `Overdue` вычисляются общим `BatteryScheduleService`.
 
 Blockers:
 
 - Для battery dashboard metrics необходимо определить scheduling, due date и overdue policy.
 ### 6. Tests stabilization
 
-**Статус:** `[-]` Базовый backend test set стабилен; coverage/security work остаётся.
+**Статус:** `[-]` Базовый backend test set и Nx target стабильны; coverage/security work остаётся.
 
 Согласовать Jest с Prisma 7 generated client, восстановить компиляцию всех suites, обновить legacy mocks и добиться зелёного `nx test backend`. Добавить отсутствующие security, Dashboard и contract tests.
 
@@ -291,11 +406,11 @@ Tests:
 
 Notes:
 
-- `nx test backend` отдельно не подтверждён; проверен прямой Jest target.
+- `nx test backend --runInBand` подтверждён: 11 suites, 35 tests.
 
 Blockers:
 
-- Остаются недостающие security/contract tests и проверка Nx target.
+- Остаются недостающие security/contract tests.
 ### 7. Swagger completion
 
 **Статус:** `[x]` Текущий Backend API полностью задокументирован и проверен.
@@ -332,10 +447,17 @@ Blockers:
 
 ## Phase 2 — Frontend Integration
 
-**Статус:** `[ ]` Не начинать до стабильного backend API.
+**Статус:** `[-]` Foundation подтверждена; domain integration ещё не выполнена.
 
-- [-] Auth client, interceptor, guards и login UI существуют, но role contract зависит от Phase 0/1.
-- [ ] Восстановить и проверить Nx build/test targets frontend.
+- [x] Auth перенесён в `libs/auth/data-access` и `libs/auth/feature-login`; внешние импорты используют public API.
+- [x] Shell перенесён целиком в `libs/shell/feature-layout`.
+- [x] Восстановлен подтверждённый shell-specific `LayoutService` на Angular Signals и `matchMedia('(max-width: 768px)')`.
+- [x] UI kit сохранён в `libs/frontend/ui` и классифицирован tags `scope:shared`, `type:ui`.
+- [x] Добавлены Nx tags, aliases и module-boundary constraints; граф строится без циклов и deep imports.
+- [x] Корневое окружение обновлено до Angular `20.3.x`, TypeScript `5.8.3` и совместимого CDK `20.2.14` без peer bypass.
+- [x] Nx build/serve/test targets frontend подтверждены.
+- [x] Auth client, interceptor, guards, Login feature и Shell компилируются через public API.
+- [x] Безопасные локальные lint errors UI kit устранены без изменения публичного API и поведения.
 - [ ] Создать typed data-access для Dashboard.
 - [ ] Создать typed data-access для Cars и Car Details.
 - [ ] Создать typed data-access для Arrival после подтверждения контракта.
@@ -345,14 +467,279 @@ Blockers:
 
 ## Current Blockers
 
-1. Clean baseline не проверен применением на disposable PostgreSQL.
-2. Не определены PSO deadline policy и Battery Tasks scheduling, включая dashboard battery metrics.
-3. Не определены role permission matrix и правило формирования `shortVin`.
-4. `DIRECT_URL` отсутствует; migration status и drift PostgreSQL не подтверждены.
+Подтверждённых блокеров frontend foundation нет.
 
 ---
 
 ## Completed History
+
+### 2026-08-01 — Create PSO During Arrival
+
+Completed:
+
+- Приёмка создаёт отдельную Pso для каждого автомобиля в существующей transaction.
+- Начальный статус — `PENDING`, дедлайн — `arrivedOn + 3` календарных дня.
+- `completedOn`/`completedById` остаются пустыми, Car остаётся `ACTIVE`.
+
+Changed:
+
+- `apps/backend/src/arrivals`
+- `docs/DECISIONS.md`
+- `docs/BUSINESS_RULES.md`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- Arrivals/PSO focused tests: 3 suites, 17 tests passed.
+- `npx nx test backend --runInBand`: 19 suites, 86 tests passed.
+- `npx nx build backend`: passed.
+
+Notes:
+
+- Arrival response DTO не изменялся.
+- Дедлайн рассчитывается UTC-календарной операцией от единого batch `arrivedOn`.
+
+Blockers:
+
+- Нет.
+
+---
+
+### 2026-08-01 — Implement User Location Access Management
+
+Completed:
+
+- Добавлены `GET /users/:id/location-access` и `PUT /users/:id/location-access`.
+- Реализованы company isolation, self-update policy и полная транзакционная замена доступов.
+- Добавлены request/response DTO, Swagger и focused tests.
+
+Changed:
+
+- `apps/backend/src/users`
+- `apps/backend/src/swagger.contract.spec.ts`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- UserLocationAccess/Swagger focused tests: 3 suites, 14 tests passed.
+- `npx nx test backend --runInBand`: 19 suites, 85 tests passed.
+- `npx nx build backend`: passed.
+
+Notes:
+
+- Дубликаты `locationIds` отклоняются как `400`.
+- Пустой массив полностью удаляет назначения.
+- Роли пользователя не изменяются.
+
+Blockers:
+
+- Нет.
+
+---
+
+### 2026-08-01 — Implement Users Read API
+
+Completed:
+
+- Добавлены `GET /users` и `GET /users/:id`.
+- Доступ ограничен ролями `SYSTEM_OWNER` и `OPERATIONS_MANAGER`.
+- Реализованы company isolation, безопасные DTO и преобразование `UserRoleAssignment` в массив enum.
+
+Changed:
+
+- `apps/backend/src/users`
+- `apps/backend/src/app.module.ts`
+- `apps/backend/src/swagger.contract.spec.ts`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- Users/Swagger focused tests: 3 suites, 9 tests passed.
+- `npx nx test backend --runInBand`: 18 suites, 75 tests passed.
+- `npx nx build backend`: passed.
+
+Notes:
+
+- `passwordHash`, sessions и служебные поля не выбираются из Prisma.
+- Location access не включён в details contract и остаётся отдельным API.
+
+Blockers:
+
+- Нет.
+
+---
+
+### 2026-08-01 — Define Role Permission Matrix and Implement Role Guard Foundation
+
+Completed:
+
+- Зафиксирована минимальная permission matrix для четырёх MVP-ролей.
+- Добавлены декларативный `@Roles(...)` и `RolesGuard`.
+- Guard читает роли из authenticated JWT context и возвращает Forbidden при отсутствии совпадения.
+
+Changed:
+
+- `apps/backend/src/auth`
+- `docs/DECISIONS.md`
+- `docs/BUSINESS_RULES.md`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- RolesGuard: 7/7 tests passed.
+- `npx nx test backend --runInBand`: 16 suites, 67 tests passed.
+- `npx nx build backend`: passed.
+
+Notes:
+
+- Существующие endpoints не изменялись и не получили role metadata.
+- Отдельная permission entity не создавалась.
+
+Blockers:
+
+- Нет.
+
+---
+
+### 2026-08-01 — Implement Location and Site Read API
+
+Completed:
+
+- Добавлены `GET /locations` и `GET /locations/:id/sites`.
+- Реализованы company isolation и доступ через `UserLocationAccess`.
+- Добавлены DTO, Swagger и focused service/controller tests.
+
+Changed:
+
+- `apps/backend/src/locations`
+- `apps/backend/src/app.module.ts`
+- `apps/backend/src/swagger.contract.spec.ts`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- Locations/Swagger focused tests: 3 suites, 9 tests passed.
+- `npx nx test backend --runInBand`: 15 suites, 60 tests passed.
+- `npx nx build backend`: passed.
+
+Notes:
+
+- Неактивные записи не скрываются: правило фильтрации по `isActive` для read API не утверждено.
+
+Blockers:
+
+- Внутри read API блокеров нет.
+
+---
+
+### 2026-08-01 — Implement Vehicle Issue Workflow
+
+Completed:
+
+- Добавлен `POST /cars/:id/issue`.
+- Выдача проверяет company/location scope, `ACTIVE`, отсутствие блокировки и завершённую PSO.
+- В одной транзакции выполняются переход в `ISSUED`, создание `VehicleIssue` и события `CAR_ISSUED`.
+- Добавлены response DTO, Swagger contract и focused tests.
+
+Changed:
+
+- `apps/backend/src/cars`
+- `apps/backend/src/swagger.contract.spec.ts`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- Vehicle Issue focused tests: 2 suites, 14 tests passed.
+- `npx nx test backend --runInBand`: 13 suites, 52 tests passed.
+- `npx nx build backend`: passed.
+
+Notes:
+
+- Request body не требуется: дата и исполнитель определяются backend.
+- Опциональный `appointmentId` не заполняется текущим MVP endpoint.
+
+Blockers:
+
+- Внутри workflow выдачи блокеров нет.
+
+---
+
+### 2026-07-31 — Implement PSO Workflow
+
+Completed:
+
+- Добавлены `GET /cars/:id/pso` и `POST /cars/:id/pso/complete`.
+- Завершение существующей Pso проверяет company/location scope, защищено от повторного выполнения и создаёт `PSO_COMPLETED`.
+- Добавлены явный response DTO, полный Swagger contract и focused tests.
+
+Changed:
+
+- `apps/backend/src/cars`
+- `apps/backend/src/swagger.contract.spec.ts`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- PSO focused tests: 2 suites, 11 tests passed.
+- `npx nx test backend --runInBand`: 12 suites, 43 tests passed.
+- `npx nx build backend`: passed.
+
+Notes:
+
+- Request body не требуется: исполнитель и серверная дата определяются backend.
+- `Car.lifecycleStatus` не изменяется.
+
+Blockers:
+
+- На момент выполнения задачи правила создания Pso и `deadlineOn` ещё не были определены; позднее закрыто задачей Create PSO During Arrival.
+
+---
+
+### 2026-07-31 — Restore Backend Build and Serve Targets
+
+Completed:
+
+- Добавлены Nx targets `backend:build` и `backend:serve`.
+- Build создаёт `dist/apps/backend/main.js`.
+- Serve запускает Nest в watch mode и использует `apps/backend/src/main.ts`.
+- Swagger через Nx serve подтверждён по HTTP 200.
+
+Changed:
+
+- `apps/backend/project.json`
+- `apps/backend/tsconfig.build.json`
+- `apps/backend/webpack.config.js`
+- `apps/backend/src/app.module.ts`
+- `package.json`
+- `package-lock.json`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- `npx nx show project backend` — build/serve/test targets видны.
+- `npx nx build backend` — passed.
+- `npx nx serve backend` — `/api/docs` HTTP 200.
+- `npx nx test backend --runInBand` — 11 suites, 35 tests passed.
+- После проверки serve-процесс остановлен, порт 3000 свободен.
+
+Notes:
+
+- Root scripts: `npm run build:backend`, `npm run serve:backend`.
+- Общий `dev` не добавлен: frontend не имеет serve target.
+
+Blockers:
+
+- `@nx/webpack:webpack` работает в Nx 23.1, но помечен deprecated к Nx 24; при обновлении Nx потребуется переход на inferred `@nx/webpack/plugin`.
+
+---
 
 ### 2026-07-29 — Task 3.1 Swagger Contract Completion
 
@@ -624,6 +1011,327 @@ Notes:
 Blockers:
 
 - См. раздел Current Blockers.
+
+---
+
+### 2026-08-01 — Battery Scheduling and Battery Tasks
+
+Completed:
+
+- Зафиксирован 30-дневный календарный график от `Car.arrivedOn`, независимый от фактических дат проверок.
+- Реализован общий `BatteryScheduleService`, последовательное закрытие периодов и окно выполнения за 3 дня.
+- Реализован `GET /cars/tasks` для PSO и Battery-задач.
+- Dashboard дополнен метриками `Upcoming`, `Urgent`, `Overdue`.
+- Swagger contract и focused tests обновлены.
+
+Changed:
+
+- `apps/backend/src/battery`
+- Battery-часть `apps/backend/src/cars`
+- Battery-метрики `apps/backend/src/dashboard`
+- `docs/DECISIONS.md`
+- `docs/BUSINESS_RULES.md`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- `npx nx test backend --runInBand`: 21 suite, 102 tests passed.
+- `npx nx build backend`: passed.
+- Swagger contract test: passed, `/cars/tasks` включён в опубликованный API.
+
+Notes:
+
+- Prisma Schema не изменялась; отдельная сущность планирования не требуется.
+- В день срока задача считается `URGENT`; `OVERDUE` начинается со следующего календарного дня.
+
+Blockers:
+
+- Внутри Battery workflow блокеров нет.
+
+---
+
+### 2026-08-01 — Location and Site CRUD (подтверждённая часть)
+
+Completed:
+
+- Реализован `POST /locations` для `SYSTEM_OWNER` и `OPERATIONS_MANAGER`.
+- Company берётся только из JWT; request DTO принимает только `code` и `name`.
+- Добавлены trim/validation, Swagger, unique conflict mapping и focused tests.
+
+Changed:
+
+- `apps/backend/src/locations`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- `npx nx test backend --runInBand`: 22 suites, 110 tests passed.
+- `npx nx build backend`: passed.
+- Swagger contract test: passed.
+
+Notes:
+
+- Prisma Schema не изменялась.
+- PATCH и Site write API не реализованы без требуемого бизнес-решения.
+
+Blockers:
+
+- Требуется определить работу с неактивными Location/Site и lifecycle связанных сущностей.
+
+---
+
+### 2026-08-01 — Complete Location/Site Administration
+
+Completed:
+
+- Реализованы update и soft-deactivate для Location.
+- Реализованы create, update и soft-deactivate для Site.
+- Подтверждены редактирование неактивных сущностей и создание Site в неактивной Location.
+- Деактивация транзакционно блокируется при наличии текущих автомобилей.
+
+Changed:
+
+- `apps/backend/src/locations`
+- `apps/backend/src/swagger.contract.spec.ts`
+- `docs/BUSINESS_RULES.md`
+- `docs/DECISIONS.md`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- `npx nx test backend --runInBand`: 23 suites, 135 tests passed.
+- `npx nx build backend`: passed.
+- Swagger contract test: passed.
+
+Notes:
+
+- Используется только `isActive=false`; физическое удаление отсутствует.
+- Prisma Schema не изменялась.
+
+Blockers:
+
+- Внутри Location/Site administration блокеров нет.
+
+---
+
+### 2026-08-01 — Role Assignment API
+
+Completed:
+
+- Реализованы `GET /users/:id/roles` и полная замена ролей через PUT.
+- Зафиксированы ограничения менеджера, self-update владельца и защита последнего `SYSTEM_OWNER`.
+- Замена ролей и удаление всех refresh-сессий выполняются одной transaction.
+- Access token TTL сокращён до 7 минут.
+
+Changed:
+
+- `apps/backend/src/users`
+- `apps/backend/src/auth/auth.service.spec.ts`
+- `apps/backend/src/swagger.contract.spec.ts`
+- `apps/backend/.env`
+- `apps/backend/.env.example`
+- `docs/BUSINESS_RULES.md`
+- `docs/DECISIONS.md`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- `npx nx test backend --runInBand`: 25 suites, 152 tests passed.
+- `npx nx build backend`: passed.
+- Swagger contract и refresh current roles/isActive tests: passed.
+
+Notes:
+
+- `UserLocationAccess` не изменяется.
+- Access JWT не отзывается досрочно и может жить не более 7 минут.
+- Prisma Schema не изменялась.
+
+Blockers:
+
+- Внутри Role Assignment API блокеров нет.
+
+---
+
+### 2026-08-01 — Final Backend Smoke Test on Clean Database
+
+Completed:
+
+- Тестовая Neon schema полностью очищена по явному разрешению владельца.
+- `migration_init` применён с нуля; повторный deploy подтвердил отсутствие pending migrations.
+- Seed выполнен дважды и создал минимальную административную инфраструктуру без дубликатов.
+- Backend запущен через Nx; Swagger и основной API flow проверены по HTTP.
+- Автомобиль создан через `POST /operations/arrivals`, а не напрямую через seed.
+- Подтверждены `Car ACTIVE`, связанный `Pso PENDING` и одно событие `CAR_ARRIVED`.
+
+Changed:
+
+- `apps/backend/prisma.config.ts`
+- `package.json`
+- `package-lock.json`
+- `docs/DATABASE.md`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- `prisma validate` и `prisma generate` — passed.
+- clean reset, `prisma migrate deploy` и двойной `prisma db seed` — passed.
+- `npx nx build backend` — passed.
+- `npx nx test backend --runInBand` — 25 suites, 152 tests passed.
+- `/api/docs` — HTTP 200.
+- Login, `/auth/me`, Location/Site read, Arrival, Car read и Pso read — passed.
+
+Notes:
+
+- Seed-команда переведена с несовместимого с Prisma 7 ESM client `ts-node` на `tsx`.
+- Prisma Schema и backend business logic не изменялись.
+- Временный serve-процесс остановлен; smoke-helper и логи удалены.
+- Секреты и seed-пароль в документацию не добавлялись.
+
+Blockers:
+
+- Для clean backend deployment блокеров нет.
+- Открытых вопросов по Car VIN contract нет.
+
+---
+
+### 2026-08-01 — Finalize Car VIN Contract
+
+Completed:
+
+- `shortVin` утверждён как обязательный шестисимвольный рабочий идентификатор с trim/uppercase.
+- Полный VIN сделан nullable и валидируется по `^[A-HJ-NPR-Z0-9]{6,17}$`.
+- Arrival поддерживает отсутствие VIN и возвращает company-scoped `hasShortVinDuplicate`.
+- `GET /cars`, `GET /cars/:id` и новый `PATCH /cars/:id` используют актуальный identity contract.
+- Duplicate shortVin разрешён; конфликт заполненного VIN внутри Company возвращает `409`.
+- Legacy-invalid VIN smoke-автомобиля очищен через публичный PATCH.
+
+Changed:
+
+- Prisma Car model и добавочная migration.
+- Arrivals/Cars DTO, services, controller, Swagger и focused tests.
+- `docs/DECISIONS.md`
+- `docs/BUSINESS_RULES.md`
+- `docs/DATABASE.md`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- Prisma validate/generate — passed.
+- Migration deploy без reset — passed.
+- `npx nx test backend --runInBand` — 27 suites, 179 tests passed.
+- `npx nx build backend` — passed.
+- Live Swagger, Arrival without VIN, list/details, uppercase PATCH и nullable VIN clear — passed.
+
+Notes:
+
+- В БД сохранены два smoke Car; оба имеют валидный shortVin, некорректных заполненных VIN нет.
+- Query list использует одну company-scoped aggregation вместо N+1.
+- Frontend, Auth и остальные workflows не изменялись.
+
+Blockers:
+
+- Нет.
+
+---
+
+### 2026-08-01 — Prepare Domain-Oriented Nx Libraries for Frontend
+
+Completed:
+
+- Auth и Shell распределены по подтверждённым domain-oriented Nx libraries.
+- `apps/frontend` подключает библиотеки через public aliases.
+- Восстановлен минимальный `LayoutService` с подтверждёнными Signals и responsive contract.
+- UI kit сохранён без физических и поведенческих изменений.
+- Nx tags, dependency constraints и frontend targets добавлены.
+- Создан `docs/ARCHITECTURE.md`.
+
+Changed:
+
+- `apps/frontend`
+- `libs/auth`
+- `libs/shell/feature-layout`
+- `libs/frontend/ui/project.json`
+- `tsconfig.base.json`
+- `eslint.config.mjs`
+- `docs/ARCHITECTURE.md`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- `npx nx show projects` — passed.
+- `npx nx graph` — passed; циклы и deep imports не обнаружены.
+- `npx nx lint frontend` — passed.
+- `auth-feature-login:lint` и `shell-feature-layout:lint` — passed.
+- `npx nx build frontend` — blocked: Angular version не определяется из установленного root environment.
+- `npx nx test frontend --watch=false` — blocked: отсутствует `@angular-devkit/build-angular`.
+- `npx nx serve frontend` — HTTP smoke не стартовал: отсутствует `@angular-devkit/architect`; listener на порту 4200 не остался.
+
+Notes:
+
+- Пустой и неиспользуемый `ArrivalInterface` удалён после подтверждения отсутствия импортов.
+- AuthService не разделялся.
+- Desktop grid и UI kit не изменялись.
+
+Blockers:
+
+- Требуется согласованный install/workspace workflow для Angular 19 dependencies.
+- Существующие UI kit lint errors требуют отдельной задачи.
+
+---
+
+### 2026-08-02 — Restore Frontend Dependencies and Verify Nx Targets
+
+Completed:
+
+- Angular framework обновлён с 19.2 до `20.3.27`; CLI/build tooling — до `20.3.32`.
+- TypeScript обновлён до `5.8.3`; Nx сохранён на синхронной версии `23.1.0`.
+- Зависимости установлены обычным `npm install` без `force` и `legacy-peer-deps`.
+- Устаревшие отдельные frontend manifest/lock удалены; dependency source консолидирован в корне.
+- Обязательные Angular migrations выполнены и не потребовали изменений приложения.
+- Frontend aliases подключены через наследование `tsconfig.base.json`.
+- UI kit lint исправлен локально без изменения ControlValueAccessor contracts.
+- Frontend build, tests, serve и HTTP smoke подтверждены.
+- Backend regression и Prisma/seed checks подтверждены.
+
+Changed:
+
+- `package.json`
+- `package-lock.json`
+- удалены legacy `apps/frontend/package.json` и `apps/frontend/package-lock.json`
+- `apps/frontend/tsconfig.json`
+- `apps/frontend/src/app/app.component.spec.ts`
+- локальные lint-правки в Auth interceptor и UI ControlValueAccessor-компонентах
+- `docs/ARCHITECTURE.md`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- Frontend production build — passed.
+- Frontend Karma/ChromeHeadless — 7/7 passed.
+- Frontend, Auth, Shell и UI lint — passed.
+- Nx graph — passed; циклов и deep imports нет.
+- Frontend `/login` — HTTP 200; порт 4200 освобождён.
+- Backend Jest — 27 suites, 179 tests passed.
+- Backend build, Prisma validate и TypeScript check seed — passed.
+
+Notes:
+
+- `--runInBand` не поддерживается Karma schema; однократный test run выполнен через `--watch=false --browsers=ChromeHeadless`.
+- CDK 20 не имеет ветки 20.3; установлена последняя совместимая `20.2.14`.
+- Optional поведенческие Angular migrations не запускались: проект уже использует block syntax, а `Router.getCurrentNavigation()` отсутствует.
+- npm audit сообщает 22 существующие dependency findings; автоматический audit fix не выполнялся.
+
+Blockers:
+
+- Нет.
 
 ---
 

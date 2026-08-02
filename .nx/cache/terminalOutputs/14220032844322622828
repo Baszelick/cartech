@@ -1,0 +1,37 @@
+[33m>[39m Building...
+[32m√[39m Building...
+[37m[1mInitial chunk files[22m  [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-H5GNZCH4.js[37m    [2m | [22m[2m-[22m                     [2m | [22m[36m144.35 kB[37m[2m | [22m               [36m42.80 kB[37m
+[32mchunk-SUVFGXK5.js[37m    [2m | [22m[2m-[22m                     [2m | [22m[36m103.46 kB[37m[2m | [22m               [36m26.50 kB[37m
+[32mpolyfills-5CFQRCPP.js[37m[2m | [22m[2mpolyfills[22m             [2m | [22m [36m34.59 kB[37m[2m | [22m               [36m11.33 kB[37m
+[32mchunk-3MTLQFLT.js[37m    [2m | [22m[2m-[22m                     [2m | [22m  [36m5.67 kB[37m[2m | [22m                [36m1.63 kB[37m
+[32mstyles-4QVBJN56.css[37m  [2m | [22m[2mstyles[22m                [2m | [22m  [36m4.47 kB[37m[2m | [22m                [36m1.03 kB[37m
+[32mmain-KPEXQS45.js[37m     [2m | [22m[2mmain[22m                  [2m | [22m  [36m1.26 kB[37m[2m | [22m              [36m559 bytes[37m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m         [2m | [22m[1m293.79 kB[22m[2m | [22m               [1m83.86 kB[22m
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-X2ZWDBBW.js[37m    [2m | [22m[2m-[22m                     [2m | [22m[36m185.72 kB[37m[2m | [22m               [36m43.81 kB[37m
+[32mchunk-4GHDKJIH.js[37m    [2m | [22m[2mindex[22m                 [2m | [22m [36m12.27 kB[37m[2m | [22m                [36m2.88 kB[37m
+[32mchunk-AF3JZOIZ.js[37m    [2m | [22m[2mindex[22m                 [2m | [22m  [36m6.23 kB[37m[2m | [22m                [36m2.04 kB[37m
+[32mchunk-76X3W76P.js[37m    [2m | [22m[2marrival-page-component[22m[2m | [22m[36m495 bytes[37m[2m | [22m              [36m495 bytes[37m
+[32mchunk-DLFG7APM.js[37m    [2m | [22m[39m[37m[2mtasks-page-component[22m  [2m | [22m[36m338 bytes[37m[2m | [22m              [36m338 bytes[37m
+[32mchunk-CI7KI3QI.js[37m    [2m | [22m[2mhome-page-component[22m   [2m | [22m[36m335 bytes[37m[2m | [22m              [36m335 bytes[37m
+[32mchunk-QUCG46AQ.js[37m    [2m | [22m[2mcars-page-component[22m   [2m | [22m[36m335 bytes[37m[2m | [22m              [36m335 bytes[37m
+
+Application bundle generation complete. [4.329 seconds] - 2026-08-02T12:44:21.485Z
+[39m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mTypeScript compiler option 'isolatedModules' may prevent the 'emitDecoratorMetadata' option from emitting all metadata.[0m [1m[35m[plugin angular-compiler][0m
+
+  The 'emitDecoratorMetadata' option is not required by Angularand can be removed if not explictly required by the project.
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: LogoComponent is not used within the template of SidebarComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    libs/shell/feature-layout/src/lib/sidebar/sidebar.component.ts:11:4:
+[37m      11 │     [32mLogoComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~[0m
+
+[39m[22m
+[37mOutput location: C:\Users\basze\cartech\dist\apps\frontend
+[39m

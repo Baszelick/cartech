@@ -25,12 +25,12 @@ export class BatteryCheckResponseDto {
   @ApiPropertyOptional({
     example: 12.6,
     nullable: true,
-    description: 'Measured voltage.',
+    description: 'Измеренное напряжение аккумулятора.',
   })
   voltage: number | null;
 
   @ApiPropertyOptional({
-    example: 'Voltage is normal',
+    example: 'Напряжение в норме',
     nullable: true,
   })
   comment: string | null;

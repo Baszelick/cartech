@@ -1,19 +1,19 @@
 import {Routes} from '@angular/router';
-import {authGuard, guestGuard} from '@cartech/frontend/auth/data-access';
+import {authGuard, guestGuard} from '@cartech/auth/data-access';
 
 export const routes: Routes = [
   {
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () =>
-      import('@cartech/frontend/auth/feature-login')
+      import('@cartech/auth/feature-login')
         .then(c => c.LoginPageComponent),
   },
   {
     path: '',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./layout/shell/shell.component')
+      import('@cartech/shell/feature-layout')
         .then(c => c.ShellComponent),
     children: [
       {

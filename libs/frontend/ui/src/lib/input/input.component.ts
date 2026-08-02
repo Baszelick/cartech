@@ -23,18 +23,18 @@ export class InputComponent implements ControlValueAccessor {
   protected readonly value = signal<string>('');
   protected readonly disabled = signal<boolean>(false)
 
-  onChange: (value: string) => void = () => {}
-  onTouched: () => void = () => {}
+  onChange: (value: string) => void = () => undefined
+  onTouched: () => void = () => undefined
 
 
     writeValue(val: string): void {
       this.value.set(val ?? '');
     }
 
-    registerOnChange(fn: any): void {
+    registerOnChange(fn: (value: string) => void): void {
       this.onChange = fn;
     }
-    registerOnTouched(fn: any): void {
+    registerOnTouched(fn: () => void): void {
       this.onTouched = fn
     }
 

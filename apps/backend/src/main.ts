@@ -24,7 +24,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('CarTech API')
     .setDescription(
-      'Enterprise-система управления автомобильной площадкой дилерского центра',
+      'Корпоративная система управления автомобильной площадкой дилерского центра.',
     )
     .setVersion('1.0')
     .addBearerAuth()

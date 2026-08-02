@@ -5,14 +5,14 @@ export class LoginDto {
   @ApiProperty({
     example: '80ad46f0-d89f-46ce-a92a-e11c4dfc2714',
     format: 'uuid',
-    description: 'Company identifier.',
+    description: 'Идентификатор компании.',
   })
   @IsUUID()
   companyId: string;
 
   @ApiProperty({
     example: 'operator',
-    description: 'Username unique within the company.',
+    description: 'Имя пользователя, уникальное в рамках компании.',
   })
   @IsString()
   @IsNotEmpty()
@@ -22,6 +22,7 @@ export class LoginDto {
     example: 'change-me',
     format: 'password',
     writeOnly: true,
+    description: 'Пароль пользователя.',
   })
   @IsString()
   @IsNotEmpty()

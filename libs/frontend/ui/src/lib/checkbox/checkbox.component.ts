@@ -21,18 +21,18 @@ export class CheckboxComponent implements ControlValueAccessor {
   protected readonly checked = signal(false);
   protected readonly disabled = signal(false);
 
-  onChange: (value: boolean) => void = () => {};
-  onTouched: () => void = () => {};
+  onChange: (value: boolean) => void = () => undefined;
+  onTouched: () => void = () => undefined;
 
   writeValue(val: boolean): void {
     this.checked.set(val ?? false);
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: boolean) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 

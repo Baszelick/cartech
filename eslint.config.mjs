@@ -17,8 +17,50 @@ export default [
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?js$'],
           depConstraints: [
             {
-              sourceTag: '*',
-              onlyDependOnLibsWithTags: ['*'],
+              sourceTag: 'type:app',
+              onlyDependOnLibsWithTags: [
+                'type:feature',
+                'type:data-access',
+                'type:ui',
+                'type:models',
+                'type:util',
+              ],
+            },
+            {
+              sourceTag: 'scope:auth',
+              onlyDependOnLibsWithTags: [
+                'scope:auth',
+                'scope:shared',
+              ],
+            },
+            {
+              sourceTag: 'scope:shell',
+              onlyDependOnLibsWithTags: [
+                'scope:shell',
+                'scope:auth',
+                'scope:shared',
+              ],
+            },
+            {
+              sourceTag: 'scope:shared',
+              onlyDependOnLibsWithTags: ['scope:shared'],
+            },
+            {
+              sourceTag: 'type:feature',
+              onlyDependOnLibsWithTags: [
+                'type:data-access',
+                'type:ui',
+                'type:models',
+                'type:util',
+              ],
+            },
+            {
+              sourceTag: 'type:data-access',
+              onlyDependOnLibsWithTags: ['type:models', 'type:util'],
+            },
+            {
+              sourceTag: 'type:ui',
+              onlyDependOnLibsWithTags: ['type:ui', 'type:util'],
             },
           ],
         },

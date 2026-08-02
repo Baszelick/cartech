@@ -7,11 +7,12 @@ import {
 } from '../../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { DashboardService } from './dashboard.service';
+import { BatteryScheduleService } from '../battery/battery-schedule.service';
 
 describe('DashboardService', () => {
   const prisma = {
     user: { findUnique: jest.fn() },
-    car: { count: jest.fn() },
+    car: { count: jest.fn(), findMany: jest.fn() },
     vehicleEvent: { count: jest.fn() },
   };
   let service: DashboardService;
@@ -21,6 +22,7 @@ describe('DashboardService', () => {
     const module = await Test.createTestingModule({
       providers: [
         DashboardService,
+        BatteryScheduleService,
         { provide: PrismaService, useValue: prisma },
       ],
     }).compile();
@@ -37,11 +39,29 @@ describe('DashboardService', () => {
     });
     prisma.car.count.mockResolvedValueOnce(12).mockResolvedValueOnce(4);
     prisma.vehicleEvent.count.mockResolvedValue(3);
+    prisma.car.findMany.mockResolvedValue([
+      {
+        arrivedOn: new Date('2026-07-01T00:00:00.000Z'),
+        _count: { batteryChecks: 0 },
+      },
+      {
+        arrivedOn: new Date('2026-06-30T00:00:00.000Z'),
+        _count: { batteryChecks: 0 },
+      },
+      {
+        arrivedOn: new Date('2026-06-01T00:00:00.000Z'),
+        _count: { batteryChecks: 0 },
+      },
+    ]);
+    jest.useFakeTimers().setSystemTime(new Date('2026-07-29T12:00:00.000Z'));
 
     await expect(service.getDashboard('user-id')).resolves.toEqual({
       carsOnStock: 12,
       needPso: 4,
       issuedToday: 3,
+      batteryUpcoming: 1,
+      batteryUrgent: 1,
+      batteryOverdue: 1,
     });
 
     const scope = {
@@ -69,6 +89,7 @@ describe('DashboardService', () => {
         occurredAt: { gte: expect.any(Date) },
       },
     });
+    jest.useRealTimers();
   });
 
   it('rejects a missing user before querying metrics', async () => {
@@ -78,6 +99,7 @@ describe('DashboardService', () => {
       UnauthorizedException,
     );
     expect(prisma.car.count).not.toHaveBeenCalled();
+    expect(prisma.car.findMany).not.toHaveBeenCalled();
     expect(prisma.vehicleEvent.count).not.toHaveBeenCalled();
   });
 });

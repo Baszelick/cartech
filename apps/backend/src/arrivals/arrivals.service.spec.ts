@@ -13,6 +13,7 @@ interface MockTx {
   user: { findFirst: jest.Mock };
   site: { findFirst: jest.Mock };
   car: { findMany: jest.Mock; create: jest.Mock };
+  pso: { create: jest.Mock };
   vehicleEvent: { create: jest.Mock };
 }
 
@@ -24,6 +25,7 @@ function createMockTx(): MockTx {
       findMany: jestRuntime.fn(),
       create: jestRuntime.fn(),
     },
+    pso: { create: jestRuntime.fn() },
     vehicleEvent: { create: jestRuntime.fn() },
   };
 }
@@ -101,6 +103,7 @@ describe('ArrivalsService', () => {
     tx.site.findFirst.mockResolvedValue(arrivalSite);
     tx.car.findMany.mockResolvedValue([]);
     tx.car.create.mockResolvedValue(createdCar);
+    tx.pso.create.mockResolvedValue({ id: 'pso-1' });
     tx.vehicleEvent.create.mockResolvedValue({ id: 'event-1' });
     runInTransaction(tx);
   }
@@ -168,11 +171,21 @@ describe('ArrivalsService', () => {
         title: 'Автомобиль принят',
       },
     });
+    expect(tx.pso.create).toHaveBeenCalledWith({
+      data: {
+        carId: createdCar.id,
+        status: 'PENDING',
+        deadlineOn: new Date('2026-08-01T00:00:00.000Z'),
+        completedOn: null,
+        completedById: null,
+      },
+    });
     expect(result).toEqual({
       count: 1,
       cars: [
         {
           ...createdCar,
+          hasShortVinDuplicate: false,
           arrivedOn: '2026-07-29',
           lifecycleStatus: 'ACTIVE',
           createdAt: '2026-07-29T10:00:00.000Z',
@@ -207,9 +220,41 @@ describe('ArrivalsService', () => {
 
     const firstDate = tx.car.create.mock.calls[0][0].data.arrivedOn;
     const secondDate = tx.car.create.mock.calls[1][0].data.arrivedOn;
+    const firstPso = tx.pso.create.mock.calls[0][0].data;
+    const secondPso = tx.pso.create.mock.calls[1][0].data;
 
     expect(firstDate).toBe(secondDate);
+    expect(firstDate).toEqual(new Date('2026-07-29T00:00:00.000Z'));
+    expect(tx.pso.create).toHaveBeenCalledTimes(2);
+    expect(firstPso).toEqual({
+      carId: 'car-1',
+      status: 'PENDING',
+      deadlineOn: new Date('2026-08-01T00:00:00.000Z'),
+      completedOn: null,
+      completedById: null,
+    });
+    expect(secondPso).toEqual({
+      carId: 'car-2',
+      status: 'PENDING',
+      deadlineOn: new Date('2026-08-01T00:00:00.000Z'),
+      completedOn: null,
+      completedById: null,
+    });
     expect(tx.vehicleEvent.create).toHaveBeenCalledTimes(2);
+  });
+
+  it('propagates a PSO creation failure from the arrival transaction', async () => {
+    const tx = createMockTx();
+    const psoError = new Error('PSO_CREATE_FAILED');
+    prepareSuccessfulTx(tx);
+    tx.pso.create.mockRejectedValue(psoError);
+
+    await expect(service.create(dto, auth)).rejects.toBe(psoError);
+
+    expect(mockPrisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(tx.car.create).toHaveBeenCalledTimes(1);
+    expect(tx.pso.create).toHaveBeenCalledTimes(1);
+    expect(tx.vehicleEvent.create).not.toHaveBeenCalled();
   });
 
   it('rejects duplicate VINs before starting a transaction', async () => {
@@ -224,6 +269,69 @@ describe('ArrivalsService', () => {
     ).rejects.toThrow(ConflictException);
 
     expect(mockPrisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('creates a car without a full VIN', async () => {
+    const tx = createMockTx();
+    prepareSuccessfulTx(tx);
+    tx.car.create.mockResolvedValue({ ...createdCar, vin: null });
+
+    const result = await service.create(
+      {
+        ...dto,
+        cars: [{ ...dto.cars[0], vin: undefined }],
+      },
+      auth,
+    );
+
+    expect(tx.car.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ vin: undefined }),
+      }),
+    );
+    expect(result.cars[0].vin).toBeNull();
+  });
+
+  it('allows duplicate shortVin in one batch and warns for both cars', async () => {
+    const tx = createMockTx();
+    prepareSuccessfulTx(tx);
+    tx.car.create.mockResolvedValueOnce(createdCar).mockResolvedValueOnce({
+      ...createdCar,
+      id: 'car-2',
+      vin: 'XW8ED41P21K654321',
+    });
+
+    const result = await service.create(
+      {
+        ...dto,
+        cars: [
+          dto.cars[0],
+          {
+            ...dto.cars[0],
+            vin: 'XW8ED41P21K654321',
+          },
+        ],
+      },
+      auth,
+    );
+
+    expect(result.cars.map((car) => car.hasShortVinDuplicate)).toEqual([
+      true,
+      true,
+    ]);
+  });
+
+  it('warns when shortVin already exists in the current company', async () => {
+    const tx = createMockTx();
+    prepareSuccessfulTx(tx);
+    tx.car.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([{ shortVin: dto.cars[0].shortVin }]);
+
+    const result = await service.create(dto, auth);
+
+    expect(result.cars[0].hasShortVinDuplicate).toBe(true);
+    expect(tx.car.create).toHaveBeenCalledTimes(1);
   });
 
   it('rejects an inactive or missing user', async () => {

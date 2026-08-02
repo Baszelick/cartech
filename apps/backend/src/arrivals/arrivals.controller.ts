@@ -18,7 +18,7 @@ import { ArrivalsService } from './arrivals.service';
 import { CreateArrivalResponseDto } from './dto/arrival-response.dto';
 import { CreateArrivalDto } from './dto/create-arrival.dto';
 
-@ApiTags('Arrivals')
+@ApiTags('Приёмка')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('operations/arrivals')
@@ -27,33 +27,34 @@ export class ArrivalsController {
 
   @Post()
   @ApiOperation({
-    summary: 'Accept arriving cars',
+    summary: 'Принять прибывшие автомобили',
     description:
-      'Atomically creates cars and CAR_ARRIVED events at an accessible active site. No Arrival entity is created.',
+      'Атомарно создаёт автомобили, записи Pso со статусом PENDING и дедлайном через три календарных дня, а также события CAR_ARRIVED на доступной активной площадке. Отдельная сущность Arrival не создаётся.',
   })
   @ApiBody({ type: CreateArrivalDto })
   @ApiCreatedResponse({
-    description: 'All cars and arrival events were created.',
+    description:
+      'Все автомобили, записи предпродажной подготовки и события прибытия созданы.',
     type: CreateArrivalResponseDto,
   })
   @ApiBadRequestResponse({
-    description: 'Request validation failed.',
+    description: 'Запрос не прошёл валидацию.',
     type: HttpErrorResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'User is unauthenticated, missing, or inactive.',
+    description: 'Пользователь не аутентифицирован, не найден или неактивен.',
     type: HttpErrorResponseDto,
   })
   @ApiForbiddenResponse({
-    description: 'User has no access to the arrival site location.',
+    description: 'У пользователя нет доступа к площадке приёмки.',
     type: HttpErrorResponseDto,
   })
   @ApiNotFoundResponse({
-    description: 'Active site was not found in the user company.',
+    description: 'Активная площадка не найдена в компании пользователя.',
     type: HttpErrorResponseDto,
   })
   @ApiConflictResponse({
-    description: 'VIN is duplicated in the request or company.',
+    description: 'VIN дублируется в запросе или уже существует в компании.',
     type: HttpErrorResponseDto,
   })
   create(

@@ -8,14 +8,26 @@ export class CarListItemResponseDto {
   })
   id: string;
 
-  @ApiProperty({ example: 'XW8ED41P21K123456' })
-  vin: string;
+  @ApiPropertyOptional({
+    example: 'XW8ED41P21K123456',
+    nullable: true,
+    pattern: '^[A-HJ-NPR-Z0-9]{6,17}$',
+  })
+  vin: string | null;
 
   @ApiProperty({
     example: '123456',
-    description: 'Explicit short VIN representation stored for the car.',
+    pattern: '^[A-Z0-9]{6}$',
+    description: 'Обязательный рабочий идентификатор автомобиля.',
   })
   shortVin: string;
+
+  @ApiProperty({
+    example: false,
+    description:
+      'True, если в этой же компании существует другая машина с таким shortVin.',
+  })
+  hasShortVinDuplicate: boolean;
 
   @ApiProperty({ example: 'Jetour' })
   brand: string;
@@ -23,7 +35,7 @@ export class CarListItemResponseDto {
   @ApiProperty({ example: 'X70 Plus' })
   model: string;
 
-  @ApiPropertyOptional({ example: 'White', nullable: true })
+  @ApiPropertyOptional({ example: 'Белый', nullable: true })
   color: string | null;
 
   @ApiProperty({ format: 'date', example: '2026-07-29' })
@@ -33,7 +45,7 @@ export class CarListItemResponseDto {
     enum: CarLifecycleStatus,
     example: CarLifecycleStatus.ACTIVE,
     description:
-      'Car lifecycle: ACTIVE is operational, ISSUED is handed over, ARCHIVED is retained outside active operations.',
+      'Жизненный цикл автомобиля: ACTIVE — в работе, ISSUED — выдан, ARCHIVED — сохранён вне активных операций.',
   })
   lifecycleStatus: CarLifecycleStatus;
 

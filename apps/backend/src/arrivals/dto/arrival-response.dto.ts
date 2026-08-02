@@ -7,11 +7,22 @@ export class ArrivedCarResponseDto {
   })
   id: string;
 
-  @ApiProperty({ example: 'XW8ED41P21K123456' })
-  vin: string;
+  @ApiPropertyOptional({
+    example: 'XW8ED41P21K123456',
+    nullable: true,
+    pattern: '^[A-HJ-NPR-Z0-9]{6,17}$',
+  })
+  vin: string | null;
 
   @ApiProperty({ example: '123456' })
   shortVin: string;
+
+  @ApiProperty({
+    example: false,
+    description:
+      'True, если в этой же компании существует другая машина с таким shortVin.',
+  })
+  hasShortVinDuplicate: boolean;
 
   @ApiProperty({ example: 'Toyota' })
   brand: string;
@@ -19,7 +30,7 @@ export class ArrivedCarResponseDto {
   @ApiProperty({ example: 'Camry' })
   model: string;
 
-  @ApiPropertyOptional({ example: 'Black', nullable: true })
+  @ApiPropertyOptional({ example: 'Чёрный', nullable: true })
   color: string | null;
 
   @ApiProperty({ format: 'date', example: '2026-07-29' })
@@ -28,7 +39,8 @@ export class ArrivedCarResponseDto {
   @ApiProperty({
     enum: ['ACTIVE'],
     example: 'ACTIVE',
-    description: 'Newly accepted cars enter the ACTIVE lifecycle.',
+    description:
+      'Новые принятые автомобили получают статус жизненного цикла ACTIVE.',
   })
   lifecycleStatus: 'ACTIVE';
 
@@ -60,7 +72,7 @@ export class ArrivedCarResponseDto {
 export class CreateArrivalResponseDto {
   @ApiProperty({
     example: 1,
-    description: 'Number of cars created by the operation.',
+    description: 'Количество автомобилей, созданных операцией.',
   })
   count: number;
 

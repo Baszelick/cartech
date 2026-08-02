@@ -1,0 +1,40 @@
+[1m[33mThe `@nx/webpack:webpack` executor is deprecated and will be removed in Nx v24. Run `nx g @nx/webpack:convert-to-inferred` to migrate to the `@nx/webpack/plugin` inferred targets. See https://nx.dev/docs/guides/tasks--caching/convert-to-inferred for details.[39m[22m
+asset main.js 454 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 243 KiB 65 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 201 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 198 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+
+ERROR in ./apps/backend/src/cars/operations/car-tasks.service.ts:57:11
+[90mTS2322: [39mType 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+  [0m [90m 55 |[39m         carTasks[33m.[39mpush({
+   [90m 56 |[39m           carId[33m:[39m car[33m.[39mid[33m,[39m
+  [31m[1m>[22m[39m[90m 57 |[39m           vin[33m:[39m car[33m.[39mvin[33m,[39m
+   [90m    |[39m           [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 58 |[39m           type[33m:[39m [33mCarTaskType[39m[33m.[39m[33mPSO[39m[33m,[39m
+   [90m 59 |[39m           status[33m:[39m [33mCarTaskStatus[39m[33m.[39m[33mPENDING[39m[33m,[39m
+   [90m 60 |[39m           dueOn[33m:[39m [36mthis[39m[33m.[39mtoDateString(car[33m.[39mpso[33m.[39mdeadlineOn)[33m,[39m[0m
+
+ERROR in ./apps/backend/src/cars/operations/car-tasks.service.ts:72:11
+[90mTS2322: [39mType 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+  [0m [90m 70 |[39m         carTasks[33m.[39mpush({
+   [90m 71 |[39m           carId[33m:[39m car[33m.[39mid[33m,[39m
+  [31m[1m>[22m[39m[90m 72 |[39m           vin[33m:[39m car[33m.[39mvin[33m,[39m
+   [90m    |[39m           [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 73 |[39m           type[33m:[39m [33mCarTaskType[39m[33m.[39m[33mBATTERY[39m[33m,[39m
+   [90m 74 |[39m           status[33m:[39m [36mthis[39m[33m.[39mtoCarTaskStatus(period[33m.[39mstatus)[33m,[39m
+   [90m 75 |[39m           dueOn[33m:[39m [36mthis[39m[33m.[39mtoDateString(period[33m.[39mdueOn)[33m,[39m[0m
+
+webpack 5.105.2 compiled with 2 errors in 8080 ms

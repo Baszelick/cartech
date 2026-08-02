@@ -8,6 +8,7 @@ import {
 import type { Prisma } from '../../generated/prisma/client';
 import {
   CarLifecycleStatus,
+  PsoStatus,
   VehicleEventType,
 } from '../../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
@@ -53,47 +54,59 @@ export class ArrivalsService {
 
     try {
       return await this.prisma.$transaction(async (tx) => {
-        const [user, site, existingCars] = await Promise.all([
-          tx.user.findFirst({
-            where: {
-              id: auth.userId,
-              companyId: auth.companyId,
-              isActive: true,
-            },
-            select: {
-              locationAccesses: {
-                select: {
-                  locationId: true,
-                },
-              },
-            },
-          }),
-          tx.site.findFirst({
-            where: {
-              id: dto.arrivalSiteId,
-              isActive: true,
-              location: {
+        const requestedVins = dto.cars.flatMap(({ vin }) => (vin ? [vin] : []));
+        const requestedShortVins = [
+          ...new Set(dto.cars.map(({ shortVin }) => shortVin)),
+        ];
+        const [user, site, existingCars, existingShortVinCars] =
+          await Promise.all([
+            tx.user.findFirst({
+              where: {
+                id: auth.userId,
                 companyId: auth.companyId,
                 isActive: true,
               },
-            },
-            select: {
-              id: true,
-              locationId: true,
-            },
-          }),
-          tx.car.findMany({
-            where: {
-              companyId: auth.companyId,
-              vin: {
-                in: dto.cars.map(({ vin }) => vin),
+              select: {
+                locationAccesses: {
+                  select: {
+                    locationId: true,
+                  },
+                },
               },
-            },
-            select: {
-              vin: true,
-            },
-          }),
-        ]);
+            }),
+            tx.site.findFirst({
+              where: {
+                id: dto.arrivalSiteId,
+                isActive: true,
+                location: {
+                  companyId: auth.companyId,
+                  isActive: true,
+                },
+              },
+              select: {
+                id: true,
+                locationId: true,
+              },
+            }),
+            tx.car.findMany({
+              where: {
+                companyId: auth.companyId,
+                vin: { in: requestedVins },
+              },
+              select: {
+                vin: true,
+              },
+            }),
+            tx.car.findMany({
+              where: {
+                companyId: auth.companyId,
+                shortVin: { in: requestedShortVins },
+              },
+              select: {
+                shortVin: true,
+              },
+            }),
+          ]);
 
         if (!user) {
           throw new UnauthorizedException('Active user not found');
@@ -122,6 +135,7 @@ export class ArrivalsService {
         }
 
         const arrivedOn = new Date(dto.arrivedOn);
+        const psoDeadlineOn = this.calculatePsoDeadline(arrivedOn);
         const createdCars: ArrivedCarRecord[] = [];
 
         for (const carDto of dto.cars) {
@@ -143,6 +157,16 @@ export class ArrivalsService {
             select: ARRIVED_CAR_SELECT,
           });
 
+          await tx.pso.create({
+            data: {
+              carId: car.id,
+              status: PsoStatus.PENDING,
+              deadlineOn: psoDeadlineOn,
+              completedOn: null,
+              completedById: null,
+            },
+          });
+
           await tx.vehicleEvent.create({
             data: {
               companyId: auth.companyId,
@@ -159,7 +183,16 @@ export class ArrivalsService {
 
         return {
           count: createdCars.length,
-          cars: createdCars.map((car) => this.toResponse(car)),
+          cars: createdCars.map((car) =>
+            this.toResponse(
+              car,
+              this.hasShortVinDuplicate(
+                car.shortVin,
+                dto,
+                existingShortVinCars,
+              ),
+            ),
+          ),
         };
       });
     } catch (error: unknown) {
@@ -172,11 +205,31 @@ export class ArrivalsService {
   }
 
   private validateDuplicateVins(dto: CreateArrivalDto): void {
-    const vins = dto.cars.map(({ vin }) => vin);
+    const vins = dto.cars.flatMap(({ vin }) => (vin ? [vin] : []));
 
     if (new Set(vins).size !== vins.length) {
       throw new ConflictException('Duplicate VINs in arrival request');
     }
+  }
+
+  private hasShortVinDuplicate(
+    shortVin: string,
+    dto: CreateArrivalDto,
+    existingCars: Array<{ shortVin: string }>,
+  ): boolean {
+    const batchCount = dto.cars.filter(
+      (car) => car.shortVin === shortVin,
+    ).length;
+
+    return (
+      batchCount > 1 || existingCars.some((car) => car.shortVin === shortVin)
+    );
+  }
+
+  private calculatePsoDeadline(arrivedOn: Date): Date {
+    const deadlineOn = new Date(arrivedOn.getTime());
+    deadlineOn.setUTCDate(deadlineOn.getUTCDate() + 3);
+    return deadlineOn;
   }
 
   private isUniqueConstraintError(error: unknown): boolean {
@@ -188,9 +241,13 @@ export class ArrivalsService {
     );
   }
 
-  private toResponse(car: ArrivedCarRecord): ArrivedCarResponseDto {
+  private toResponse(
+    car: ArrivedCarRecord,
+    hasShortVinDuplicate: boolean,
+  ): ArrivedCarResponseDto {
     return {
       ...car,
+      hasShortVinDuplicate,
       arrivedOn: car.arrivedOn.toISOString().slice(0, 10),
       lifecycleStatus: 'ACTIVE',
       createdAt: car.createdAt.toISOString(),

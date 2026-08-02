@@ -2,7 +2,7 @@
 
 > Текущее состояние и целевой Prisma workflow. Архитектурная стратегия зафиксирована в ADR-015.
 
-Последнее обновление: 2026-07-29
+Последнее обновление: 2026-08-01
 
 ---
 
@@ -13,9 +13,11 @@
 - Schema проходит `prisma validate`.
 - Client успешно генерируется из корня workspace.
 - Seed соответствует текущим Company, Location, Site, User, UserRoleAssignment и UserLocationAccess.
-- Active migration history содержит один clean baseline: `prisma/migrations/migration_init`.
+- Active migration history содержит clean baseline и добавочную VIN migration.
 - Четыре legacy migrations перенесены в `prisma/legacy-migrations` и не применяются Prisma Migrate.
-- Фактический drift подключённой БД не подтверждён: pooler connection возвращает Schema Engine error, `DIRECT_URL` не настроен.
+- Clean baseline развёрнут с нуля на разрешённой тестовой Neon PostgreSQL через direct connection.
+- `migrate deploy`, двойной seed, backend build/serve и основной Arrival smoke-flow подтверждены.
+- Migration `20260801160000_finalize_car_vin_contract` делает `Car.vin` nullable без reset и потери существующих Car.
 
 ## Legacy history
 
@@ -30,7 +32,8 @@ Legacy SQL сохранён только для анализа возможно�
 Активная история:
 
 - `prisma/migrations/migration_lock.toml`;
-- `prisma/migrations/migration_init/migration.sql`.
+- `prisma/migrations/migration_init/migration.sql`;
+- `prisma/migrations/20260801160000_finalize_car_vin_contract/migration.sql`.
 
 Baseline создан командой `prisma migrate diff --from-empty --to-schema` без подключения к базе. Он содержит 8 enum и 19 tables текущей Schema. Повторная генерация дала идентичный SHA-256.
 
@@ -75,7 +78,7 @@ npx prisma migrate dev --name <migration_name> --config apps/backend/prisma.conf
 
 `migrate dev` выполняется только на disposable development database с direct connection.
 
-Database-часть workflow подготовлена. Полный backend start пока не подтверждён: в Nx backend project отсутствуют build/serve targets, а legacy modules блокируют TypeScript build.
+Workflow подтверждён из корня workspace на чистой тестовой PostgreSQL. Seed запускается через `tsx`, поскольку generated Prisma Client использует ESM.
 
 ## Environment
 
@@ -97,7 +100,7 @@ Seed идемпотентно создаёт:
 - роль `SYSTEM_OWNER`;
 - доступ пользователя к Location.
 
-Seed намеренно не создаёт Car, PSO или Battery Tasks: их contracts ещё не полностью реализованы в backend workflow.
+Seed намеренно не создаёт Car, Pso или VehicleEvent. Smoke-автомобиль создаётся только через `POST /operations/arrivals`, чтобы проверить реальную транзакцию приёмки.
 
 Пароль seed-пользователя предназначен только для локальной disposable среды и не должен использоваться в production.
 
@@ -111,14 +114,17 @@ Seed намеренно не создаёт Car, PSO или Battery Tasks: их 
 - `migration_init` детерминированно генерируется из текущей Schema;
 - baseline содержит все 19 tables и 8 enum, legacy objects отсутствуют;
 - active migration path содержит только `migration_init`;
-- seed отдельно проходит TypeScript type-check против generated Prisma Client.
+- seed отдельно проходит TypeScript type-check против generated Prisma Client;
+- clean reset и применение `migration_init` — успешно;
+- повторный `migrate deploy` — pending migrations отсутствуют;
+- seed выполнен дважды; повторный запуск идемпотентен;
+- seed создаёт Company, активного admin, `SYSTEM_OWNER`, активные Location/Site и `UserLocationAccess`;
+- backend build — успешно;
+- backend Jest — 25 suites, 152 tests;
+- Nx serve и Swagger `/api/docs` — HTTP 200;
+- login, `/auth/me`, Location/Site read и `POST /operations/arrivals` — успешно;
+- Arrival создал `Car.lifecycleStatus = ACTIVE`, `Pso.status = PENDING` и одно событие `CAR_ARRIVED`.
 
 Не подтверждено:
 
-- применение `migration_init` через `prisma migrate deploy` на disposable PostgreSQL;
-- `prisma migrate status` через direct connection;
-- drift реальной PostgreSQL базы;
-- успешный seed на новой базе;
-- полный backend start.
-
-Причина: disposable PostgreSQL и `DIRECT_URL` в текущем окружении отсутствуют. Существующая удалённая база намеренно не изменялась.
+- автоматизированное сохранение или преобразование данных legacy database — оно не входит в clean-baseline workflow.

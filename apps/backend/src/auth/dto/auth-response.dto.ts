@@ -27,7 +27,7 @@ export class AuthUserResponseDto {
     enum: UserRole,
     isArray: true,
     example: [UserRole.TECHNICIAN],
-    description: 'Roles assigned through UserRoleAssignment.',
+    description: 'Роли, назначенные через UserRoleAssignment.',
   })
   roles: UserRole[];
 }
@@ -35,7 +35,7 @@ export class AuthUserResponseDto {
 export class AuthSessionResponseDto {
   @ApiProperty({
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-    description: 'JWT access token.',
+    description: 'JWT access-токен.',
   })
   accessToken: string;
 

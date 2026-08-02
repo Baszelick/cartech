@@ -6,7 +6,7 @@ export class CreateBatteryCheckDto {
     example: 12.6,
     minimum: 0,
     maximum: 30,
-    description: 'Measured battery voltage.',
+    description: 'Измеренное напряжение аккумулятора.',
   })
   @IsOptional()
   @IsNumber()
@@ -15,7 +15,8 @@ export class CreateBatteryCheckDto {
   voltage?: number;
 
   @ApiPropertyOptional({
-    example: 'Voltage is normal',
+    example: 'Напряжение в норме',
+    description: 'Комментарий к проверке.',
   })
   @IsOptional()
   @IsString()

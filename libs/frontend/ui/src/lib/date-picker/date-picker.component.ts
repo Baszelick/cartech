@@ -44,8 +44,8 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   readonly weekDays = Info.weekdays('short', { locale: 'ru' })
 
-  private onChange: (value: DateTime | null) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: DateTime | null) => void = () => undefined;
+  private onTouched: () => void = () => undefined;
 
   readonly displayValue = computed(() => {
     const val = this.value();
@@ -83,13 +83,18 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   toggle(): void {
     if (this.isDisabled()) return;
-    this.isOpen() ? this.close() : this.open();
+    if (this.isOpen()) {
+      this.close();
+    } else {
+      this.open();
+    }
   }
 
   open(): void {
     if (this.isDisabled()) return;
-    if (this.value()) {
-      this.activeMonth.set(this.value()!.startOf('month'));
+    const selectedValue = this.value();
+    if (selectedValue) {
+      this.activeMonth.set(selectedValue.startOf('month'));
     }
     this.isOpen.set(true);
   }

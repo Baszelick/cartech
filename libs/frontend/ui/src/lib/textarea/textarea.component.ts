@@ -29,8 +29,8 @@ export class TextareaComponent implements ControlValueAccessor {
     readonly value = signal<string>('');
     readonly disabled = signal<boolean>(false);
 
-    private onChange: (value: string) => void = () => {};
-    private onTouched: () => void = () => {};
+    private onChange: (value: string) => void = () => undefined;
+    private onTouched: () => void = () => undefined;
 
     writeValue(val: string): void {
         this.value.set(val ?? '');

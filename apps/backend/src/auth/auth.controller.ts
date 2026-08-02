@@ -34,7 +34,7 @@ import {
 } from './dto/auth-response.dto';
 import { HttpErrorResponseDto } from '../common/dto/http-error-response.dto';
 
-@ApiTags('Auth')
+@ApiTags('Авторизация')
 @Controller('auth')
 export class AuthController {
   private readonly refreshCookieName: string;
@@ -79,21 +79,21 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Sign in',
+    summary: 'Войти в систему',
     description:
-      'Authenticates a user within a company, returns an access token, and sets the refresh token in an HttpOnly cookie.',
+      'Аутентифицирует пользователя в рамках компании, возвращает access-токен и сохраняет refresh-токен в HttpOnly cookie.',
   })
   @ApiBody({ type: LoginDto })
   @ApiOkResponse({
-    description: 'Authentication succeeded.',
+    description: 'Аутентификация выполнена успешно.',
     type: AuthSessionResponseDto,
   })
   @ApiBadRequestResponse({
-    description: 'Request validation failed.',
+    description: 'Запрос не прошёл валидацию.',
     type: HttpErrorResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'Invalid credentials or inactive user.',
+    description: 'Неверные учётные данные или неактивный пользователь.',
     type: HttpErrorResponseDto,
   })
   async login(
@@ -111,17 +111,18 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Refresh the session',
+    summary: 'Обновить сессию',
     description:
-      'Rotates the refresh token from the HttpOnly cookie and returns a new access token.',
+      'Ротирует refresh-токен из HttpOnly cookie и возвращает новый access-токен.',
   })
   @ApiCookieAuth('refreshToken')
   @ApiOkResponse({
-    description: 'Session refreshed.',
+    description: 'Сессия успешно обновлена.',
     type: AuthSessionResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'Refresh cookie is missing, invalid, expired, or reused.',
+    description:
+      'Refresh cookie отсутствует, недействителен, просрочен или уже использован.',
     type: HttpErrorResponseDto,
   })
   async refresh(
@@ -145,12 +146,14 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
-    summary: 'Sign out',
+    summary: 'Выйти из системы',
     description:
-      'Revokes the current session when a refresh cookie is present and clears the cookie.',
+      'Отзывает текущую сессию при наличии refresh cookie и очищает cookie.',
   })
   @ApiCookieAuth('refreshToken')
-  @ApiNoContentResponse({ description: 'Session ended and cookie cleared.' })
+  @ApiNoContentResponse({
+    description: 'Сессия завершена, cookie очищен.',
+  })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken: string | undefined =
       req.cookies?.[this.refreshCookieName];
@@ -162,15 +165,16 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Get the current user',
-    description: 'Returns the authenticated user and assigned roles.',
+    summary: 'Получить текущего пользователя',
+    description:
+      'Возвращает аутентифицированного пользователя и назначенные ему роли.',
   })
   @ApiOkResponse({
-    description: 'Current user.',
+    description: 'Текущий пользователь.',
     type: AuthUserResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid.',
+    description: 'Access-токен отсутствует или недействителен.',
     type: HttpErrorResponseDto,
   })
   async getMe(@Req() req: AuthenticatedRequest) {

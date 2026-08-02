@@ -3,7 +3,7 @@ import {provideRouter} from '@angular/router';
 
 import {routes} from './app.routes';
 import {provideHttpClient, withInterceptors} from "@angular/common/http";
-import {authInterceptor, AuthService} from '@cartech/frontend/auth/data-access';
+import {authInterceptor, AuthService} from '@cartech/auth/data-access';
 import {firstValueFrom} from 'rxjs';
 
 export const appConfig: ApplicationConfig = {

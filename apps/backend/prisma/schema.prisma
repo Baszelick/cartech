@@ -257,7 +257,7 @@ model Car {
   arrivalSiteId   String @db.Uuid
   createdById     String @db.Uuid
 
-  vin      String
+  vin      String?
   shortVin String
 
   brand String

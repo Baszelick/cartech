@@ -30,7 +30,7 @@ describe('AuthService', () => {
     createRefreshToken: jestRuntime.fn(),
     verifyRefreshToken: jestRuntime.fn(),
     refreshExpiresInMs: 7 * 24 * 60 * 60 * 1000,
-    accessExpiresInMs: 15 * 60 * 1000,
+    accessExpiresInMs: 7 * 60 * 1000,
   };
 
   const publicUser = {

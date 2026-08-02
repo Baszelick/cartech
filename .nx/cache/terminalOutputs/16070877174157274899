@@ -1,0 +1,26 @@
+
+[7m[1m[33m NX [39m[22m[27m  [33mNx Daemon is not enabled. Assets and package.json files will not be updated when files change.[39m
+
+[2J[3J[H19:09:12 - Starting compilation in watch mode...
+
+
+19:09:19 - Found 0 errors. Watching for file changes.
+[1m[31mDebugger listening on ws://localhost:9229/c4c087ad-a7d5-4a5f-ad14-545649fc8928
+Debugger listening on ws://localhost:9229/c4c087ad-a7d5-4a5f-ad14-545649fc8928
+For help, see: https://nodejs.org/en/docs/inspector
+[39m[22m
+[1m[31mReferenceError: exports is not defined in ES module scope
+    at file:///C:/Users/basze/cartech/dist/apps/backend/generated/prisma/client.js:38:23
+    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:395:35)
+    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:360:47)
+    at loadESMFromCJS (node:internal/modules/cjs/loader:1385:24)
+    at Module._compile (node:internal/modules/cjs/loader:1536:5)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1108:12)
+    at Function.Module._load (C:\Users\basze\cartech\node_modules\@nx\js\dist\src\executors\node\node-with-require-overrides.js:20:31)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+[39m[22m
+
+[7m[1m[36m NX [39m[22m[27m [1mProcess exited with code 1, waiting for changes to restart...[22m
+

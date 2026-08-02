@@ -4,6 +4,31 @@
   "projectType": "application",
   "sourceRoot": "apps/backend/src",
   "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/backend",
+        "main": "apps/backend/src/main.ts",
+        "tsConfig": "apps/backend/tsconfig.build.json",
+        "outputFileName": "main.js",
+        "target": "node",
+        "compiler": "tsc",
+        "externalDependencies": "all",
+        "sourceMap": true,
+        "webpackConfig": "apps/backend/webpack.config.js"
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "continuous": true,
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "backend:build",
+        "inspect": false,
+        "watch": true
+      }
+    },
     "test": {
       "executor": "nx:run-commands",
       "options": {

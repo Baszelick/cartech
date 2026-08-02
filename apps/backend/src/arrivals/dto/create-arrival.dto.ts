@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   ArrayMinSize,
@@ -8,33 +8,42 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  MaxLength,
-  MinLength,
+  Matches,
   ValidateNested,
 } from 'class-validator';
+import {
+  FULL_VIN_PATTERN,
+  normalizeCarIdentifier,
+  SHORT_VIN_PATTERN,
+} from '../../common/car-identity';
 
 export class ArrivalCarDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'XW8ED41P21K123456',
+    nullable: true,
     minLength: 6,
     maxLength: 17,
-    description: 'Full vehicle identification number.',
+    pattern: '^[A-HJ-NPR-Z0-9]{6,17}$',
+    description:
+      'Необязательный полный VIN. Значение trim/uppercase; буквы I, O и Q запрещены.',
   })
+  @Transform(({ value }) => normalizeCarIdentifier(value))
+  @IsOptional()
   @IsString()
-  @MinLength(6)
-  @MaxLength(17)
-  vin: string;
+  @Matches(FULL_VIN_PATTERN)
+  vin?: string | null;
 
   @ApiProperty({
     example: '123456',
-    minLength: 1,
-    maxLength: 17,
+    minLength: 6,
+    maxLength: 6,
+    pattern: '^[A-Z0-9]{6}$',
     description:
-      'Explicit short VIN representation; its derivation rule is not yet defined.',
+      'Обязательный рабочий идентификатор. Значение trim/uppercase; совпадения разрешены.',
   })
+  @Transform(({ value }) => normalizeCarIdentifier(value))
   @IsString()
-  @MinLength(1)
-  @MaxLength(17)
+  @Matches(SHORT_VIN_PATTERN)
   shortVin: string;
 
   @ApiProperty({ example: 'Toyota' })
@@ -47,7 +56,7 @@ export class ArrivalCarDto {
   @IsNotEmpty()
   model: string;
 
-  @ApiPropertyOptional({ example: 'Black' })
+  @ApiPropertyOptional({ example: 'Чёрный' })
   @IsOptional()
   @IsString()
   @IsNotEmpty()
@@ -58,7 +67,7 @@ export class CreateArrivalDto {
   @ApiProperty({
     format: 'uuid',
     example: '6fb95e2c-9440-4d9b-82a2-780af81be53c',
-    description: 'Site where the cars are accepted.',
+    description: 'Площадка, на которой принимают автомобили.',
   })
   @IsUUID()
   arrivalSiteId: string;
@@ -66,7 +75,7 @@ export class CreateArrivalDto {
   @ApiProperty({
     format: 'date',
     example: '2026-07-29',
-    description: 'Arrival business date.',
+    description: 'Дата приёмки по бизнес-календарю.',
   })
   @IsDateString()
   arrivedOn: string;
@@ -74,7 +83,7 @@ export class CreateArrivalDto {
   @ApiProperty({
     type: [ArrivalCarDto],
     minItems: 1,
-    description: 'Cars created atomically by this operation.',
+    description: 'Автомобили, атомарно создаваемые этой операцией.',
   })
   @IsArray()
   @ArrayMinSize(1)

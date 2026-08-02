@@ -4,7 +4,7 @@
   "sourceRoot": "libs/frontend/ui/src",
   "prefix": "ct",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:shared", "type:ui"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"

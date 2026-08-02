@@ -9,7 +9,7 @@ describe('Swagger contract', () => {
   it('documents every published operation with resolved schemas', async () => {
     process.env.JWT_ACCESS_SECRET ??= 'test-access-secret';
     process.env.JWT_REFRESH_SECRET ??= 'test-refresh-secret';
-    process.env.JWT_ACCESS_EXPIRES_IN ??= '15m';
+    process.env.JWT_ACCESS_EXPIRES_IN ??= '7m';
     process.env.JWT_REFRESH_EXPIRES_IN ??= '7d';
     process.env.REFRESH_TOKEN_TTL_MS ??= '604800000';
     process.env.REFRESH_COOKIE_NAME ??= 'cartech_refresh_token';
@@ -45,10 +45,24 @@ describe('Swagger contract', () => {
         '/auth/me',
         '/auth/refresh',
         '/cars',
+        '/cars/tasks',
         '/cars/{id}',
         '/cars/{id}/battery-check',
+        '/cars/{id}/issue',
+        '/cars/{id}/pso',
+        '/cars/{id}/pso/complete',
         '/dashboard',
+        '/locations',
+        '/locations/{id}',
+        '/locations/{id}/deactivate',
+        '/locations/{locationId}/sites',
+        '/locations/{locationId}/sites/{siteId}',
+        '/locations/{locationId}/sites/{siteId}/deactivate',
         '/operations/arrivals',
+        '/users',
+        '/users/{id}',
+        '/users/{id}/location-access',
+        '/users/{id}/roles',
       ].sort(),
     );
 
@@ -75,8 +89,17 @@ describe('Swagger contract', () => {
     expect(
       document.paths['/cars/{id}/battery-check']?.post?.requestBody,
     ).toBeDefined();
+    expect(document.paths['/cars/{id}']?.patch?.requestBody).toBeDefined();
+    expect(document.paths['/cars/{id}']?.patch?.responses).toHaveProperty(
+      '409',
+    );
+    expect(
+      document.paths['/users/{id}/location-access']?.put?.requestBody,
+    ).toBeDefined();
     expect(document.components?.securitySchemes).toHaveProperty('bearer');
     expect(document.components?.securitySchemes).toHaveProperty('refreshToken');
+    expect(schemas).toHaveProperty('UpdateCarIdentityDto');
+    expect(schemas).toHaveProperty('CarDetailsResponseDto');
 
     await app.close();
   });

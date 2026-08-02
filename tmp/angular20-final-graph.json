@@ -1,0 +1,428 @@
+{
+  "graph": {
+    "nodes": {
+      "shell-feature-layout": {
+        "name": "shell-feature-layout",
+        "type": "lib",
+        "data": {
+          "root": "libs/shell/feature-layout",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "shell-feature-layout",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/shell/feature-layout/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:shell",
+            "type:feature"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "auth-feature-login": {
+        "name": "auth-feature-login",
+        "type": "lib",
+        "data": {
+          "root": "libs/auth/feature-login",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "auth-feature-login",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/auth/feature-login/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:auth",
+            "type:feature"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "auth-data-access": {
+        "name": "auth-data-access",
+        "type": "lib",
+        "data": {
+          "root": "libs/auth/data-access",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "auth-data-access",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/auth/data-access/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:auth",
+            "type:data-access"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "ui": {
+        "name": "ui",
+        "type": "lib",
+        "data": {
+          "root": "libs/frontend/ui",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "ui",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/frontend/ui/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:shared",
+            "type:ui"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "frontend": {
+        "name": "frontend",
+        "type": "app",
+        "data": {
+          "root": "apps/frontend",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "npx eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/frontend",
+                "command": "eslint ."
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "dependsOn": [
+                "^build"
+              ],
+              "inputs": [
+                "production",
+                "^production"
+              ],
+              "executor": "@nx/angular:application",
+              "outputs": [
+                "{options.outputPath}"
+              ],
+              "defaultConfiguration": "production",
+              "options": {
+                "outputPath": "dist/apps/frontend",
+                "index": "apps/frontend/src/index.html",
+                "browser": "apps/frontend/src/main.ts",
+                "polyfills": [
+                  "zone.js"
+                ],
+                "tsConfig": "apps/frontend/tsconfig.app.json",
+                "inlineStyleLanguage": "scss",
+                "stylePreprocessorOptions": {
+                  "includePaths": [
+                    "apps/frontend/src/styles"
+                  ]
+                },
+                "assets": [
+                  {
+                    "glob": "**/*",
+                    "input": "apps/frontend/public"
+                  },
+                  {
+                    "glob": "**/*",
+                    "input": "apps/frontend/src/assets",
+                    "output": "assets"
+                  }
+                ],
+                "styles": [
+                  "apps/frontend/src/styles.scss"
+                ],
+                "scripts": []
+              },
+              "configurations": {
+                "production": {
+                  "budgets": [
+                    {
+                      "type": "initial",
+                      "maximumWarning": "500kB",
+                      "maximumError": "1MB"
+                    },
+                    {
+                      "type": "anyComponentStyle",
+                      "maximumWarning": "4kB",
+                      "maximumError": "8kB"
+                    }
+                  ],
+                  "outputHashing": "all"
+                },
+                "development": {
+                  "optimization": false,
+                  "extractLicenses": false,
+                  "sourceMap": true
+                }
+              },
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "@nx/angular:dev-server",
+              "defaultConfiguration": "development",
+              "options": {
+                "proxyConfig": "apps/frontend/proxy.conf.json"
+              },
+              "configurations": {
+                "production": {
+                  "buildTarget": "frontend:build:production"
+                },
+                "development": {
+                  "buildTarget": "frontend:build:development"
+                }
+              },
+              "parallelism": true,
+              "continuous": true
+            },
+            "test": {
+              "executor": "@angular-devkit/build-angular:karma",
+              "options": {
+                "polyfills": [
+                  "zone.js",
+                  "zone.js/testing"
+                ],
+                "tsConfig": "apps/frontend/tsconfig.spec.json",
+                "inlineStyleLanguage": "scss",
+                "assets": [
+                  {
+                    "glob": "**/*",
+                    "input": "apps/frontend/public"
+                  },
+                  {
+                    "glob": "**/*",
+                    "input": "apps/frontend/src/assets",
+                    "output": "assets"
+                  }
+                ],
+                "styles": [
+                  "apps/frontend/src/styles.scss"
+                ],
+                "scripts": []
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "frontend",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/frontend/src",
+          "prefix": "app",
+          "tags": [
+            "type:app"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "backend": {
+        "name": "backend",
+        "type": "app",
+        "data": {
+          "root": "apps/backend",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/apps/backend/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "npx eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/backend",
+                "command": "eslint ."
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "dependsOn": [
+                "^build"
+              ],
+              "inputs": [
+                "production",
+                "^production"
+              ],
+              "executor": "@nx/webpack:webpack",
+              "outputs": [
+                "{options.outputPath}"
+              ],
+              "options": {
+                "outputPath": "dist/apps/backend",
+                "main": "apps/backend/src/main.ts",
+                "tsConfig": "apps/backend/tsconfig.build.json",
+                "outputFileName": "main.js",
+                "target": "node",
+                "compiler": "tsc",
+                "externalDependencies": "all",
+                "sourceMap": true,
+                "webpackConfig": "apps/backend/webpack.config.js"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "@nx/js:node",
+              "continuous": true,
+              "dependsOn": [
+                "build"
+              ],
+              "options": {
+                "buildTarget": "backend:build",
+                "inspect": false,
+                "watch": true
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "jest --config apps/backend/jest.config.ts",
+                "cwd": "."
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "backend",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/backend/src",
+          "implicitDependencies": [],
+          "tags": []
+        }
+      }
+    },
+    "dependencies": {
+      "shell-feature-layout": [
+        {
+          "source": "shell-feature-layout",
+          "target": "ui",
+          "type": "static"
+        },
+        {
+          "source": "shell-feature-layout",
+          "target": "auth-data-access",
+          "type": "static"
+        }
+      ],
+      "auth-feature-login": [
+        {
+          "source": "auth-feature-login",
+          "target": "ui",
+          "type": "static"
+        },
+        {
+          "source": "auth-feature-login",
+          "target": "auth-data-access",
+          "type": "static"
+        }
+      ],
+      "auth-data-access": [],
+      "ui": [],
+      "frontend": [
+        {
+          "source": "frontend",
+          "target": "auth-data-access",
+          "type": "static"
+        },
+        {
+          "source": "frontend",
+          "target": "auth-feature-login",
+          "type": "dynamic"
+        },
+        {
+          "source": "frontend",
+          "target": "shell-feature-layout",
+          "type": "dynamic"
+        },
+        {
+          "source": "frontend",
+          "target": "ui",
+          "type": "static"
+        }
+      ],
+      "backend": []
+    }
+  }
+}

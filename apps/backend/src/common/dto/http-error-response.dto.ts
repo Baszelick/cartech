@@ -6,16 +6,16 @@ export class HttpErrorResponseDto {
 
   @ApiProperty({
     oneOf: [
-      { type: 'string', example: 'Bad Request' },
+      { type: 'string', example: 'Некорректный запрос' },
       {
         type: 'array',
         items: { type: 'string' },
-        example: ['companyId must be a UUID'],
+        example: ['companyId должен быть UUID'],
       },
     ],
   })
   message: string | string[];
 
-  @ApiProperty({ example: 'Bad Request' })
+  @ApiProperty({ example: 'Некорректный запрос' })
   error: string;
 }

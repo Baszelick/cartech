@@ -2,18 +2,18 @@ import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('System')
+@ApiTags('Система')
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
   @ApiOperation({
-    summary: 'Check API availability',
-    description: 'Returns a static greeting when the HTTP API is available.',
+    summary: 'Проверить доступность API',
+    description: 'Возвращает статическое приветствие, если HTTP API доступен.',
   })
   @ApiOkResponse({
-    description: 'API greeting.',
+    description: 'Приветствие API.',
     schema: { type: 'string', example: 'Hello World!' },
   })
   getHello(): string {

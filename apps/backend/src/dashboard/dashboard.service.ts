@@ -6,10 +6,17 @@ import {
 } from '../../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { DashboardResponseDto } from './dto/dashboard-response.dto';
+import {
+  BatteryScheduleService,
+  BatteryTaskStatus,
+} from '../battery/battery-schedule.service';
 
 @Injectable()
 export class DashboardService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly batterySchedule: BatteryScheduleService,
+  ) {}
 
   async getDashboard(userId: string): Promise<DashboardResponseDto> {
     const user = await this.prisma.user.findUnique({
@@ -32,7 +39,7 @@ export class DashboardService {
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
-    const [carsOnStock, needPso, issuedToday] = await Promise.all([
+    const [carsOnStock, needPso, issuedToday, batteryCars] = await Promise.all([
       this.prisma.car.count({
         where: {
           ...carScope,
@@ -54,8 +61,41 @@ export class DashboardService {
           occurredAt: { gte: startOfToday },
         },
       }),
+      this.prisma.car.findMany({
+        where: {
+          ...carScope,
+          lifecycleStatus: CarLifecycleStatus.ACTIVE,
+        },
+        select: {
+          arrivedOn: true,
+          _count: { select: { batteryChecks: true } },
+        },
+      }),
     ]);
 
-    return { carsOnStock, needPso, issuedToday };
+    const batteryMetrics = {
+      batteryUpcoming: 0,
+      batteryUrgent: 0,
+      batteryOverdue: 0,
+    };
+    const now = new Date();
+
+    for (const car of batteryCars) {
+      const status = this.batterySchedule.getCurrentPeriod(
+        car.arrivedOn,
+        car._count.batteryChecks,
+        now,
+      ).status;
+
+      if (status === BatteryTaskStatus.UPCOMING) {
+        batteryMetrics.batteryUpcoming += 1;
+      } else if (status === BatteryTaskStatus.URGENT) {
+        batteryMetrics.batteryUrgent += 1;
+      } else if (status === BatteryTaskStatus.OVERDUE) {
+        batteryMetrics.batteryOverdue += 1;
+      }
+    }
+
+    return { carsOnStock, needPso, issuedToday, ...batteryMetrics };
   }
 }

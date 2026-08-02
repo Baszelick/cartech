@@ -44,8 +44,8 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
   readonly isOpen = signal<boolean>(false)
   readonly isDisabled = signal<boolean>(false)
 
-  private onChange: (value: T | null) => void = () => {}
-  private onTouched: () => void = () => {}
+  private onChange: (value: T | null) => void = () => undefined
+  private onTouched: () => void = () => undefined
 
   get triggerWidth(): number {
     return this.elementRef.nativeElement.getBoundingClientRect().width;

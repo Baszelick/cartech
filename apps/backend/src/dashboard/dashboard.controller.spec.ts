@@ -25,7 +25,14 @@ describe('DashboardController', () => {
         roles: ['VIEWER'],
       },
     } as AuthenticatedRequest;
-    const response = { carsOnStock: 12, needPso: 4, issuedToday: 3 };
+    const response = {
+      carsOnStock: 12,
+      needPso: 4,
+      issuedToday: 3,
+      batteryUpcoming: 1,
+      batteryUrgent: 1,
+      batteryOverdue: 1,
+    };
     dashboardService.getDashboard.mockResolvedValue(response);
 
     await expect(controller.getDashboard(request)).resolves.toBe(response);

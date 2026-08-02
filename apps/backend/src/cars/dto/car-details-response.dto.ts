@@ -3,7 +3,7 @@ import { CarListItemResponseDto } from './car-list-item-response.dto';
 
 export class CarDetailsResponseDto extends CarListItemResponseDto {
   @ApiPropertyOptional({
-    example: 'Documents require review',
+    example: 'Требуется проверка документов',
     nullable: true,
   })
   blockedReason: string | null;
@@ -22,7 +22,7 @@ export class CarDetailsResponseDto extends CarListItemResponseDto {
   arrivalSiteId: string;
 
   @ApiPropertyOptional({
-    example: 'Duplicate record',
+    example: 'Дублирующая запись',
     nullable: true,
   })
   archivedReason: string | null;

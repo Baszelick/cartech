@@ -1,0 +1,259 @@
+{
+  "graph": {
+    "nodes": {
+      "auth-feature-login": {
+        "name": "auth-feature-login",
+        "type": "lib",
+        "data": {
+          "root": "libs/frontend/auth/feature-login",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "auth-feature-login",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/frontend/auth/feature-login/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [],
+          "implicitDependencies": []
+        }
+      },
+      "auth-data-access": {
+        "name": "auth-data-access",
+        "type": "lib",
+        "data": {
+          "root": "libs/frontend/auth/data-access",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "auth-data-access",
+          "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/frontend/auth/data-access/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [],
+          "implicitDependencies": []
+        }
+      },
+      "ui": {
+        "name": "ui",
+        "type": "lib",
+        "data": {
+          "root": "libs/frontend/ui",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "ui",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/frontend/ui/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [],
+          "implicitDependencies": []
+        }
+      },
+      "frontend": {
+        "name": "frontend",
+        "type": "app",
+        "data": {
+          "root": "apps/frontend",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "npx eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/frontend",
+                "command": "eslint ."
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "frontend",
+          "implicitDependencies": [],
+          "tags": []
+        }
+      },
+      "backend": {
+        "name": "backend",
+        "type": "app",
+        "data": {
+          "root": "apps/backend",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/apps/backend/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "npx eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/backend",
+                "command": "eslint ."
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "dependsOn": [
+                "^build"
+              ],
+              "inputs": [
+                "production",
+                "^production"
+              ],
+              "executor": "@nx/webpack:webpack",
+              "outputs": [
+                "{options.outputPath}"
+              ],
+              "options": {
+                "outputPath": "dist/apps/backend",
+                "main": "apps/backend/src/main.ts",
+                "tsConfig": "apps/backend/tsconfig.build.json",
+                "outputFileName": "main.js",
+                "target": "node",
+                "compiler": "tsc",
+                "externalDependencies": "all",
+                "sourceMap": true,
+                "webpackConfig": "apps/backend/webpack.config.js"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "@nx/js:node",
+              "continuous": true,
+              "dependsOn": [
+                "build"
+              ],
+              "options": {
+                "buildTarget": "backend:build",
+                "inspect": false,
+                "watch": true
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "jest --config apps/backend/jest.config.ts",
+                "cwd": "."
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "backend",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/backend/src",
+          "implicitDependencies": [],
+          "tags": []
+        }
+      }
+    },
+    "dependencies": {
+      "auth-feature-login": [
+        {
+          "source": "auth-feature-login",
+          "target": "ui",
+          "type": "static"
+        },
+        {
+          "source": "auth-feature-login",
+          "target": "auth-data-access",
+          "type": "static"
+        }
+      ],
+      "auth-data-access": [],
+      "ui": [],
+      "frontend": [
+        {
+          "source": "frontend",
+          "target": "auth-data-access",
+          "type": "static"
+        },
+        {
+          "source": "frontend",
+          "target": "auth-feature-login",
+          "type": "dynamic"
+        },
+        {
+          "source": "frontend",
+          "target": "ui",
+          "type": "static"
+        }
+      ],
+      "backend": []
+    }
+  }
+}

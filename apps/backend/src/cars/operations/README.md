@@ -1,11 +1,12 @@
 # Cars operation boundaries
 
 - `CarQueryService` contains read-only Car queries.
-- `BatteryOperationsService` records completed `BatteryCheck` facts only.
-- PSO operations are deferred until the PSO policy is confirmed.
-- Issue operations are deferred until the issue workflow is migrated.
+- `BatteryOperationsService` records a `BatteryCheck` against the oldest open
+  calendar period.
+- `CarTasksService` returns pending PSO and current actionable battery periods.
+- `PsoOperationsService` reads and completes an existing PSO record.
+- `VehicleIssueOperationsService` issues an eligible car and records its
+  lifecycle transition and event atomically.
 
-No task scheduling, PSO workflow, or issue workflow is implemented here.
-
-The legacy battery status helper remains temporarily because Dashboard still
-imports it; CarsModule no longer depends on it.
+Battery scheduling is implemented by the shared `BatteryScheduleService`.
+Vehicle return remains outside this module.
