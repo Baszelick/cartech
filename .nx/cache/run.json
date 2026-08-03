@@ -1,54 +1,43 @@
 {
   "run": {
-    "command": "nx run-many -t test -p dashboard-feature-home,cars-feature-list,arrivals-feature-arrival,tasks-feature-tasks --parallel=4 --watch=false --browsers=ChromeHeadless",
-    "startTime": "2026-08-02T17:14:10.824Z",
-    "endTime": "2026-08-02T17:14:41.316Z",
+    "command": "nx run-many -t serve -p backend,frontend --parallel=2",
+    "startTime": "2026-08-03T17:58:12.294Z",
+    "endTime": "2026-08-03T19:55:36.903Z",
     "inner": false
   },
   "tasks": [
     {
-      "taskId": "tasks-feature-tasks:test",
-      "target": "test",
-      "projectName": "tasks-feature-tasks",
-      "hash": "354456555773940777",
-      "startTime": "2026-08-02T17:14:10.854Z",
-      "endTime": "2026-08-02T17:14:41.104Z",
+      "taskId": "backend:build",
+      "target": "build",
+      "projectName": "backend",
+      "hash": "14172638083816357969",
+      "startTime": "2026-08-03T17:58:12.339Z",
+      "endTime": "2026-08-03T17:58:27.092Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
     },
     {
-      "taskId": "cars-feature-list:test",
-      "target": "test",
-      "projectName": "cars-feature-list",
-      "hash": "2617357063408186434",
-      "startTime": "2026-08-02T17:14:10.854Z",
-      "endTime": "2026-08-02T17:14:41.182Z",
+      "taskId": "frontend:serve:development",
+      "target": "serve",
+      "projectName": "frontend",
+      "hash": "3511776589679115099",
+      "startTime": "2026-08-03T17:58:12.339Z",
+      "endTime": "2026-08-03T19:55:36.661Z",
       "params": "",
       "cacheStatus": "cache-miss",
-      "status": 0
+      "status": 1
     },
     {
-      "taskId": "dashboard-feature-home:test",
-      "target": "test",
-      "projectName": "dashboard-feature-home",
-      "hash": "2761853460919154933",
-      "startTime": "2026-08-02T17:14:10.854Z",
-      "endTime": "2026-08-02T17:14:41.231Z",
+      "taskId": "backend:serve",
+      "target": "serve",
+      "projectName": "backend",
+      "hash": "13045841044038283554",
+      "startTime": "2026-08-03T17:58:27.132Z",
+      "endTime": "2026-08-03T19:55:36.664Z",
       "params": "",
       "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "arrivals-feature-arrival:test",
-      "target": "test",
-      "projectName": "arrivals-feature-arrival",
-      "hash": "16879065720640668414",
-      "startTime": "2026-08-02T17:14:10.854Z",
-      "endTime": "2026-08-02T17:14:41.279Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
+      "status": 1
     }
   ]
 }

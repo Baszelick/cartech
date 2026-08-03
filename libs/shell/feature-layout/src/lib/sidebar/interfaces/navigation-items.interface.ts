@@ -1,4 +1,5 @@
 import type {IconName} from '@cartech/frontend/ui';
+import { UserRole } from '@cartech/auth/data-access';
 
 export interface NavigationItem {
   label: string;
@@ -7,4 +8,5 @@ export interface NavigationItem {
 
   badge?: number;
   disabled?: boolean;
+  roles?: UserRole[]
 }

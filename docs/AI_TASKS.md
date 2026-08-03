@@ -1337,15 +1337,15 @@ Blockers:
 
 ### 2026-08-02 — Developer Experience: Prisma scripts и login smoke
 
-Статус: `[-]` Инфраструктура Prisma и backend auth подтверждены; frontend login заблокирован рассинхронизацией контракта.
+Статус: `[-]` Кодовая часть Prisma/auth/frontend login согласована; live smoke ожидает локального запуска вне sandbox.
 
 - [x] Добавлены корневые Prisma scripts для generate, validate, migrate, deploy, reset, studio и seed.
-- [x] Prisma config загружает локальный `apps/backend/.env` при запуске команд из корня.
+- [x] Prisma config, Nest и seed загружают единый корневой `/.env`.
 - [x] Seed дважды выполнен успешно и подтверждён как идемпотентный.
 - [x] В реальной БД подтверждены Company, admin, SYSTEM_OWNER, Location, Site и UserLocationAccess.
 - [x] Backend login, `/auth/me`, refresh-cookie, refresh и logout подтверждены реальными HTTP-запросами.
-- [ ] Согласовать frontend login с обязательным backend-полем `companyId`: текущая форма отправляет только `username` и `password`.
-- [ ] После согласования повторить UI smoke: переход после login, F5 и logout.
+- [x] Frontend и backend login согласованы через публичный `companyCode`.
+- [ ] Локально повторить UI smoke: login, переход, F5, refresh, `/company/me` и logout.
 
 Completed:
 
@@ -1492,6 +1492,22 @@ Blockers:
 ---
 
 ## Правило обновления документа
+
+### 2026-08-03 — Company login, seed и environment
+
+Статус: `[-]`
+
+- [x] Подготовлена additive migration `Company.code` с безопасным backfill.
+- [x] Backend и frontend login contracts переведены с UUID `companyId` на публичный `companyCode`.
+- [x] Внутренние JWT, relations и scope сохраняют UUID `companyId`.
+- [x] Добавлен защищённый `GET /company/me`, DTO, Swagger и focused tests.
+- [x] Seed переведён на `Форсаж` / `FORSAGE` и владельца `ivan` Иван Талисов.
+- [x] Nest, Prisma CLI и seed используют единый корневой `/.env`.
+- [ ] Выполнить deploy, двойной seed, полный test/build, Studio и live smoke локально: sandbox блокирует TCP 5432 и запуск Nx через approval layer.
+
+Blockers:
+
+- Live Neon verification недоступна в текущей sandbox-среде; локальные команды приведены в отчёте задачи.
 
 ### 2026-08-02 — Frontend feature libraries
 

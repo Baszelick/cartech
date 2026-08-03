@@ -12,17 +12,20 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log('🌱 Начинаем забивать тестовые данные (seeding)...');
+  console.log('🌱 Начинаем создавать стартовые данные...');
 
-  let company = await prisma.company.findFirst({
-    where: { name: 'CarTech Demo' },
+  const company = await prisma.company.upsert({
+    where: { code: 'FORSAGE' },
+    update: {
+      name: 'Форсаж',
+      isActive: true,
+    },
+    create: {
+      code: 'FORSAGE',
+      name: 'Форсаж',
+      isActive: true,
+    },
   });
-
-  if (!company) {
-    company = await prisma.company.create({
-      data: { name: 'CarTech Demo' },
-    });
-  }
 
   const location = await prisma.location.upsert({
     where: {
@@ -56,41 +59,49 @@ async function main() {
     },
   });
 
-  const hashedPassword = await bcrypt.hash('admin123', 10);
-  const admin = await prisma.user.upsert({
+  const hashedPassword = await bcrypt.hash('178Region', 10);
+  const owner = await prisma.user.upsert({
     where: {
       companyId_username: {
         companyId: company.id,
-        username: 'admin',
+        username: 'ivan',
       },
     },
     update: {
       passwordHash: hashedPassword,
-      firstName: 'Админ',
-      lastName: 'Админов',
+      firstName: 'Иван',
+      lastName: 'Талисов',
       isActive: true,
       mustChangePassword: false,
     },
     create: {
       companyId: company.id,
-      username: 'admin',
+      username: 'ivan',
       passwordHash: hashedPassword,
-      firstName: 'Админ',
-      lastName: 'Админов',
+      firstName: 'Иван',
+      lastName: 'Талисов',
+      isActive: true,
       mustChangePassword: false,
+    },
+  });
+
+  await prisma.userRoleAssignment.deleteMany({
+    where: {
+      userId: owner.id,
+      role: { not: UserRole.SYSTEM_OWNER },
     },
   });
 
   await prisma.userRoleAssignment.upsert({
     where: {
       userId_role: {
-        userId: admin.id,
+        userId: owner.id,
         role: UserRole.SYSTEM_OWNER,
       },
     },
     update: {},
     create: {
-      userId: admin.id,
+      userId: owner.id,
       role: UserRole.SYSTEM_OWNER,
     },
   });
@@ -98,20 +109,99 @@ async function main() {
   await prisma.userLocationAccess.upsert({
     where: {
       userId_locationId: {
-        userId: admin.id,
+        userId: owner.id,
         locationId: location.id,
       },
     },
     update: {},
     create: {
-      userId: admin.id,
+      userId: owner.id,
       locationId: location.id,
     },
   });
 
-  console.log(`👤 Seed-пользователь admin создан для companyId=${company.id}.`);
+  await removeSafeLegacyDemoCompany();
 
-  console.log('✅ База успешно заполнена тестовыми данными!');
+  console.log('👤 Стартовый владелец ivan создан.');
+  console.log('✅ Стартовые данные готовы.');
+}
+
+async function removeSafeLegacyDemoCompany(): Promise<void> {
+  const demo = await prisma.company.findFirst({
+    where: { name: 'CarTech Demo' },
+    select: { id: true },
+  });
+  if (!demo) {
+    return;
+  }
+
+  const users = await prisma.user.findMany({
+    where: { companyId: demo.id },
+    select: { id: true, username: true },
+  });
+  const userIds = users.map(({ id }) => id);
+  const locationIds = (
+    await prisma.location.findMany({
+      where: { companyId: demo.id },
+      select: { id: true },
+    })
+  ).map(({ id }) => id);
+
+  const [
+    cars,
+    vehicleEvents,
+    feedPosts,
+    auditLogs,
+    userBusinessReferences,
+  ] = await Promise.all([
+    prisma.car.count({ where: { companyId: demo.id } }),
+    prisma.vehicleEvent.count({ where: { companyId: demo.id } }),
+    prisma.feedPost.count({ where: { companyId: demo.id } }),
+    prisma.auditLog.count({ where: { companyId: demo.id } }),
+    Promise.all([
+      prisma.feedComment.count({ where: { authorId: { in: userIds } } }),
+      prisma.feedPostReaction.count({ where: { userId: { in: userIds } } }),
+      prisma.feedCommentReaction.count({ where: { userId: { in: userIds } } }),
+      prisma.batteryCheck.count({ where: { checkedById: { in: userIds } } }),
+      prisma.vehicleMovement.count({ where: { movedById: { in: userIds } } }),
+      prisma.deliveryAppointment.count({
+        where: { createdById: { in: userIds } },
+      }),
+      prisma.vehicleIssue.count({ where: { issuedById: { in: userIds } } }),
+    ]),
+  ]);
+
+  const onlyDemoAdmin =
+    users.length === 1 && users[0]?.username.toLowerCase() === 'admin';
+  const hasBusinessData =
+    cars > 0 ||
+    vehicleEvents > 0 ||
+    feedPosts > 0 ||
+    auditLogs > 0 ||
+    userBusinessReferences.some((count) => count > 0);
+
+  if (!onlyDemoAdmin || hasBusinessData) {
+    console.warn(
+      '⚠️ CarTech Demo сохранена: обнаружены дополнительные пользователи или связанные бизнес-данные.',
+    );
+    return;
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.authSession.deleteMany({ where: { userId: { in: userIds } } });
+    await tx.userLocationAccess.deleteMany({
+      where: { userId: { in: userIds } },
+    });
+    await tx.userRoleAssignment.deleteMany({
+      where: { userId: { in: userIds } },
+    });
+    await tx.site.deleteMany({ where: { locationId: { in: locationIds } } });
+    await tx.user.deleteMany({ where: { id: { in: userIds } } });
+    await tx.location.deleteMany({ where: { id: { in: locationIds } } });
+    await tx.company.delete({ where: { id: demo.id } });
+  });
+
+  console.log('🧹 Безопасная demo-компания CarTech Demo удалена.');
 }
 
 main()

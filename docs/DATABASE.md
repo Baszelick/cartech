@@ -93,14 +93,18 @@ Workflow подтверждён из корня workspace на чистой те
 
 Seed идемпотентно создаёт:
 
-- Company `CarTech Demo`;
+- Company `Форсаж` с code `FORSAGE`;
 - Location с code `SPB`;
 - Site `Площадка Парнас`;
-- активного пользователя `admin`;
+- активного владельца `ivan` (Иван Талисов), `mustChangePassword=false`;
 - роль `SYSTEM_OWNER`;
 - доступ пользователя к Location.
 
 Seed намеренно не создаёт Car, Pso или VehicleEvent. Smoke-автомобиль создаётся только через `POST /operations/arrivals`, чтобы проверить реальную транзакцию приёмки.
+
+Nest, Prisma CLI и seed используют единый корневой `/.env`. Корневой `/.env.example` содержит только безопасные placeholders. `apps/backend/.env` не используется.
+
+Legacy Company `CarTech Demo` удаляется seed только при единственном пользователе `admin` и отсутствии связанных бизнес-данных. Иначе данные сохраняются, а seed выводит предупреждение.
 
 Пароль seed-пользователя предназначен только для локальной disposable среды и не должен использоваться в production.
 
@@ -118,7 +122,7 @@ Seed намеренно не создаёт Car, Pso или VehicleEvent. Smoke-
 - clean reset и применение `migration_init` — успешно;
 - повторный `migrate deploy` — pending migrations отсутствуют;
 - seed выполнен дважды; повторный запуск идемпотентен;
-- seed создаёт Company, активного admin, `SYSTEM_OWNER`, активные Location/Site и `UserLocationAccess`;
+- seed создаёт Company `Форсаж`, активного `ivan`, `SYSTEM_OWNER`, активные Location/Site и `UserLocationAccess`;
 - backend build — успешно;
 - backend Jest — 25 suites, 152 tests;
 - Nx serve и Swagger `/api/docs` — HTTP 200;

@@ -1,6 +1,7 @@
 import {NavigationItem} from '../interfaces/navigation-items.interface';
+import {UserRole} from "@cartech/auth/data-access";
 
-export const NAVIGATION:  NavigationItem[] = [
+export const NAVIGATION: NavigationItem[] = [
   {
     label: 'Главная',
     icon: 'home',
@@ -20,5 +21,11 @@ export const NAVIGATION:  NavigationItem[] = [
     label: 'Поступление',
     icon: 'arrival',
     route: '/arrival',
+  },
+  {
+    label: 'Администрирование',
+    icon: 'arrival',
+    route: '/user',
+    roles: [UserRole.SYSTEM_OWNER, UserRole.OPERATIONS_MANAGER]
   },
 ];

@@ -6,7 +6,7 @@
 
 CarTech организован как Nx monorepo. Приложения находятся в `apps/`, повторно используемый frontend-код — в `libs/`.
 
-Единым источником npm dependencies и lock history являются корневые `package.json` и `package-lock.json`. Отдельные frontend manifest и локальный `apps/frontend/node_modules` не используются.
+Единым источником npm dependencies и lock history являются корневые `package.json` и `package-lock.json`. Отдельные frontend manifest и локальный `apps/frontend/node_modules` не используются. Runtime-конфигурация Nest, Prisma CLI и seed загружается из единственного корневого `/.env`; безопасный шаблон хранится в `/.env.example`.
 
 Текущая frontend-структура:
 

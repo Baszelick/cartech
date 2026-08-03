@@ -1,5 +1,12 @@
+export enum UserRole {
+  SYSTEM_OWNER = 'SYSTEM_OWNER',
+  OPERATIONS_MANAGER = 'OPERATIONS_MANAGER',
+  TECHNICIAN = 'TECHNICIAN',
+  VIEWER = 'VIEWER',
+}
+
 export interface LoginRequest {
-  companyId: string;
+  companyCode: string;
   username: string;
   password: string;
 }
@@ -10,21 +17,15 @@ export interface LoginResponse {
 }
 
 export interface AuthUser {
-    id: string;
-    username: string;
-    firstName: string;
-    lastName: string;
-    role: string;
+  id: string;
+  companyId: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  roles: UserRole[];
+  mustChangePassword: boolean;
 }
 
 export interface RefreshResponse {
   accessToken: string;
-}
-
-export interface MeResponse {
-  id: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  role: string;
 }

@@ -49,12 +49,22 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const { companyId, username, password } = loginDto;
+    const { companyCode, password } = loginDto;
+    const username = loginDto.username.trim().toLowerCase();
+
+    const company = await this.prisma.company.findUnique({
+      where: { code: companyCode },
+      select: { id: true, isActive: true },
+    });
+
+    if (!company || !company.isActive) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     const user = await this.prisma.user.findUnique({
       where: {
         companyId_username: {
-          companyId,
+          companyId: company.id,
           username,
         },
       },

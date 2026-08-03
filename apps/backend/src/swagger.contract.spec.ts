@@ -52,6 +52,7 @@ describe('Swagger contract', () => {
         '/cars/{id}/issue',
         '/cars/{id}/pso',
         '/cars/{id}/pso/complete',
+        '/company/me',
         '/dashboard',
         '/locations',
         '/locations/{id}',
@@ -87,6 +88,20 @@ describe('Swagger contract', () => {
     }
 
     expect(document.paths['/auth/login']?.post?.requestBody).toBeDefined();
+    expect(document.paths['/company/me']?.get?.responses).toHaveProperty(
+      '200',
+    );
+    expect(schemas).toHaveProperty('CompanyResponseDto');
+    expect(schemas).toHaveProperty('LoginDto');
+    expect(schemas['LoginDto']).toMatchObject({
+      required: expect.arrayContaining(['companyCode', 'username', 'password']),
+      properties: expect.objectContaining({
+        companyCode: expect.objectContaining({
+          example: 'FORSAGE',
+          pattern: '^[A-Z0-9_-]{2,32}$',
+        }),
+      }),
+    });
     expect(
       document.paths['/operations/arrivals']?.post?.requestBody,
     ).toBeDefined();

@@ -1,17 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 
 export class LoginDto {
   @ApiProperty({
-    example: '80ad46f0-d89f-46ce-a92a-e11c4dfc2714',
-    format: 'uuid',
-    description: 'Идентификатор компании.',
+    example: 'FORSAGE',
+    minLength: 2,
+    maxLength: 32,
+    pattern: '^[A-Z0-9_-]{2,32}$',
+    description: 'Публичный код компании. Пробелы удаляются, буквы приводятся к верхнему регистру.',
   })
-  @IsUUID()
-  companyId: string;
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
+  @IsString()
+  @Length(2, 32)
+  @Matches(/^[A-Z0-9_-]{2,32}$/)
+  companyCode: string;
 
   @ApiProperty({
-    example: 'operator',
+    example: 'ivan',
     description: 'Имя пользователя, уникальное в рамках компании.',
   })
   @IsString()
@@ -19,7 +27,7 @@ export class LoginDto {
   username: string;
 
   @ApiProperty({
-    example: 'change-me',
+    example: '178Region',
     format: 'password',
     writeOnly: true,
     description: 'Пароль пользователя.',

@@ -1,5 +1,16 @@
 # Architecture Decisions
 
+## 2026-08-03 — Company code, login contract и единый environment
+
+Принято:
+
+- `Company.code` — обязательный глобально уникальный публичный код: trim, uppercase, длина 2–32, формат `^[A-Z0-9_-]{2,32}$`.
+- Login принимает `companyCode`, `username` и `password`; внутренние relations, JWT и scope продолжают использовать UUID `companyId`.
+- Отсутствующая/неактивная Company, отсутствующий/неактивный User и неверный пароль возвращают одинаковый `401`.
+- Nest, Prisma CLI и seed загружают единственный локальный `/.env`; безопасный шаблон находится в `/.env.example`.
+- `GET /company/me` возвращает публичные поля компании из `companyId` JWT.
+- Стартовая Company — `Форсаж` (`FORSAGE`), владелец — `ivan` Иван Талисов с ролью `SYSTEM_OWNER`.
+
 > Документ содержит все важные архитектурные решения проекта.
 >
 > Каждое решение описывает:

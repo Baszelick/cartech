@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 
 import { AuthService } from './auth.service';
 import { authInterceptor } from '../interceptors/auth.interceptor';
-import type { AuthUser } from '../interfaces/auth.interface';
+import { UserRole, type AuthUser } from '../interfaces/auth.interface';
 
 describe('AuthService session restoration', () => {
   let authService: AuthService;
@@ -19,10 +19,12 @@ describe('AuthService session restoration', () => {
 
   const user: AuthUser = {
     id: 'user-id',
-    username: 'admin',
-    firstName: 'Admin',
-    lastName: 'User',
-    role: 'SYSTEM_OWNER',
+    companyId: 'company-id',
+    username: 'ivan',
+    firstName: 'Иван',
+    lastName: 'Талисов',
+    roles: [UserRole.SYSTEM_OWNER],
+    mustChangePassword: false,
   };
 
   beforeEach(() => {
@@ -44,6 +46,27 @@ describe('AuthService session restoration', () => {
 
   afterEach(() => {
     httpTesting.verify();
+  });
+
+  it('sends companyCode in the login contract', () => {
+    authService
+      .login({
+        companyCode: 'FORSAGE',
+        username: 'ivan',
+        password: '178Region',
+      })
+      .subscribe();
+
+    const login = httpTesting.expectOne('/api/auth/login');
+    expect(login.request.body).toEqual({
+      companyCode: 'FORSAGE',
+      username: 'ivan',
+      password: '178Region',
+    });
+    expect(login.request.withCredentials).toBeTrue();
+    login.flush({ accessToken: 'access-token', user });
+
+    expect(authService.currentUser()).toEqual(user);
   });
 
   it('restores access token and current user through refresh and me', () => {

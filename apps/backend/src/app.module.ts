@@ -9,12 +9,13 @@ import { ArrivalsModule } from './arrivals/arrivals.module';
 import { AuthModule } from './auth/auth.module';
 import { LocationsModule } from './locations/locations.module';
 import { UsersModule } from './users/users.module';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['apps/backend/.env', '.env'],
+      envFilePath: '.env',
     }),
     PrismaModule,
     CarsModule,
@@ -23,6 +24,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     LocationsModule,
     UsersModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

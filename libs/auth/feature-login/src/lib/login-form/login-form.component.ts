@@ -45,7 +45,7 @@ export class LoginFormComponent {
   readonly loginError = signal<string | null>(null);
 
   readonly form = this.#fb.nonNullable.group({
-    companyId: ['', Validators.required],
+    companyCode: ['', Validators.required],
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
@@ -66,7 +66,12 @@ export class LoginFormComponent {
     this.form.disable();
 
     this.#authService
-      .login(this.form.getRawValue())
+      .login({
+        ...this.form.getRawValue(),
+        companyCode: this.form.controls.companyCode.value
+          .trim()
+          .toUpperCase(),
+      })
       .pipe(
         takeUntilDestroyed(this.#destroy),
         finalize(() => {

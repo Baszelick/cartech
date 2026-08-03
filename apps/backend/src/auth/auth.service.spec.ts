@@ -13,6 +13,9 @@ describe('AuthService', () => {
   let service: AuthService;
 
   const mockPrisma: any = {
+    company: {
+      findUnique: jestRuntime.fn(),
+    },
     user: {
       findUnique: jestRuntime.fn(),
       findUniqueOrThrow: jestRuntime.fn(),
@@ -72,6 +75,13 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
+    beforeEach(() => {
+      mockPrisma.company.findUnique.mockResolvedValue({
+        id: 'company-1',
+        isActive: true,
+      });
+    });
+
     it('loads a company user with roles and creates a session', async () => {
       mockPrisma.user.findUnique.mockResolvedValue(databaseUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
@@ -84,7 +94,7 @@ describe('AuthService', () => {
       mockTokenService.createAccessToken.mockResolvedValue('access_token');
 
       const result = await service.login({
-        companyId: 'company-1',
+        companyCode: 'FORSAGE',
         username: 'admin',
         password: 'password',
       });
@@ -123,7 +133,7 @@ describe('AuthService', () => {
 
       await expect(
         service.login({
-          companyId: 'company-1',
+          companyCode: 'FORSAGE',
           username: 'admin',
           password: 'password',
         }),
@@ -136,7 +146,7 @@ describe('AuthService', () => {
 
       await expect(
         service.login({
-          companyId: 'company-1',
+          companyCode: 'FORSAGE',
           username: 'admin',
           password: 'wrong',
         }),
@@ -148,11 +158,67 @@ describe('AuthService', () => {
 
       await expect(
         service.login({
-          companyId: 'company-1',
+          companyCode: 'FORSAGE',
           username: 'unknown',
           password: 'password',
         }),
       ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('rejects an unknown company without querying users', async () => {
+      mockPrisma.company.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.login({
+          companyCode: 'UNKNOWN',
+          username: 'admin',
+          password: 'password',
+        }),
+      ).rejects.toThrow(UnauthorizedException);
+      expect(mockPrisma.user.findUnique).not.toHaveBeenCalled();
+    });
+
+    it('rejects an inactive company without querying users', async () => {
+      mockPrisma.company.findUnique.mockResolvedValue({
+        id: 'company-1',
+        isActive: false,
+      });
+
+      await expect(
+        service.login({
+          companyCode: 'FORSAGE',
+          username: 'admin',
+          password: 'password',
+        }),
+      ).rejects.toThrow(UnauthorizedException);
+      expect(mockPrisma.user.findUnique).not.toHaveBeenCalled();
+    });
+
+    it('normalizes username before querying the company user', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(databaseUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockPrisma.authSession.create.mockResolvedValue({ id: 'session-1' });
+      mockTokenService.createRefreshToken.mockResolvedValue('refresh_token');
+      (bcrypt.hash as jest.Mock).mockResolvedValue('hashed_refresh');
+      mockPrisma.authSession.update.mockResolvedValue({});
+      mockTokenService.createAccessToken.mockResolvedValue('access_token');
+
+      await service.login({
+        companyCode: 'FORSAGE',
+        username: '  ADMIN ',
+        password: 'password',
+      });
+
+      expect(mockPrisma.user.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            companyId_username: {
+              companyId: 'company-1',
+              username: 'admin',
+            },
+          },
+        }),
+      );
     });
   });
 
@@ -267,3 +333,7 @@ describe('AuthService', () => {
     });
   });
 });
+      expect(mockPrisma.company.findUnique).toHaveBeenCalledWith({
+        where: { code: 'FORSAGE' },
+        select: { id: true, isActive: true },
+      });

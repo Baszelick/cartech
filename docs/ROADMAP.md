@@ -105,7 +105,7 @@ MVP должен поддерживать:
 
 Существующая foundation не считается завершённой.
 
-- [x] Login использует `(companyId, username)`.
+- [x] Login использует публичный `companyCode` и username; JWT и relations сохраняют внутренний `companyId`.
 - [x] Access token, refresh rotation, HttpOnly cookie, logout и `/auth/me` приведены к новой user model.
 - [x] Role contract использует массив `UserRoleAssignment`.
 - [x] JWT содержит `companyId` и массив ролей; location access остаётся relation, а не snapshot токена.
@@ -401,13 +401,13 @@ MVP считается готовым только после успешной �
 
 - [x] Корневые Prisma scripts используют единый `apps/backend/prisma.config.ts`.
 - [x] Seed workflow подтверждён двумя последовательными запусками.
-- [x] Seed создаёт минимальную инфраструктуру: Company, admin, SYSTEM_OWNER, Location, Site и UserLocationAccess.
+- [-] Seed подготовлен для Company `Форсаж`, владельца `ivan`, SYSTEM_OWNER, Location, Site и UserLocationAccess; live Neon запуск требует выполнения владельцем.
 - [x] Backend login, `/auth/me`, refresh и logout подтверждены.
-- [ ] Завершить frontend login smoke после согласования обязательного `companyId` с формой входа.
+- [-] Frontend login переведён на `companyCode`; live login/F5/logout smoke требует выполнения владельцем вне sandbox.
 
 ### Current Blocker
 
-Frontend отправляет в `POST /auth/login` только `username` и `password`, тогда как актуальный backend DTO требует также UUID `companyId`. До согласования контракта UI login, переход после входа, сохранение сессии после F5 и logout через интерфейс не могут быть отмечены выполненными.
+Login contract согласован через `companyCode`; внутренний UUID компании клиент не вводит. Live smoke с Neon остаётся неподтверждённым из-за запрета TCP 5432 в текущей sandbox-среде.
 
 ### Session restoration
 
