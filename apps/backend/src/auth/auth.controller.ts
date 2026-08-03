@@ -22,6 +22,7 @@ import {
   ApiBadRequestResponse,
   ApiCookieAuth,
   ApiNoContentResponse,
+  ApiForbiddenResponse,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -33,6 +34,8 @@ import {
   AuthUserResponseDto,
 } from './dto/auth-response.dto';
 import { HttpErrorResponseDto } from '../common/dto/http-error-response.dto';
+import { ChangeInitialPasswordDto } from './dto/change-initial-password.dto';
+import { AllowPasswordChangeRequired } from './password-change.decorator';
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -143,6 +146,50 @@ export class AuthController {
     };
   }
 
+  @Post('change-initial-password')
+  @UseGuards(JwtAuthGuard)
+  @AllowPasswordChangeRequired()
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Сменить временный пароль',
+    description:
+      'Доступно только активному пользователю с mustChangePassword=true. Удаляет старые refresh-сессии, создаёт новую сессию и возвращает обновлённые токены.',
+  })
+  @ApiBody({ type: ChangeInitialPasswordDto })
+  @ApiOkResponse({
+    description: 'Пароль изменён, новая refresh-cookie установлена.',
+    type: AuthSessionResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Пароль не прошёл validation, совпадает с временным или смена не требуется.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Требуется аутентификация либо пользователь неактивен.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'Операция недоступна для текущего auth context.',
+    type: HttpErrorResponseDto,
+  })
+  async changeInitialPassword(
+    @Body() dto: ChangeInitialPasswordDto,
+    @Req() req: AuthenticatedRequest,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.changeInitialPassword(
+      req.user.userId,
+      dto.newPassword,
+    );
+    this.setRefreshCookie(res, result.refreshToken);
+    return {
+      accessToken: result.accessToken,
+      user: result.user,
+    };
+  }
+
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
@@ -163,6 +210,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
+  @AllowPasswordChangeRequired()
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Получить текущего пользователя',

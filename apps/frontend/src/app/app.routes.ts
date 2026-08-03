@@ -24,25 +24,25 @@ export const routes: Routes = [
       {
         path: 'home',
         loadComponent: () =>
-          import('./features/home/pages/home-page/home-page.component')
+          import('@cartech/dashboard/feature-home')
             .then(c => c.HomePageComponent),
       },
       {
         path: 'tasks',
         loadComponent: () =>
-          import('./features/tasks/pages/tasks-page/tasks-page.component')
+          import('@cartech/tasks/feature-tasks')
             .then(c => c.TasksPageComponent),
       },
       {
         path: 'cars',
         loadComponent: () =>
-          import('./features/cars/pages/cars-page/cars-page.component')
+          import('@cartech/cars/feature-list')
             .then(c => c.CarsPageComponent),
       },
       {
         path: 'arrival',
         loadComponent: () =>
-          import('./features/arrival/pages/arrival-page/arrival-page.component')
+          import('@cartech/arrivals/feature-arrival')
             .then(c => c.ArrivalPageComponent),
       },
     ],

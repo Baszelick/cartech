@@ -1,0 +1,21 @@
+{
+  "name": "tasks-feature-tasks",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/tasks/feature-tasks/src",
+  "prefix": "ct",
+  "projectType": "library",
+  "tags": ["scope:tasks", "type:feature"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "polyfills": ["zone.js", "zone.js/testing"],
+        "tsConfig": "libs/tasks/feature-tasks/tsconfig.spec.json",
+        "inlineStyleLanguage": "scss"
+      }
+    }
+  }
+}

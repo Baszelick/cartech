@@ -14,4 +14,4 @@ modules by path external "@prisma/ 168 bytes
   external "@prisma/adapter-pg" 42 bytes [built] [code generated]
   external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
 + 8 modules
-webpack 5.105.2 compiled successfully in 7178 ms
+webpack 5.105.2 compiled successfully in 9548 ms

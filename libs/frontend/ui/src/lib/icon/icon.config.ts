@@ -24,4 +24,5 @@ export const ICON_PATHS: Record<IconName, string> = {
   lock: '/icons/lock.svg',
   eye: '/icons/eye.svg',
   eyeOff: '/icons/eye-off.svg',
+  building: '/icons/building.svg',
 };

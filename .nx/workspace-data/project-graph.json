@@ -1,5 +1,81 @@
 {
   "nodes": {
+    "arrivals-feature-arrival": {
+      "name": "arrivals-feature-arrival",
+      "type": "lib",
+      "data": {
+        "root": "libs/arrivals/feature-arrival",
+        "targets": {
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "test": {
+            "executor": "@angular-devkit/build-angular:karma",
+            "options": {
+              "polyfills": [
+                "zone.js",
+                "zone.js/testing"
+              ],
+              "tsConfig": "libs/arrivals/feature-arrival/tsconfig.spec.json",
+              "inlineStyleLanguage": "scss"
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "arrivals-feature-arrival",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/arrivals/feature-arrival/src",
+        "prefix": "ct",
+        "projectType": "library",
+        "tags": [
+          "scope:arrivals",
+          "type:feature"
+        ],
+        "implicitDependencies": []
+      }
+    },
+    "dashboard-feature-home": {
+      "name": "dashboard-feature-home",
+      "type": "lib",
+      "data": {
+        "root": "libs/dashboard/feature-home",
+        "targets": {
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "test": {
+            "executor": "@angular-devkit/build-angular:karma",
+            "options": {
+              "polyfills": [
+                "zone.js",
+                "zone.js/testing"
+              ],
+              "tsConfig": "libs/dashboard/feature-home/tsconfig.spec.json",
+              "inlineStyleLanguage": "scss"
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "dashboard-feature-home",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/dashboard/feature-home/src",
+        "prefix": "ct",
+        "projectType": "library",
+        "tags": [
+          "scope:dashboard",
+          "type:feature"
+        ],
+        "implicitDependencies": []
+      }
+    },
     "shell-feature-layout": {
       "name": "shell-feature-layout",
       "type": "lib",
@@ -25,6 +101,44 @@
         "implicitDependencies": []
       }
     },
+    "tasks-feature-tasks": {
+      "name": "tasks-feature-tasks",
+      "type": "lib",
+      "data": {
+        "root": "libs/tasks/feature-tasks",
+        "targets": {
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "test": {
+            "executor": "@angular-devkit/build-angular:karma",
+            "options": {
+              "polyfills": [
+                "zone.js",
+                "zone.js/testing"
+              ],
+              "tsConfig": "libs/tasks/feature-tasks/tsconfig.spec.json",
+              "inlineStyleLanguage": "scss"
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "tasks-feature-tasks",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/tasks/feature-tasks/src",
+        "prefix": "ct",
+        "projectType": "library",
+        "tags": [
+          "scope:tasks",
+          "type:feature"
+        ],
+        "implicitDependencies": []
+      }
+    },
     "auth-feature-login": {
       "name": "auth-feature-login",
       "type": "lib",
@@ -45,6 +159,44 @@
         "projectType": "library",
         "tags": [
           "scope:auth",
+          "type:feature"
+        ],
+        "implicitDependencies": []
+      }
+    },
+    "cars-feature-list": {
+      "name": "cars-feature-list",
+      "type": "lib",
+      "data": {
+        "root": "libs/cars/feature-list",
+        "targets": {
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "test": {
+            "executor": "@angular-devkit/build-angular:karma",
+            "options": {
+              "polyfills": [
+                "zone.js",
+                "zone.js/testing"
+              ],
+              "tsConfig": "libs/cars/feature-list/tsconfig.spec.json",
+              "inlineStyleLanguage": "scss"
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "cars-feature-list",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/cars/feature-list/src",
+        "prefix": "ct",
+        "projectType": "library",
+        "tags": [
+          "scope:cars",
           "type:feature"
         ],
         "implicitDependencies": []
@@ -215,6 +367,8 @@
             "executor": "@nx/angular:dev-server",
             "defaultConfiguration": "development",
             "options": {
+              "host": "127.0.0.1",
+              "port": 4200,
               "proxyConfig": "apps/frontend/proxy.conf.json"
             },
             "configurations": {
@@ -237,6 +391,11 @@
               ],
               "tsConfig": "apps/frontend/tsconfig.spec.json",
               "inlineStyleLanguage": "scss",
+              "stylePreprocessorOptions": {
+                "includePaths": [
+                  "apps/frontend/src/styles"
+                ]
+              },
               "assets": [
                 {
                   "glob": "**/*",
@@ -15738,6 +15897,20 @@
     }
   },
   "dependencies": {
+    "arrivals-feature-arrival": [
+      {
+        "source": "arrivals-feature-arrival",
+        "target": "npm:@angular/core",
+        "type": "static"
+      }
+    ],
+    "dashboard-feature-home": [
+      {
+        "source": "dashboard-feature-home",
+        "target": "npm:@angular/core",
+        "type": "static"
+      }
+    ],
     "shell-feature-layout": [
       {
         "source": "shell-feature-layout",
@@ -15757,6 +15930,13 @@
       {
         "source": "shell-feature-layout",
         "target": "auth-data-access",
+        "type": "static"
+      }
+    ],
+    "tasks-feature-tasks": [
+      {
+        "source": "tasks-feature-tasks",
+        "target": "npm:@angular/core",
         "type": "static"
       }
     ],
@@ -15789,6 +15969,13 @@
       {
         "source": "auth-feature-login",
         "target": "npm:rxjs",
+        "type": "static"
+      }
+    ],
+    "cars-feature-list": [
+      {
+        "source": "cars-feature-list",
+        "target": "npm:@angular/core",
         "type": "static"
       }
     ],
@@ -15859,7 +16046,7 @@
       },
       {
         "source": "frontend",
-        "target": "npm:@angular/common",
+        "target": "npm:rxjs",
         "type": "static"
       },
       {
@@ -15869,7 +16056,7 @@
       },
       {
         "source": "frontend",
-        "target": "npm:rxjs",
+        "target": "npm:@angular/common",
         "type": "static"
       },
       {
@@ -15884,8 +16071,23 @@
       },
       {
         "source": "frontend",
-        "target": "ui",
-        "type": "static"
+        "target": "dashboard-feature-home",
+        "type": "dynamic"
+      },
+      {
+        "source": "frontend",
+        "target": "tasks-feature-tasks",
+        "type": "dynamic"
+      },
+      {
+        "source": "frontend",
+        "target": "cars-feature-list",
+        "type": "dynamic"
+      },
+      {
+        "source": "frontend",
+        "target": "arrivals-feature-arrival",
+        "type": "dynamic"
       },
       {
         "source": "frontend",
@@ -15996,12 +16198,17 @@
       },
       {
         "source": "backend",
-        "target": "npm:passport-jwt",
+        "target": "npm:@nestjs/core",
         "type": "static"
       },
       {
         "source": "backend",
-        "target": "npm:@nestjs/core",
+        "target": "npm:rxjs",
+        "type": "static"
+      },
+      {
+        "source": "backend",
+        "target": "npm:passport-jwt",
         "type": "static"
       },
       {
@@ -38402,5 +38609,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1785674880379
+  "computedAt": 1785690952866
 }

@@ -69,6 +69,7 @@ async function main() {
       firstName: 'Админ',
       lastName: 'Админов',
       isActive: true,
+      mustChangePassword: false,
     },
     create: {
       companyId: company.id,
@@ -76,6 +77,7 @@ async function main() {
       passwordHash: hashedPassword,
       firstName: 'Админ',
       lastName: 'Админов',
+      mustChangePassword: false,
     },
   });
 

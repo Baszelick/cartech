@@ -1,0 +1,21 @@
+{
+  "name": "dashboard-feature-home",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/dashboard/feature-home/src",
+  "prefix": "ct",
+  "projectType": "library",
+  "tags": ["scope:dashboard", "type:feature"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "polyfills": ["zone.js", "zone.js/testing"],
+        "tsConfig": "libs/dashboard/feature-home/tsconfig.spec.json",
+        "inlineStyleLanguage": "scss"
+      }
+    }
+  }
+}

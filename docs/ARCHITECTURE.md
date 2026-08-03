@@ -22,6 +22,18 @@ libs/
   shell/
     feature-layout/          # Shell, Sidebar, Header, Control Center и LayoutService
 
+  dashboard/
+    feature-home/            # entry point домашней страницы Dashboard
+
+  cars/
+    feature-list/            # entry point списка автомобилей
+
+  arrivals/
+    feature-arrival/         # страница приёмки и связанные компоненты
+
+  tasks/
+    feature-tasks/           # entry point задач
+
   frontend/
     ui/                      # общий UI kit; физическое имя сохранено
 ```
@@ -37,6 +49,10 @@ Nx projects используют tags `scope:*` и `type:*`:
 | `auth-data-access` | `scope:auth`, `type:data-access` |
 | `auth-feature-login` | `scope:auth`, `type:feature` |
 | `shell-feature-layout` | `scope:shell`, `type:feature` |
+| `dashboard-feature-home` | `scope:dashboard`, `type:feature` |
+| `cars-feature-list` | `scope:cars`, `type:feature` |
+| `arrivals-feature-arrival` | `scope:arrivals`, `type:feature` |
+| `tasks-feature-tasks` | `scope:tasks`, `type:feature` |
 | `ui` | `scope:shared`, `type:ui` |
 | `frontend` | `type:app` |
 
@@ -47,6 +63,10 @@ frontend
   ├─> shell/feature-layout
   ├─> auth/feature-login
   ├─> auth/data-access
+  ├─> dashboard/feature-home
+  ├─> cars/feature-list
+  ├─> arrivals/feature-arrival
+  ├─> tasks/feature-tasks
   └─> frontend/ui
 
 shell/feature-layout
@@ -63,6 +83,10 @@ auth/feature-login
 - `@cartech/auth/data-access`;
 - `@cartech/auth/feature-login`;
 - `@cartech/shell/feature-layout`;
+- `@cartech/dashboard/feature-home`;
+- `@cartech/cars/feature-list`;
+- `@cartech/arrivals/feature-arrival`;
+- `@cartech/tasks/feature-tasks`;
 - `@cartech/frontend/ui`.
 
 Deep imports во внутренние `src/lib` других библиотек не допускаются. Ограничения контролируются `@nx/enforce-module-boundaries`.

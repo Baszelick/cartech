@@ -40,6 +40,7 @@ describe('AuthService', () => {
     firstName: 'Admin',
     lastName: 'User',
     roles: ['SYSTEM_OWNER'],
+    mustChangePassword: false,
   };
 
   const databaseUser = {

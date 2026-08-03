@@ -1,0 +1,28 @@
+[1m[33mThe `@nx/webpack:webpack` executor is deprecated and will be removed in Nx v24. Run `nx g @nx/webpack:convert-to-inferred` to migrate to the `@nx/webpack/plugin` inferred targets. See https://nx.dev/docs/guides/tasks--caching/convert-to-inferred for details.[39m[22m
+asset main.js 485 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 273 KiB 72 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+
+ERROR in ./apps/backend/src/auth/jwt-auth.guard.ts:30:16
+[90mTS1361: [39m'Observable' cannot be used as a value because it was imported using 'import type'.
+  [0m [90m 28 |[39m       )[33m;[39m
+   [90m 29 |[39m     }
+  [31m[1m>[22m[39m[90m 30 |[39m     [36mreturn[39m [36mnew[39m [33mObservable[39m[33m<[39m[33mboolean[39m[33m>[39m((subscriber) [33m=>[39m {
+   [90m    |[39m                [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 31 |[39m       [36mconst[39m subscription [33m=[39m activation[33m.[39msubscribe({
+   [90m 32 |[39m         next[33m:[39m (allowed) [33m=>[39m {
+   [90m 33 |[39m           [36mtry[39m {[0m
+
+webpack 5.105.2 compiled with 1 error in 7604 ms

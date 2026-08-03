@@ -28,6 +28,12 @@ export class UserDetailsResponseDto {
   isActive: boolean;
 
   @ApiProperty({
+    example: false,
+    description: 'Требуется ли смена временного пароля.',
+  })
+  mustChangePassword: boolean;
+
+  @ApiProperty({
     enum: UserRole,
     isArray: true,
     example: [UserRole.OPERATIONS_MANAGER],

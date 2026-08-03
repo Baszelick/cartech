@@ -29,6 +29,7 @@ describe('UsersService', () => {
         firstName: 'Анна',
         lastName: 'Иванова',
         isActive: true,
+        mustChangePassword: false,
         roles: [{ role: UserRole.OPERATIONS_MANAGER }],
       },
     ]);
@@ -53,6 +54,7 @@ describe('UsersService', () => {
         firstName: 'Анна',
         lastName: 'Иванова',
         isActive: true,
+        mustChangePassword: false,
         roles: [UserRole.OPERATIONS_MANAGER],
       },
     ]);
@@ -66,6 +68,7 @@ describe('UsersService', () => {
         firstName: 'Иван',
         lastName: 'Петров',
         isActive: true,
+        mustChangePassword: false,
         roles: [
           { role: UserRole.SYSTEM_OWNER },
           { role: UserRole.OPERATIONS_MANAGER },
@@ -87,7 +90,8 @@ describe('UsersService', () => {
       username: 'operator',
       firstName: 'Анна',
       lastName: 'Иванова',
-      isActive: true,
+        isActive: true,
+        mustChangePassword: false,
       roles: [{ role: UserRole.OPERATIONS_MANAGER }],
     });
 

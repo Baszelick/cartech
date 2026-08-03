@@ -18,4 +18,5 @@ export type IconName =
   | 'lock'
   | 'eye'
   | 'eyeOff'
+  | 'building';
 

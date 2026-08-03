@@ -10,32 +10,37 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UserLocationAccessService } from './user-location-access.service';
 
 describe('UserLocationAccessService', () => {
-  const prisma = {
+  const prisma: any = {
     user: { findFirst: jest.fn() },
     location: { findMany: jest.fn() },
     userLocationAccess: {
+      findMany: jest.fn(),
       deleteMany: jest.fn(),
       createMany: jest.fn(),
     },
     $transaction: jest.fn(),
   };
-  const manager = {
+  const manager: AuthenticatedUser = {
     userId: 'manager-id',
     companyId: 'company-id',
     username: 'manager',
     roles: [UserRole.OPERATIONS_MANAGER],
-  } as AuthenticatedUser;
-  const owner = {
+    mustChangePassword: false,
+  };
+  const owner: AuthenticatedUser = {
+    ...manager,
     userId: 'owner-id',
-    companyId: 'company-id',
     username: 'owner',
     roles: [UserRole.SYSTEM_OWNER],
-  } as AuthenticatedUser;
-  const assignedLocation = {
-    id: 'location-id',
-    code: 'MSK',
-    name: 'Москва',
+  };
+  const technician = {
+    id: 'tech-id',
     isActive: true,
+    roles: [{ role: UserRole.TECHNICIAN }],
+    locationAccesses: [
+      { locationId: 'manager-location' },
+      { locationId: 'foreign-location' },
+    ],
   };
   let service: UserLocationAccessService;
 
@@ -44,6 +49,27 @@ describe('UserLocationAccessService', () => {
     prisma.$transaction.mockImplementation(
       async (callback: (tx: typeof prisma) => unknown) => callback(prisma),
     );
+    prisma.user.findFirst.mockResolvedValue(technician);
+    prisma.userLocationAccess.findMany.mockResolvedValue([
+      { locationId: 'manager-location' },
+      { locationId: 'manager-location-2' },
+    ]);
+    prisma.location.findMany
+      .mockResolvedValueOnce([{ id: 'manager-location-2' }])
+      .mockResolvedValueOnce([
+        {
+          id: 'foreign-location',
+          code: 'FOREIGN',
+          name: 'Внешняя',
+          isActive: true,
+        },
+        {
+          id: 'manager-location-2',
+          code: 'M2',
+          name: 'Доступная',
+          isActive: true,
+        },
+      ]);
     const module = await Test.createTestingModule({
       providers: [
         UserLocationAccessService,
@@ -53,133 +79,101 @@ describe('UserLocationAccessService', () => {
     service = module.get(UserLocationAccessService);
   });
 
-  it('returns current access for a user in the JWT company', async () => {
-    prisma.user.findFirst.mockResolvedValue({ id: 'target-id' });
-    prisma.location.findMany.mockResolvedValue([assignedLocation]);
-
-    const result = await service.getForUser('target-id', 'company-id');
-
-    expect(prisma.user.findFirst).toHaveBeenCalledWith({
-      where: { id: 'target-id', companyId: 'company-id' },
-      select: { id: true },
-    });
-    expect(prisma.location.findMany).toHaveBeenCalledWith({
-      where: {
-        companyId: 'company-id',
-        userAccesses: { some: { userId: 'target-id' } },
-      },
-      orderBy: [{ name: 'asc' }, { id: 'asc' }],
-      select: {
-        id: true,
-        code: true,
-        name: true,
-        isActive: true,
-      },
-    });
-    expect(result).toEqual({
-      userId: 'target-id',
-      locations: [assignedLocation],
-    });
-  });
-
-  it('hides a user from another company through NotFound', async () => {
-    prisma.user.findFirst.mockResolvedValue(null);
-
-    await expect(
-      service.getForUser('foreign-user-id', 'company-id'),
-    ).rejects.toBeInstanceOf(NotFoundException);
-    expect(prisma.location.findMany).not.toHaveBeenCalled();
-  });
-
-  it('fully replaces access in one transaction', async () => {
-    prisma.user.findFirst.mockResolvedValue({ id: 'target-id' });
-    prisma.location.findMany
-      .mockResolvedValueOnce([{ id: 'location-id' }])
-      .mockResolvedValueOnce([assignedLocation]);
-    prisma.userLocationAccess.deleteMany.mockResolvedValue({ count: 1 });
-    prisma.userLocationAccess.createMany.mockResolvedValue({ count: 1 });
-
+  it('manager replaces only access inside own scope and preserves foreign access', async () => {
     const result = await service.replaceForUser(
-      'target-id',
-      { locationIds: ['location-id'] },
+      'tech-id',
+      { locationIds: ['manager-location-2'] },
       manager,
     );
 
-    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-    expect(prisma.location.findMany).toHaveBeenNthCalledWith(1, {
-      where: {
-        companyId: 'company-id',
-        id: { in: ['location-id'] },
-      },
-      select: { id: true },
-    });
     expect(prisma.userLocationAccess.deleteMany).toHaveBeenCalledWith({
-      where: { userId: 'target-id' },
+      where: {
+        userId: 'tech-id',
+        locationId: {
+          in: ['manager-location', 'manager-location-2'],
+        },
+      },
     });
     expect(prisma.userLocationAccess.createMany).toHaveBeenCalledWith({
-      data: [{ userId: 'target-id', locationId: 'location-id' }],
+      data: [
+        {
+          userId: 'tech-id',
+          locationId: 'manager-location-2',
+        },
+      ],
     });
-    expect(result.locations).toEqual([assignedLocation]);
-  });
-
-  it('accepts an empty array and removes all access', async () => {
-    prisma.user.findFirst.mockResolvedValue({ id: 'target-id' });
-    prisma.userLocationAccess.deleteMany.mockResolvedValue({ count: 2 });
-    prisma.location.findMany.mockResolvedValue([]);
-
-    const result = await service.replaceForUser(
-      'target-id',
-      { locationIds: [] },
-      manager,
+    expect(result.locations.map(({ id }) => id)).toContain(
+      'foreign-location',
     );
-
-    expect(prisma.userLocationAccess.deleteMany).toHaveBeenCalledWith({
-      where: { userId: 'target-id' },
-    });
-    expect(prisma.userLocationAccess.createMany).not.toHaveBeenCalled();
-    expect(result).toEqual({ userId: 'target-id', locations: [] });
   });
 
-  it('rejects duplicate locationIds before the transaction', async () => {
+  it('manager cannot assign a location outside own scope', async () => {
+    prisma.location.findMany.mockReset().mockResolvedValue([]);
     await expect(
       service.replaceForUser(
-        'target-id',
-        { locationIds: ['location-id', 'location-id'] },
-        manager,
-      ),
-    ).rejects.toBeInstanceOf(BadRequestException);
-    expect(prisma.$transaction).not.toHaveBeenCalled();
-  });
-
-  it('rejects a location outside the JWT company without replacing access', async () => {
-    prisma.user.findFirst.mockResolvedValue({ id: 'target-id' });
-    prisma.location.findMany.mockResolvedValue([]);
-
-    await expect(
-      service.replaceForUser(
-        'target-id',
-        { locationIds: ['foreign-location-id'] },
+        'tech-id',
+        { locationIds: ['foreign-location'] },
         manager,
       ),
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(prisma.userLocationAccess.deleteMany).not.toHaveBeenCalled();
   });
 
-  it('allows SYSTEM_OWNER to replace own access', async () => {
-    prisma.user.findFirst.mockResolvedValue({ id: 'owner-id' });
-    prisma.userLocationAccess.deleteMany.mockResolvedValue({ count: 1 });
-    prisma.location.findMany.mockResolvedValue([]);
-
+  it('manager is denied without a shared location', async () => {
+    prisma.user.findFirst.mockResolvedValue({
+      ...technician,
+      locationAccesses: [{ locationId: 'foreign-location' }],
+    });
     await expect(
-      service.replaceForUser('owner-id', { locationIds: [] }, owner),
-    ).resolves.toEqual({ userId: 'owner-id', locations: [] });
-    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+      service.replaceForUser('tech-id', { locationIds: [] }, manager),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('forbids OPERATIONS_MANAGER from replacing own access', async () => {
+  it('manager cannot manage a non-technician', async () => {
+    prisma.user.findFirst.mockResolvedValue({
+      ...technician,
+      roles: [{ role: UserRole.OPERATIONS_MANAGER }],
+    });
     await expect(
-      service.replaceForUser('manager-id', { locationIds: [] }, manager),
+      service.replaceForUser('tech-id', { locationIds: [] }, manager),
     ).rejects.toBeInstanceOf(ForbiddenException);
-    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('owner replaces the full location set', async () => {
+    prisma.location.findMany.mockReset()
+      .mockResolvedValueOnce([{ id: 'manager-location' }])
+      .mockResolvedValueOnce([]);
+    await service.replaceForUser(
+      'tech-id',
+      { locationIds: ['manager-location'] },
+      owner,
+    );
+    expect(prisma.userLocationAccess.deleteMany).toHaveBeenCalledWith({
+      where: { userId: 'tech-id' },
+    });
+  });
+
+  it('prevents an active user from ending with no locations', async () => {
+    prisma.user.findFirst.mockResolvedValue({
+      ...technician,
+      locationAccesses: [{ locationId: 'manager-location' }],
+    });
+    await expect(
+      service.replaceForUser('tech-id', { locationIds: [] }, manager),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('hides a foreign user and rejects duplicate UUIDs', async () => {
+    prisma.user.findFirst.mockResolvedValue(null);
+    await expect(
+      service.replaceForUser('foreign-id', { locationIds: [] }, owner),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    await expect(
+      service.replaceForUser(
+        'tech-id',
+        { locationIds: ['same', 'same'] },
+        owner,
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
 });

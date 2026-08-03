@@ -41,6 +41,7 @@ describe('Swagger contract', () => {
       [
         '/',
         '/auth/login',
+        '/auth/change-initial-password',
         '/auth/logout',
         '/auth/me',
         '/auth/refresh',
@@ -61,8 +62,11 @@ describe('Swagger contract', () => {
         '/operations/arrivals',
         '/users',
         '/users/{id}',
+        '/users/{id}/activate',
+        '/users/{id}/deactivate',
         '/users/{id}/location-access',
         '/users/{id}/roles',
+        '/users/{id}/reset-password',
       ].sort(),
     );
 
@@ -95,6 +99,13 @@ describe('Swagger contract', () => {
     );
     expect(
       document.paths['/users/{id}/location-access']?.put?.requestBody,
+    ).toBeDefined();
+    expect(document.paths['/users']?.post?.requestBody).toBeDefined();
+    expect(
+      document.paths['/users/{id}/reset-password']?.post?.requestBody,
+    ).toBeDefined();
+    expect(
+      document.paths['/auth/change-initial-password']?.post?.requestBody,
     ).toBeDefined();
     expect(document.components?.securitySchemes).toHaveProperty('bearer');
     expect(document.components?.securitySchemes).toHaveProperty('refreshToken');

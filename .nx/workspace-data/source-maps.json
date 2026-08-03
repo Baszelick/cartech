@@ -518,6 +518,14 @@
       "apps/frontend/project.json",
       "nx/core/project-json"
     ],
+    "targets.serve.options.host": [
+      "apps/frontend/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.port": [
+      "apps/frontend/project.json",
+      "nx/core/project-json"
+    ],
     "targets.serve.options.proxyConfig": [
       "apps/frontend/project.json",
       "nx/core/project-json"
@@ -574,6 +582,10 @@
       "apps/frontend/project.json",
       "nx/core/project-json"
     ],
+    "targets.test.options.stylePreprocessorOptions": [
+      "apps/frontend/project.json",
+      "nx/core/project-json"
+    ],
     "targets.test.options.assets.0": [
       "apps/frontend/project.json",
       "nx/core/project-json"
@@ -600,6 +612,638 @@
     ],
     "targets.test.options": [
       "apps/frontend/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "libs/arrivals/feature-arrival": {
+    "root": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.cache": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.1": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.2": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.3": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.4": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.outputs.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.outputs": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.executor": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options.cwd": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options.command": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.technologies": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.technologies.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.description": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help.command": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help.example": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "name": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:arrivals": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.type:feature": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.executor": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills.0": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills.1": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.tsConfig": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.inlineStyleLanguage": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options": [
+      "libs/arrivals/feature-arrival/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "libs/cars/feature-list": {
+    "root": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.cache": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.1": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.2": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.3": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.4": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.outputs.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.outputs": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.executor": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options.cwd": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options.command": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.technologies": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.technologies.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.description": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help.command": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help.example": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "name": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:cars": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.type:feature": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.executor": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills.0": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills.1": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.tsConfig": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.inlineStyleLanguage": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options": [
+      "libs/cars/feature-list/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "libs/dashboard/feature-home": {
+    "root": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.cache": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.1": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.2": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.3": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.4": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.outputs.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.outputs": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.executor": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options.cwd": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options.command": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.technologies": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.technologies.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.description": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help.command": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help.example": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "name": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:dashboard": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.type:feature": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.executor": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills.0": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills.1": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.tsConfig": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.inlineStyleLanguage": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options": [
+      "libs/dashboard/feature-home/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "libs/tasks/feature-tasks": {
+    "root": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.cache": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.1": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.2": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.3": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs.4": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.inputs": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.outputs.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.outputs": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.executor": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options.cwd": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options.command": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.options": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.technologies": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.technologies.0": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.description": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help.command": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "targets.lint.metadata.help.example": [
+      "eslint.config.mjs",
+      "@nx/eslint/plugin"
+    ],
+    "name": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:tasks": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.type:feature": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.executor": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills.0": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills.1": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.polyfills": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.tsConfig": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options.inlineStyleLanguage": [
+      "libs/tasks/feature-tasks/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.test.options": [
+      "libs/tasks/feature-tasks/project.json",
       "nx/core/project-json"
     ]
   },

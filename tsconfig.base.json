@@ -18,7 +18,11 @@
       "@cartech/frontend/ui": ["libs/frontend/ui/src/index.ts"],
       "@cartech/auth/data-access": ["libs/auth/data-access/src/index.ts"],
       "@cartech/auth/feature-login": ["libs/auth/feature-login/src/index.ts"],
-      "@cartech/shell/feature-layout": ["libs/shell/feature-layout/src/index.ts"]
+      "@cartech/shell/feature-layout": ["libs/shell/feature-layout/src/index.ts"],
+      "@cartech/dashboard/feature-home": ["libs/dashboard/feature-home/src/index.ts"],
+      "@cartech/cars/feature-list": ["libs/cars/feature-list/src/index.ts"],
+      "@cartech/arrivals/feature-arrival": ["libs/arrivals/feature-arrival/src/index.ts"],
+      "@cartech/tasks/feature-tasks": ["libs/tasks/feature-tasks/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

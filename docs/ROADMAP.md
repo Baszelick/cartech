@@ -358,8 +358,21 @@ MVP считается готовым только после успешной �
 
 - [ ] Компании
 - [ ] Локации
-- [ ] Пользователи
-- [ ] Роли
+- [x] Пользователи: создание, роли/локации, temporary password и reset
+- [x] Роли
+
+### Personnel security
+
+- [x] `mustChangePassword` migration и auth contract.
+- [x] Централизованное ограничение API до смены временного пароля.
+- [x] Initial password change с rotation refresh-session.
+- [x] SYSTEM_OWNER/OPERATIONS_MANAGER permission policy.
+- [x] Полный test/build/live smoke.
+- [x] Edit/deactivate/activate lifecycle.
+- [x] Manager scope через пересечение UserLocationAccess.
+- [x] Scoped location replacement с сохранением внешних назначений.
+- [ ] Frontend admin panel.
+- [ ] Frontend forced-password-change screen.
 
 ### История и коммуникации
 
@@ -373,3 +386,33 @@ MVP считается готовым только после успешной �
 - [ ] Импорт и экспорт
 - [ ] Уведомления
 - [ ] Отчёты и аналитика
+
+---
+
+## Developer Experience
+
+### Frontend domain boundaries
+
+- [x] Feature-код Dashboard Home, Cars list, Arrival и Tasks вынесен из application root в Nx libraries.
+- [x] Lazy routes используют только публичные aliases библиотек.
+- [x] Lint, component tests, dependency graph и frontend production build проходят.
+
+Статус: `[-]`
+
+- [x] Корневые Prisma scripts используют единый `apps/backend/prisma.config.ts`.
+- [x] Seed workflow подтверждён двумя последовательными запусками.
+- [x] Seed создаёт минимальную инфраструктуру: Company, admin, SYSTEM_OWNER, Location, Site и UserLocationAccess.
+- [x] Backend login, `/auth/me`, refresh и logout подтверждены.
+- [ ] Завершить frontend login smoke после согласования обязательного `companyId` с формой входа.
+
+### Current Blocker
+
+Frontend отправляет в `POST /auth/login` только `username` и `password`, тогда как актуальный backend DTO требует также UUID `companyId`. До согласования контракта UI login, переход после входа, сохранение сессии после F5 и logout через интерфейс не могут быть отмечены выполненными.
+
+### Session restoration
+
+- [x] Angular bootstrap ожидает завершения refresh → me до выполнения route guards.
+- [x] Dev-proxy согласует backend cookie path `/auth` с frontend API path `/api/auth`.
+- [x] Действующая refresh-сессия сохраняется после перезагрузки приложения.
+- [x] Отсутствующая или завершённая refresh-сессия корректно открывает приложение как гость.
+- [x] Logout удаляет refresh-cookie.

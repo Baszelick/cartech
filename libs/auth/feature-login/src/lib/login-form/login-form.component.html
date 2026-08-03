@@ -1,88 +1,105 @@
 <div class="login-card">
-  <div class="login-logo">
-    <ct-image-logo
-      [size]="200"
-    />
+    <div class="login-logo">
+        <ct-image-logo
+                [size]="200"
+        />
 
-    <span class="brand-text">
+        <span class="brand-text">
       Car<span class="brand-text-blue">Tech</span>
     </span>
-  </div>
+    </div>
 
-  <span class="welcome">
+    <span class="welcome">
     Войдите, чтобы продолжить
   </span>
 
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-  >
-    <div class="login-form">
-      <div class="form-group login">
-        Логин
+    <form
+            [formGroup]="form"
+            (ngSubmit)="onSubmit()"
+    >
+        <div class="login-form">
 
-        <ct-form-field>
-          <ct-input
-            formControlName="username"
-            type="text"
-            placeholder="Введите логин"
-          >
-            <ct-icon
-              ctInputPrefix
-              name="user"
-            />
-          </ct-input>
-        </ct-form-field>
-      </div>
+            <div class="form-group company">
+                Компания
+                <ct-form-field>
+                    <ct-input
+                            formControlName="companyId"
+                            type="text"
+                            placeholder="Введите компанию"
+                    >
+                        <ct-icon
+                                ctInputPrefix
+                                name="building"
+                        />
+                    </ct-input>
+                </ct-form-field>
+            </div>
 
-      <div class="form-group password">
-        Пароль
+            <div class="form-group login">
+                Логин
 
-        <ct-form-field>
-          <ct-input
-            formControlName="password"
-            [type]="passwordVisible() ? 'text' : 'password'"
-            placeholder="Введите пароль"
-          >
-            <ct-icon
-              ctInputPrefix
-              name="lock"
-            />
+                <ct-form-field>
+                    <ct-input
+                            formControlName="username"
+                            type="text"
+                            placeholder="Введите логин"
+                    >
+                        <ct-icon
+                                ctInputPrefix
+                                name="user"
+                        />
+                    </ct-input>
+                </ct-form-field>
+            </div>
 
-            <ct-button
-              ctInputSuffix
-              type="button"
-              variant="ghost"
-              [disabled]="isLoading()"
-              (click)="toggleVisibility()"
-            >
-              <ct-icon
-                [name]="passwordEye()"
-              />
-            </ct-button>
-          </ct-input>
-        </ct-form-field>
-      </div>
-    </div>
+            <div class="form-group password">
+                Пароль
 
-    @if (loginError()) {
-      <span class="error">
+                <ct-form-field>
+                    <ct-input
+                            formControlName="password"
+                            [type]="passwordVisible() ? 'text' : 'password'"
+                            placeholder="Введите пароль"
+                    >
+                        <ct-icon
+                                ctInputPrefix
+                                name="lock"
+                        />
+
+                        <ct-button
+                                ctInputSuffix
+                                type="button"
+                                variant="ghost"
+                                [disabled]="isLoading()"
+                                (click)="toggleVisibility()"
+                        >
+                            <ct-icon
+                                    [name]="passwordEye()"
+                            />
+                        </ct-button>
+                    </ct-input>
+                </ct-form-field>
+            </div>
+        </div>
+
+        @if (loginError()) {
+            <span class="error">
         {{ loginError() }}
       </span>
-    }
+        }
 
-    <div class="form-actions">
-      <ct-button
-        size="full"
-        class="full-width"
-        variant="primary"
-        type="submit"
-        [disabled]="isLoading()"
-      >
+        <div class="form-actions">
+            <ct-button
+                    size="full"
+                    class="full-width"
+                    variant="primary"
+                    type="submit"
+                    [disabled]="isLoading()"
+            >
         <span class="action-btn-text">
           {{ isLoading() ? 'Входим...' : 'Войти' }}
         </span>
-      </ct-button>
-    </div>
-  </form>
+            </ct-button>
+        </div>
+    </form>
 </div>

@@ -1,0 +1,631 @@
+[1m[33mThe `@nx/webpack:webpack` executor is deprecated and will be removed in Nx v24. Run `nx g @nx/webpack:convert-to-inferred` to migrate to the `@nx/webpack/plugin` inferred targets. See https://nx.dev/docs/guides/tasks--caching/convert-to-inferred for details.[39m[22m
+asset main.js 454 KiB [compared for emit] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 243 KiB 65 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 201 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 198 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 8242 ms
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +33ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBatteryScheduleModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mArrivalsModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLocationsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCarsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +68ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCarsController {/cars}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/tasks, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/battery-check, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso/complete, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/issue, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mArrivalsController {/operations/arrivals}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/operations/arrivals, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +5ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mLocationsController {/locations}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id/deactivate, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId/deactivate, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18072  - [39m02.08.2026, 17:52:22 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +92ms[39m
+[1m[31m(node:18072) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[39m[22m
+asset main.js 455 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 243 KiB 65 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 4561 ms
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +37ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBatteryScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mArrivalsModule dependencies initialized[39m[38;5;3m +13ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLocationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCarsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +84ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCarsController {/cars}:[39m[38;5;3m +2ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/tasks, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/battery-check, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso/complete, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/issue, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mArrivalsController {/operations/arrivals}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/operations/arrivals, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mLocationsController {/locations}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id/deactivate, PATCH} route[39m[38;5;3m +6ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId/deactivate, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1164  - [39m02.08.2026, 19:35:15 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +107ms[39m
+asset main.js 455 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 243 KiB 65 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 1376 ms
+asset main.js 455 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 243 KiB 65 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 1077 ms
+asset main.js 455 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 243 KiB 65 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 1224 ms
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +102ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBatteryScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +4ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mArrivalsModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLocationsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCarsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:22 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+asset main.js 455 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 243 KiB 65 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 1125 ms
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +118ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCarsController {/cars}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/tasks, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/battery-check, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso/complete, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/issue, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mArrivalsController {/operations/arrivals}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/operations/arrivals, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mLocationsController {/locations}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id/deactivate, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId/deactivate, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 16324  - [39m02.08.2026, 19:36:23 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +165ms[39m
+asset main.js 455 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 243 KiB 65 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 1178 ms
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +59ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBatteryScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mArrivalsModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLocationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCarsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +93ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCarsController {/cars}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/tasks, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/battery-check, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso/complete, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/issue, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mArrivalsController {/operations/arrivals}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/operations/arrivals, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mLocationsController {/locations}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id/deactivate, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId/deactivate, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18476  - [39m02.08.2026, 19:36:27 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +162ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +43ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBatteryScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mArrivalsModule dependencies initialized[39m[38;5;3m +6ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLocationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCarsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +77ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCarsController {/cars}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/tasks, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/battery-check, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso/complete, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/issue, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mArrivalsController {/operations/arrivals}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/operations/arrivals, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mLocationsController {/locations}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id/deactivate, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId/deactivate, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6920  - [39m02.08.2026, 19:36:30 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +100ms[39m
+asset main.js 461 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 250 KiB 66 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 1051 ms
+asset main.js 475 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 263 KiB 70 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 964 ms
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:53 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +46ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBatteryScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +7ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mArrivalsModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLocationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCarsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +75ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCarsController {/cars}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/tasks, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/battery-check, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso/complete, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/issue, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mArrivalsController {/operations/arrivals}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/operations/arrivals, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mLocationsController {/locations}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id/deactivate, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId/deactivate, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/reset-password, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18768  - [39m02.08.2026, 19:36:54 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +101ms[39m
+asset main.js 475 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 263 KiB 70 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 1183 ms
+asset main.js 475 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 263 KiB 70 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+webpack 5.105.2 compiled successfully in 1047 ms
+asset main.js 475 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 263 KiB 70 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+
+ERROR in ./apps/backend/src/auth/token.service.ts:74:11
+[90mTS2741: [39mProperty 'mustChangePassword' is missing in type '{ sub: string; companyId: string; username: string; roles: UserRole[]; type: "access"; }' but required in type 'AccessTokenPayload'.
+  [0m [90m 72 |[39m     roles[33m:[39m [33mUserRole[39m[][33m;[39m
+   [90m 73 |[39m   })[33m:[39m [33mPromise[39m[33m<[39m[33mstring[39m[33m>[39m {
+  [31m[1m>[22m[39m[90m 74 |[39m     [36mconst[39m payload[33m:[39m [33mAccessTokenPayload[39m [33m=[39m {
+   [90m    |[39m           [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 75 |[39m       sub[33m:[39m user[33m.[39mid[33m,[39m
+   [90m 76 |[39m       companyId[33m:[39m user[33m.[39mcompanyId[33m,[39m
+   [90m 77 |[39m       username[33m:[39m user[33m.[39musername[33m,[39m[0m
+
+webpack 5.105.2 compiled with 1 error in 1030 ms
+[1m[31mBuild failed, waiting for changes to restart...[39m[22m
+asset main.js 475 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 263 KiB 70 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+
+ERROR in ./apps/backend/src/auth/token.service.ts:74:11
+[90mTS2741: [39mProperty 'mustChangePassword' is missing in type '{ sub: string; companyId: string; username: string; roles: UserRole[]; type: "access"; }' but required in type 'AccessTokenPayload'.
+  [0m [90m 72 |[39m     roles[33m:[39m [33mUserRole[39m[][33m;[39m
+   [90m 73 |[39m   })[33m:[39m [33mPromise[39m[33m<[39m[33mstring[39m[33m>[39m {
+  [31m[1m>[22m[39m[90m 74 |[39m     [36mconst[39m payload[33m:[39m [33mAccessTokenPayload[39m [33m=[39m {
+   [90m    |[39m           [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 75 |[39m       sub[33m:[39m user[33m.[39mid[33m,[39m
+   [90m 76 |[39m       companyId[33m:[39m user[33m.[39mcompanyId[33m,[39m
+   [90m 77 |[39m       username[33m:[39m user[33m.[39musername[33m,[39m[0m
+
+webpack 5.105.2 compiled with 1 error in 882 ms
+[1m[31mBuild failed, waiting for changes to restart...[39m[22m
+asset main.js 475 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 263 KiB 70 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+
+ERROR in ./apps/backend/src/auth/auth.service.ts:98:67
+[90mTS2345: [39mArgument of type '{ id: string; companyId: string; username: string; firstName: string; lastName: string; roles: UserRole[]; }' is not assignable to parameter of type '{ id: string; companyId: string; username: string; roles: UserRole[]; mustChangePassword: boolean; }'.
+  Property 'mustChangePassword' is missing in type '{ id: string; companyId: string; username: string; firstName: string; lastName: string; roles: UserRole[]; }' but required in type '{ id: string; companyId: string; username: string; roles: UserRole[]; mustChangePassword: boolean; }'.
+  [0m [90m  96 |[39m
+   [90m  97 |[39m     [36mconst[39m publicUser [33m=[39m [36mthis[39m[33m.[39mtoPublicUser(user)[33m;[39m
+  [31m[1m>[22m[39m[90m  98 |[39m     [36mconst[39m accessToken [33m=[39m [36mawait[39m [36mthis[39m[33m.[39mtokenService[33m.[39mcreateAccessToken(publicUser)[33m;[39m
+   [90m     |[39m                                                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m  99 |[39m
+   [90m 100 |[39m     [36mreturn[39m {
+   [90m 101 |[39m       accessToken[33m,[39m[0m
+
+ERROR in ./apps/backend/src/auth/auth.service.ts:171:67
+[90mTS2345: [39mArgument of type '{ id: string; companyId: string; username: string; firstName: string; lastName: string; roles: UserRole[]; }' is not assignable to parameter of type '{ id: string; companyId: string; username: string; roles: UserRole[]; mustChangePassword: boolean; }'.
+  Property 'mustChangePassword' is missing in type '{ id: string; companyId: string; username: string; firstName: string; lastName: string; roles: UserRole[]; }' but required in type '{ id: string; companyId: string; username: string; roles: UserRole[]; mustChangePassword: boolean; }'.
+  [0m [90m 169 |[39m
+   [90m 170 |[39m     [36mconst[39m publicUser [33m=[39m [36mthis[39m[33m.[39mtoPublicUser(session[33m.[39muser)[33m;[39m
+  [31m[1m>[22m[39m[90m 171 |[39m     [36mconst[39m accessToken [33m=[39m [36mawait[39m [36mthis[39m[33m.[39mtokenService[33m.[39mcreateAccessToken(publicUser)[33m;[39m
+   [90m     |[39m                                                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 172 |[39m
+   [90m 173 |[39m     [36mreturn[39m {
+   [90m 174 |[39m       accessToken[33m,[39m[0m
+
+webpack 5.105.2 compiled with 2 errors in 831 ms
+[1m[31mBuild failed, waiting for changes to restart...[39m[22m
+asset main.js 475 KiB [emitted] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 263 KiB 70 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 202 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 8 modules
+
+ERROR in ./apps/backend/src/auth/auth.service.ts:98:67
+[90mTS2345: [39mArgument of type '{ id: string; companyId: string; username: string; firstName: string; lastName: string; roles: UserRole[]; }' is not assignable to parameter of type '{ id: string; companyId: string; username: string; roles: UserRole[]; mustChangePassword: boolean; }'.
+  Property 'mustChangePassword' is missing in type '{ id: string; companyId: string; username: string; firstName: string; lastName: string; roles: UserRole[]; }' but required in type '{ id: string; companyId: string; username: string; roles: UserRole[]; mustChangePassword: boolean; }'.
+  [0m [90m  96 |[39m
+   [90m  97 |[39m     [36mconst[39m publicUser [33m=[39m [36mthis[39m[33m.[39mtoPublicUser(user)[33m;[39m
+  [31m[1m>[22m[39m[90m  98 |[39m     [36mconst[39m accessToken [33m=[39m [36mawait[39m [36mthis[39m[33m.[39mtokenService[33m.[39mcreateAccessToken(publicUser)[33m;[39m
+   [90m     |[39m                                                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m  99 |[39m
+   [90m 100 |[39m     [36mreturn[39m {
+   [90m 101 |[39m       accessToken[33m,[39m[0m
+
+ERROR in ./apps/backend/src/auth/auth.service.ts:171:67
+[90mTS2345: [39mArgument of type '{ id: string; companyId: string; username: string; firstName: string; lastName: string; roles: UserRole[]; }' is not assignable to parameter of type '{ id: string; companyId: string; username: string; roles: UserRole[]; mustChangePassword: boolean; }'.
+  Property 'mustChangePassword' is missing in type '{ id: string; companyId: string; username: string; firstName: string; lastName: string; roles: UserRole[]; }' but required in type '{ id: string; companyId: string; username: string; roles: UserRole[]; mustChangePassword: boolean; }'.
+  [0m [90m 169 |[39m
+   [90m 170 |[39m     [36mconst[39m publicUser [33m=[39m [36mthis[39m[33m.[39mtoPublicUser(session[33m.[39muser)[33m;[39m
+  [31m[1m>[22m[39m[90m 171 |[39m     [36mconst[39m accessToken [33m=[39m [36mawait[39m [36mthis[39m[33m.[39mtokenService[33m.[39mcreateAccessToken(publicUser)[33m;[39m
+   [90m     |[39m                                                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 172 |[39m
+   [90m 173 |[39m     [36mreturn[39m {
+   [90m 174 |[39m       accessToken[33m,[39m[0m
+
+webpack 5.105.2 compiled with 2 errors in 838 ms
+[1m[31mBuild failed, waiting for changes to restart...[39m[22m

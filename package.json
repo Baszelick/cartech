@@ -1,7 +1,24 @@
 {
   "scripts": {
+    "dev": "nx run-many -t serve -p backend,frontend --parallel=2",
     "serve:backend": "nx serve backend",
-    "build:backend": "nx build backend"
+    "serve:frontend": "nx serve frontend",
+    "build": "nx run-many -t build -p backend,frontend",
+    "build:backend": "nx build backend",
+    "build:frontend": "nx build frontend",
+    "test": "nx run-many -t test -p backend,frontend",
+    "test:backend": "nx test backend",
+    "test:frontend": "nx test frontend",
+    "lint": "nx run-many -t lint -p backend,frontend",
+    "lint:backend": "nx lint backend",
+    "lint:frontend": "nx lint frontend",
+    "prisma:generate": "prisma generate --config apps/backend/prisma.config.ts",
+    "prisma:validate": "prisma validate --config apps/backend/prisma.config.ts",
+    "prisma:migrate": "prisma migrate dev --config apps/backend/prisma.config.ts",
+    "prisma:deploy": "prisma migrate deploy --config apps/backend/prisma.config.ts",
+    "prisma:reset": "prisma migrate reset --config apps/backend/prisma.config.ts",
+    "prisma:studio": "prisma studio --config apps/backend/prisma.config.ts",
+    "seed": "prisma db seed --config apps/backend/prisma.config.ts"
   },
   "dependencies": {
     "@angular/animations": "20.3.27",

@@ -30,6 +30,12 @@ export class AuthUserResponseDto {
     description: 'Роли, назначенные через UserRoleAssignment.',
   })
   roles: UserRole[];
+
+  @ApiProperty({
+    example: false,
+    description: 'Требуется ли обязательная смена временного пароля.',
+  })
+  mustChangePassword: boolean;
 }
 
 export class AuthSessionResponseDto {

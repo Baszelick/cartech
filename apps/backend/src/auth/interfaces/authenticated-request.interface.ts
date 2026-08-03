@@ -6,6 +6,7 @@ export interface AuthenticatedUser {
   companyId: string;
   username: string;
   roles: UserRole[];
+  mustChangePassword: boolean;
 }
 
 export interface AuthenticatedRequest extends Request {

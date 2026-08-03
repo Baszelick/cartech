@@ -4,6 +4,8 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
+  Post,
   Put,
   Req,
   UseGuards,
@@ -13,6 +15,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
+  ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -36,6 +39,15 @@ import { UserLocationAccessService } from './user-location-access.service';
 import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
 import { UserRolesResponseDto } from './dto/user-roles-response.dto';
 import { UserRolesService } from './user-roles.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { ResetUserPasswordDto } from './dto/reset-user-password.dto';
+import {
+  PasswordResetResponseDto,
+  UserCreatedResponseDto,
+} from './dto/user-created-response.dto';
+import { UserPersonnelService } from './user-personnel.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { ActivateUserDto } from './dto/activate-user.dto';
 
 @ApiTags('Пользователи')
 @ApiBearerAuth()
@@ -47,7 +59,150 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly userLocationAccessService: UserLocationAccessService,
     private readonly userRolesService: UserRolesService,
+    private readonly userPersonnelService: UserPersonnelService,
   ) {}
+
+  @Post()
+  @ApiOperation({
+    summary: 'Создать сотрудника',
+    description:
+      'SYSTEM_OWNER создаёт пользователя с любыми ролями; OPERATIONS_MANAGER — только с единственной ролью TECHNICIAN. Требуется минимум одна активная локация текущей компании. Временный пароль не возвращается.',
+  })
+  @ApiBody({ type: CreateUserDto })
+  @ApiCreatedResponse({
+    description: 'Сотрудник создан и обязан сменить временный пароль.',
+    type: UserCreatedResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Некорректные поля, пароль, роли, дубликаты или недоступные локации.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Требуется аутентификация.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'Роль администратора не разрешает запрошенный набор ролей.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiConflictResponse({
+    description: 'Username уже занят в текущей компании.',
+    type: HttpErrorResponseDto,
+  })
+  create(
+    @Body() dto: CreateUserDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.userPersonnelService.create(dto, request.user);
+  }
+
+  @Post(':id/reset-password')
+  @ApiOperation({
+    summary: 'Сбросить пароль сотрудника',
+    description:
+      'Устанавливает новый временный пароль, включает обязательную смену и удаляет refresh-сессии. SYSTEM_OWNER может сбросить пароль любому другому активному пользователю своей компании; OPERATIONS_MANAGER — только single-role TECHNICIAN.',
+  })
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+    description: 'Идентификатор пользователя.',
+  })
+  @ApiBody({ type: ResetUserPasswordDto })
+  @ApiOkResponse({
+    description: 'Временный пароль установлен, сессии удалены.',
+    type: PasswordResetResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Некорректный UUID/пароль или пользователь неактивен.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Требуется аутентификация.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'Запрещён self-reset или сброс для ролей пользователя.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Пользователь отсутствует или принадлежит другой компании.',
+    type: HttpErrorResponseDto,
+  })
+  resetPassword(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ResetUserPasswordDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.userPersonnelService.resetPassword(id, dto, request.user);
+  }
+
+  @Patch(':id')
+  @ApiOperation({
+    summary: 'Изменить данные сотрудника',
+    description:
+      'Изменяет только username, имя и фамилию. SYSTEM_OWNER управляет любым пользователем компании; OPERATIONS_MANAGER — только single-role TECHNICIAN с общей локацией.',
+  })
+  @ApiParam({ name: 'id', format: 'uuid' })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiOkResponse({ type: UserDetailsResponseDto })
+  @ApiBadRequestResponse({ type: HttpErrorResponseDto })
+  @ApiUnauthorizedResponse({ type: HttpErrorResponseDto })
+  @ApiForbiddenResponse({ type: HttpErrorResponseDto })
+  @ApiNotFoundResponse({ type: HttpErrorResponseDto })
+  @ApiConflictResponse({
+    description: 'Username уже занят в текущей компании.',
+    type: HttpErrorResponseDto,
+  })
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateUserDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.userPersonnelService.update(id, dto, request.user);
+  }
+
+  @Patch(':id/deactivate')
+  @ApiOperation({
+    summary: 'Деактивировать сотрудника',
+    description:
+      'Отключает login/refresh и удаляет AuthSession, сохраняя роли, локации и историю. Self-deactivate и деактивация последнего активного SYSTEM_OWNER запрещены.',
+  })
+  @ApiParam({ name: 'id', format: 'uuid' })
+  @ApiOkResponse({ type: UserDetailsResponseDto })
+  @ApiBadRequestResponse({ type: HttpErrorResponseDto })
+  @ApiUnauthorizedResponse({ type: HttpErrorResponseDto })
+  @ApiForbiddenResponse({ type: HttpErrorResponseDto })
+  @ApiNotFoundResponse({ type: HttpErrorResponseDto })
+  @ApiConflictResponse({ type: HttpErrorResponseDto })
+  deactivate(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.userPersonnelService.deactivate(id, request.user);
+  }
+
+  @Patch(':id/activate')
+  @ApiOperation({
+    summary: 'Активировать сотрудника',
+    description:
+      'Активирует пользователя с новым временным паролем, включает mustChangePassword и удаляет старые AuthSession.',
+  })
+  @ApiParam({ name: 'id', format: 'uuid' })
+  @ApiBody({ type: ActivateUserDto })
+  @ApiOkResponse({ type: UserDetailsResponseDto })
+  @ApiBadRequestResponse({ type: HttpErrorResponseDto })
+  @ApiUnauthorizedResponse({ type: HttpErrorResponseDto })
+  @ApiForbiddenResponse({ type: HttpErrorResponseDto })
+  @ApiNotFoundResponse({ type: HttpErrorResponseDto })
+  @ApiConflictResponse({ type: HttpErrorResponseDto })
+  activate(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ActivateUserDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.userPersonnelService.activate(id, dto, request.user);
+  }
 
   @Get()
   @ApiOperation({
@@ -119,7 +274,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Заменить доступы пользователя к локациям',
     description:
-      'Доступно ролям SYSTEM_OWNER и OPERATIONS_MANAGER. Полностью заменяет набор доступов локациями текущей компании. SYSTEM_OWNER может менять собственные доступы; OPERATIONS_MANAGER — только доступы других пользователей. Дубликаты UUID отклоняются.',
+      'SYSTEM_OWNER полностью заменяет набор. OPERATIONS_MANAGER управляет только активными локациями собственного scope у single-role TECHNICIAN с общей локацией; назначения вне manager scope сохраняются. Активный пользователь не может остаться без локаций.',
   })
   @ApiParam({
     name: 'id',
@@ -134,7 +289,7 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description:
-      'Некорректный UUID, дубликаты locationIds или недоступная компании локация.',
+      'Некорректный UUID, дубликаты, неактивная/недоступная локация или пустой итоговый набор активного пользователя.',
     type: HttpErrorResponseDto,
   })
   @ApiUnauthorizedResponse({

@@ -1335,7 +1335,176 @@ Blockers:
 
 ---
 
+### 2026-08-02 — Developer Experience: Prisma scripts и login smoke
+
+Статус: `[-]` Инфраструктура Prisma и backend auth подтверждены; frontend login заблокирован рассинхронизацией контракта.
+
+- [x] Добавлены корневые Prisma scripts для generate, validate, migrate, deploy, reset, studio и seed.
+- [x] Prisma config загружает локальный `apps/backend/.env` при запуске команд из корня.
+- [x] Seed дважды выполнен успешно и подтверждён как идемпотентный.
+- [x] В реальной БД подтверждены Company, admin, SYSTEM_OWNER, Location, Site и UserLocationAccess.
+- [x] Backend login, `/auth/me`, refresh-cookie, refresh и logout подтверждены реальными HTTP-запросами.
+- [ ] Согласовать frontend login с обязательным backend-полем `companyId`: текущая форма отправляет только `username` и `password`.
+- [ ] После согласования повторить UI smoke: переход после login, F5 и logout.
+
+Completed:
+
+- Prisma CLI и seed workflow готовы для ежедневной разработки.
+- Backend auth smoke пройден.
+
+Changed:
+
+- `package.json`
+- `apps/backend/prisma.config.ts`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- `npm run seed` — два последовательных запуска passed.
+- Backend login — HTTP 200; `/auth/me` — HTTP 200; refresh — HTTP 200; logout — HTTP 204.
+
+Notes:
+
+- Refresh cookie устанавливается как HttpOnly с путём `/auth` и удаляется при logout.
+
+Blockers:
+
+- Frontend login request не содержит обязательный `companyId`; backend через frontend proxy возвращает HTTP 400 `companyId must be a UUID`.
+
+---
+
+### 2026-08-02 — Frontend session restoration
+
+Статус: `[x]`
+
+- [x] Установлена причина потери сессии после F5: dev-proxy удалял `/api` из request path, но не переписывал backend cookie path `/auth`.
+- [x] Dev-proxy переписывает refresh-cookie path `/auth` в `/api/auth`.
+- [x] `provideAppInitializer` возвращает ожидаемый Angular `Promise` и завершает refresh → me до первого guard.
+- [x] Действующая refresh-сессия восстанавливает access token и текущего пользователя.
+- [x] Refresh 401 не ломает bootstrap и оставляет гостевое состояние.
+- [x] Auth и guest guards используют восстановленное состояние и не запускают собственный refresh.
+- [x] Logout удаляет cookie; следующий bootstrap refresh получает 401.
+
+Completed:
+
+- Session restoration после перезагрузки подтверждён unit-тестами и реальными HTTP-запросами через frontend proxy.
+
+Changed:
+
+- `apps/frontend/proxy.conf.json`
+- `apps/frontend/src/app/app.config.ts`
+- `apps/frontend/src/app/app.config.spec.ts`
+- `apps/frontend/project.json`
+- `apps/frontend/tsconfig.spec.json`
+- `libs/auth/data-access/**`
+- `docs/AI_TASKS.md`
+- `docs/ROADMAP.md`
+
+Tests:
+
+- Frontend/Auth lint — passed.
+- Frontend Karma/ChromeHeadless — 8/8 passed.
+- Frontend production build — passed.
+- Live proxy flow: login 200, refresh 200, me 200, logout 204, refresh после logout 401.
+
+Blockers:
+
+- Нет.
+
+---
+
+### 2026-08-02 — Personnel creation и temporary password workflow
+
+Статус: `[x]`
+
+- [x] Добавлены `User.mustChangePassword` и отдельная additive migration.
+- [x] Реализован транзакционный `POST /users` с role/location policy.
+- [x] Реализован `POST /users/:id/reset-password` с удалением AuthSession.
+- [x] Реализован `POST /auth/change-initial-password` с новой refresh-сессией.
+- [x] Forced-access policy централизован в JWT guard и возвращает `PASSWORD_CHANGE_REQUIRED`.
+- [x] Auth/read DTO, JWT context и Swagger актуализированы.
+- [x] Seed SYSTEM_OWNER явно получает `mustChangePassword=false`.
+- [x] Prisma deploy, seed, 212 backend tests, build и live smoke-flow прошли.
+
+Completed:
+
+- Полный backend workflow создания сотрудника, обязательной смены и административного reset готов.
+
+Tests:
+
+- Backend Jest: 31 suite, 212 tests passed.
+- Backend build — passed.
+- Live: create 201, forced API 403, change 200, обычный API 200, reset 200, старая refresh-сессия 401.
+
+Blockers:
+
+- Нет.
+
+---
+
+### 2026-08-02 — Personnel creation и temporary password workflow
+
+Статус: `[x]`
+
+- [x] Добавлены `User.mustChangePassword` и отдельная additive migration.
+- [x] Реализован транзакционный `POST /users` с role/location policy.
+- [x] Реализован `POST /users/:id/reset-password` с удалением AuthSession.
+- [x] Реализован `POST /auth/change-initial-password` с новой refresh-сессией.
+- [x] Forced-access policy централизован в JWT guard и возвращает `PASSWORD_CHANGE_REQUIRED`.
+- [x] Auth/read DTO, JWT context и Swagger актуализированы.
+- [x] Seed SYSTEM_OWNER явно получает `mustChangePassword=false`.
+- [x] Prisma deploy, seed, 202 backend tests, build и live smoke-flow прошли.
+
+Completed:
+
+- Полный backend workflow создания сотрудника, обязательной смены и административного reset готов.
+
+Tests:
+
+- Backend Jest: 30 suites, 202 tests passed.
+- Backend build — passed.
+- Live: create 201, forced API 403, change 200, обычный API 200, reset 200, старая refresh-сессия 401.
+
+Blockers:
+
+- Нет.
+
+---
+
+### 2026-08-02 — Personnel lifecycle и manager location scope
+
+Статус: `[x]`
+
+- [x] Реализованы `PATCH /users/:id`, `/deactivate` и `/activate`.
+- [x] Username/name validation и company-scoped conflict подтверждены.
+- [x] Self-deactivate и последний активный SYSTEM_OWNER защищены.
+- [x] Deactivate/activate удаляют AuthSession; activate задаёт новый temporary password и `mustChangePassword=true`.
+- [x] OPERATIONS_MANAGER управляет только single-role TECHNICIAN с общей Location.
+- [x] Manager PUT location-access заменяет только собственный scope и сохраняет внешние назначения.
+- [x] Активный пользователь не может остаться без Location; назначаются только активные Location.
+- [x] Swagger, 31 suite/220 tests, build и live smoke-flow прошли.
+
+Blockers:
+
+- Нет.
+
+---
+
 ## Правило обновления документа
+
+### 2026-08-02 — Frontend feature libraries
+
+Статус: `[x]`
+
+- [x] Dashboard Home, Cars list, Arrival и Tasks вынесены из `apps/frontend` в domain-oriented Nx libraries.
+- [x] `apps/frontend` оставлен composition root и подключает features через public API aliases.
+- [x] Для новых библиотек добавлены самостоятельные lint и Karma test targets.
+- [x] Nx graph, lint, component tests и production build подтверждены.
+
+Blockers:
+
+- Нет.
 
 После выполнения каждой задачи агент обязан:
 

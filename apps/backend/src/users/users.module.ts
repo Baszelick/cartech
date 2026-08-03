@@ -4,10 +4,16 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UserLocationAccessService } from './user-location-access.service';
 import { UserRolesService } from './user-roles.service';
+import { UserPersonnelService } from './user-personnel.service';
 
 @Module({
   imports: [AuthModule],
   controllers: [UsersController],
-  providers: [UsersService, UserLocationAccessService, UserRolesService],
+  providers: [
+    UsersService,
+    UserLocationAccessService,
+    UserRolesService,
+    UserPersonnelService,
+  ],
 })
 export class UsersModule {}

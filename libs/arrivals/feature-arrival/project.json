@@ -1,0 +1,21 @@
+{
+  "name": "arrivals-feature-arrival",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/arrivals/feature-arrival/src",
+  "prefix": "ct",
+  "projectType": "library",
+  "tags": ["scope:arrivals", "type:feature"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "polyfills": ["zone.js", "zone.js/testing"],
+        "tsConfig": "libs/arrivals/feature-arrival/tsconfig.spec.json",
+        "inlineStyleLanguage": "scss"
+      }
+    }
+  }
+}

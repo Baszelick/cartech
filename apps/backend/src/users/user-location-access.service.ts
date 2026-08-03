@@ -58,30 +58,73 @@ export class UserLocationAccessService {
     return this.prisma.$transaction(async (tx) => {
       const targetUser = await tx.user.findFirst({
         where: { id: targetUserId, companyId: actor.companyId },
-        select: { id: true },
+        select: {
+          id: true,
+          isActive: true,
+          roles: { select: { role: true } },
+          locationAccesses: { select: { locationId: true } },
+        },
       });
 
       if (!targetUser) throw new NotFoundException('User not found');
 
-      const locations = dto.locationIds.length
+      const isOwner = actor.roles.includes(UserRole.SYSTEM_OWNER);
+      const managerScopeIds = isOwner
+        ? []
+        : await this.validateManagerScope(tx, targetUser, actor);
+      const allowedLocations = dto.locationIds.length
         ? await tx.location.findMany({
             where: {
               companyId: actor.companyId,
-              id: { in: dto.locationIds },
+              isActive: true,
+              id: {
+                in: isOwner
+                  ? dto.locationIds
+                  : dto.locationIds.filter((id) =>
+                      managerScopeIds.includes(id),
+                    ),
+              },
             },
             select: { id: true },
           })
         : [];
 
-      if (locations.length !== dto.locationIds.length) {
+      if (allowedLocations.length !== dto.locationIds.length) {
         throw new BadRequestException(
-          'One or more locations are invalid for this company',
+          'One or more locations are unavailable',
         );
       }
 
-      await tx.userLocationAccess.deleteMany({
-        where: { userId: targetUser.id },
-      });
+      const existingIds = targetUser.locationAccesses.map(
+        ({ locationId }) => locationId,
+      );
+      const finalIds = isOwner
+        ? [...dto.locationIds]
+        : [
+            ...existingIds.filter(
+              (locationId) => !managerScopeIds.includes(locationId),
+            ),
+            ...dto.locationIds,
+          ];
+
+      if (targetUser.isActive && finalIds.length === 0) {
+        throw new BadRequestException(
+          'An active user must have at least one location',
+        );
+      }
+
+      if (isOwner) {
+        await tx.userLocationAccess.deleteMany({
+          where: { userId: targetUser.id },
+        });
+      } else {
+        await tx.userLocationAccess.deleteMany({
+          where: {
+            userId: targetUser.id,
+            locationId: { in: managerScopeIds },
+          },
+        });
+      }
 
       if (dto.locationIds.length) {
         await tx.userLocationAccess.createMany({
@@ -103,6 +146,43 @@ export class UserLocationAccessService {
 
       return this.toResponse(targetUser.id, assignedLocations);
     });
+  }
+
+  private async validateManagerScope(
+    tx: any,
+    targetUser: {
+      id: string;
+      roles: Array<{ role: UserRole }>;
+      locationAccesses: Array<{ locationId: string }>;
+    },
+    actor: AuthenticatedUser,
+  ): Promise<string[]> {
+    const targetRoles = targetUser.roles.map(({ role }) => role);
+    if (
+      targetRoles.length !== 1 ||
+      targetRoles[0] !== UserRole.TECHNICIAN
+    ) {
+      throw new ForbiddenException(
+        'Operations manager can manage only a single-role technician',
+      );
+    }
+    const managerAccesses = await tx.userLocationAccess.findMany({
+      where: { userId: actor.userId },
+      select: { locationId: true },
+    });
+    const managerIds = managerAccesses.map(
+      ({ locationId }: { locationId: string }) => locationId,
+    );
+    if (
+      !targetUser.locationAccesses.some(({ locationId }) =>
+        managerIds.includes(locationId),
+      )
+    ) {
+      throw new ForbiddenException(
+        'Operations manager has no shared location with this technician',
+      );
+    }
+    return managerIds;
   }
 
   private validateDuplicates(locationIds: string[]): void {

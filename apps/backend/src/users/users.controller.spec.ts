@@ -10,6 +10,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UserLocationAccessService } from './user-location-access.service';
 import { UserRolesService } from './user-roles.service';
+import { UserPersonnelService } from './user-personnel.service';
 
 describe('UsersController', () => {
   const usersService = {
@@ -24,12 +25,20 @@ describe('UsersController', () => {
     getForUser: jest.fn(),
     replaceForUser: jest.fn(),
   };
+  const userPersonnelService = {
+    create: jest.fn(),
+    resetPassword: jest.fn(),
+    update: jest.fn(),
+    deactivate: jest.fn(),
+    activate: jest.fn(),
+  };
   const request = {
     user: {
       userId: 'manager-id',
       companyId: 'company-id',
       username: 'manager',
       roles: [UserRole.OPERATIONS_MANAGER],
+      mustChangePassword: false,
     },
   } as AuthenticatedRequest;
   let controller: UsersController;
@@ -45,6 +54,7 @@ describe('UsersController', () => {
           useValue: userLocationAccessService,
         },
         { provide: UserRolesService, useValue: userRolesService },
+        { provide: UserPersonnelService, useValue: userPersonnelService },
       ],
     }).compile();
     controller = module.get(UsersController);
@@ -133,6 +143,74 @@ describe('UsersController', () => {
     expect(userRolesService.replaceForUser).toHaveBeenCalledWith(
       'user-id',
       dto,
+      request.user,
+    );
+  });
+
+  it('passes create DTO and JWT context to personnel service', async () => {
+    const dto = {
+      username: 'tech',
+      firstName: 'Иван',
+      lastName: 'Петров',
+      temporaryPassword: 'Tech2026',
+      roles: [UserRole.TECHNICIAN],
+      locationIds: ['location-id'],
+    };
+    userPersonnelService.create.mockResolvedValue({ id: 'user-id' });
+
+    await controller.create(dto, request);
+
+    expect(userPersonnelService.create).toHaveBeenCalledWith(
+      dto,
+      request.user,
+    );
+  });
+
+  it('passes reset DTO, UUID and JWT context to personnel service', async () => {
+    const dto = { temporaryPassword: 'Tech2026' };
+    userPersonnelService.resetPassword.mockResolvedValue({
+      userId: 'user-id',
+      mustChangePassword: true,
+    });
+
+    await controller.resetPassword('user-id', dto, request);
+
+    expect(userPersonnelService.resetPassword).toHaveBeenCalledWith(
+      'user-id',
+      dto,
+      request.user,
+    );
+  });
+
+  it('passes lifecycle operations to personnel service', async () => {
+    userPersonnelService.update.mockResolvedValue({ id: 'user-id' });
+    userPersonnelService.deactivate.mockResolvedValue({ id: 'user-id' });
+    userPersonnelService.activate.mockResolvedValue({ id: 'user-id' });
+
+    await controller.update(
+      'user-id',
+      { firstName: 'Иван' },
+      request,
+    );
+    await controller.deactivate('user-id', request);
+    await controller.activate(
+      'user-id',
+      { temporaryPassword: 'Active2026' },
+      request,
+    );
+
+    expect(userPersonnelService.update).toHaveBeenCalledWith(
+      'user-id',
+      { firstName: 'Иван' },
+      request.user,
+    );
+    expect(userPersonnelService.deactivate).toHaveBeenCalledWith(
+      'user-id',
+      request.user,
+    );
+    expect(userPersonnelService.activate).toHaveBeenCalledWith(
+      'user-id',
+      { temporaryPassword: 'Active2026' },
       request.user,
     );
   });

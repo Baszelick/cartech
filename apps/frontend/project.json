@@ -60,6 +60,8 @@
     "serve": {
       "executor": "@nx/angular:dev-server",
       "options": {
+        "host": "127.0.0.1",
+        "port": 4200,
         "proxyConfig": "apps/frontend/proxy.conf.json"
       },
       "configurations": {
@@ -78,6 +80,9 @@
         "polyfills": ["zone.js", "zone.js/testing"],
         "tsConfig": "apps/frontend/tsconfig.spec.json",
         "inlineStyleLanguage": "scss",
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/frontend/src/styles"]
+        },
         "assets": [
           {
             "glob": "**/*",

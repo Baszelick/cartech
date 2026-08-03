@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { TokenService } from './token.service';
@@ -12,6 +16,7 @@ export const publicUserSelect = {
   username: true,
   firstName: true,
   lastName: true,
+  mustChangePassword: true,
   roles: {
     select: {
       role: true,
@@ -25,6 +30,7 @@ interface PublicUserSource {
   username: string;
   firstName: string;
   lastName: string;
+  mustChangePassword: boolean;
   roles: Array<{ role: UserRole }>;
 }
 
@@ -206,6 +212,72 @@ export class AuthService {
     return this.toPublicUser(user);
   }
 
+  async changeInitialPassword(userId: string, newPassword: string) {
+    return this.prisma.$transaction(
+      async (tx) => {
+        const user = await tx.user.findUnique({
+          where: { id: userId },
+          include: {
+            roles: { select: { role: true } },
+          },
+        });
+        if (!user || !user.isActive) {
+          throw new UnauthorizedException('User is inactive or unavailable');
+        }
+        if (!user.mustChangePassword) {
+          throw new BadRequestException(
+            'Initial password change is not required',
+          );
+        }
+        if (await bcrypt.compare(newPassword, user.passwordHash)) {
+          throw new BadRequestException(
+            'New password must differ from the temporary password',
+          );
+        }
+
+        const passwordHash = await bcrypt.hash(newPassword, 10);
+        const updatedUser = await tx.user.update({
+          where: { id: user.id },
+          data: { passwordHash, mustChangePassword: false },
+          include: {
+            roles: { select: { role: true } },
+          },
+        });
+        await tx.authSession.deleteMany({ where: { userId: user.id } });
+
+        const session = await tx.authSession.create({
+          data: {
+            userId: user.id,
+            refreshTokenHash: 'placeholder',
+            expiresAt: new Date(
+              Date.now() + this.tokenService.refreshExpiresInMs,
+            ),
+          },
+        });
+        const refreshToken = await this.tokenService.createRefreshToken(
+          user.id,
+          session.id,
+        );
+        await tx.authSession.update({
+          where: { id: session.id },
+          data: {
+            refreshTokenHash: await bcrypt.hash(refreshToken, 10),
+          },
+        });
+
+        const publicUser = this.toPublicUser(updatedUser);
+        return {
+          accessToken:
+            await this.tokenService.createAccessToken(publicUser),
+          refreshToken,
+          refreshCookieName: this.refreshCookieName,
+          user: publicUser,
+        };
+      },
+      { isolationLevel: 'Serializable' },
+    );
+  }
+
   private toPublicUser(user: PublicUserSource) {
     return {
       id: user.id,
@@ -214,6 +286,7 @@ export class AuthService {
       firstName: user.firstName,
       lastName: user.lastName,
       roles: user.roles.map(({ role }) => role),
+      mustChangePassword: user.mustChangePassword,
     };
   }
 }

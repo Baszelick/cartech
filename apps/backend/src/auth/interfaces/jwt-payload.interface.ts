@@ -5,6 +5,7 @@ export interface AccessTokenPayload {
   companyId: string;
   username: string;
   roles: UserRole[];
+  mustChangePassword: boolean;
   type: 'access';
 }
 

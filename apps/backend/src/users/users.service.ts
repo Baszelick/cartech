@@ -10,6 +10,7 @@ const USER_SELECT = {
   firstName: true,
   lastName: true,
   isActive: true,
+  mustChangePassword: true,
   roles: {
     orderBy: { role: 'asc' as const },
     select: { role: true },
@@ -22,6 +23,7 @@ type UserRecord = {
   firstName: string;
   lastName: string;
   isActive: boolean;
+  mustChangePassword: boolean;
   roles: Array<{ role: UserRole }>;
 };
 
@@ -64,6 +66,7 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
       isActive: user.isActive,
+      mustChangePassword: user.mustChangePassword,
       roles: user.roles.map(({ role }) => role),
     };
   }

@@ -70,12 +70,14 @@ export class TokenService {
     companyId: string;
     username: string;
     roles: UserRole[];
+    mustChangePassword: boolean;
   }): Promise<string> {
     const payload: AccessTokenPayload = {
       sub: user.id,
       companyId: user.companyId,
       username: user.username,
       roles: user.roles,
+      mustChangePassword: user.mustChangePassword,
       type: 'access',
     };
 
