@@ -24,7 +24,7 @@ export const NAVIGATION: NavigationItem[] = [
   },
   {
     label: 'Администрирование',
-    icon: 'arrival',
+    icon: 'shield',
     route: '/user',
     roles: [UserRole.SYSTEM_OWNER, UserRole.OPERATIONS_MANAGER]
   },

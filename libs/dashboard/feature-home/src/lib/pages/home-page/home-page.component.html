@@ -1,1 +1,7 @@
 <p>home-page works!</p>
+
+<ct-tabs
+  [items]="locations"
+  [selected]="selectedLocation()"
+  (selectedChange)="selectedLocation.set($event)"
+></ct-tabs>

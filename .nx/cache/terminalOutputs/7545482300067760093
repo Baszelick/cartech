@@ -1,0 +1,87 @@
+[1m[33mThe `@nx/webpack:webpack` executor is deprecated and will be removed in Nx v24. Run `nx g @nx/webpack:convert-to-inferred` to migrate to the `@nx/webpack/plugin` inferred targets. See https://nx.dev/docs/guides/tasks--caching/convert-to-inferred for details.[39m[22m
+asset main.js 512 KiB [compared for emit] [big] (name: main) 1 related asset
+runtime modules 1.8 KiB 4 modules
+modules by path ./apps/backend/src/ 299 KiB 78 modules
+modules by path external "@nestjs/ 252 bytes
+  external "@nestjs/core" 42 bytes [built] [code generated]
+  external "@nestjs/common" 42 bytes [built] [code generated]
+  + 4 modules
+modules by path ./apps/backend/generated/prisma/ 203 KiB
+  modules by path ./apps/backend/generated/prisma/*.ts 3.67 KiB 2 modules
+  modules by path ./apps/backend/generated/prisma/internal/*.ts 199 KiB 2 modules
+modules by path external "@prisma/ 168 bytes
+  modules by path external "@prisma/client/runtime/*.mjs" 84 bytes 2 modules
+  external "@prisma/adapter-pg" 42 bytes [built] [code generated]
+  external "@prisma/client/runtime/client" 42 bytes [built] [code generated]
++ 9 modules
+webpack 5.105.2 compiled successfully in 15077 ms
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:24 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +71ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBatteryScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mArrivalsModule dependencies initialized[39m[38;5;3m +5ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLocationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCompanyModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCarsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +140ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +18ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCarsController {/cars}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/tasks, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/battery-check, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/pso/complete, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id/issue, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, PATCH} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/cars/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mArrivalsController {/operations/arrivals}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/operations/arrivals, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/change-initial-password, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mLocationsController {/locations}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id/deactivate, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:id, PATCH} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId/deactivate, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites/:siteId, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/locations/:locationId/sites, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/reset-password, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/deactivate, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/activate, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/location-access, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id/roles, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCompanyController {/company}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/company/me, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 4276  - [39m04.08.2026, 11:21:25 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +341ms[39m
+[1m[31m(node:4276) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[39m[22m

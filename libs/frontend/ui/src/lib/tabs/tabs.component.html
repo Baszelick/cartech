@@ -1,0 +1,21 @@
+<div
+  class="tabs"
+  role="tablist"
+>
+  @for (item of items(); track item.value) {
+    <button
+      class="tab"
+      role="tab"
+      type="button"
+      [class.tab-active]="item.value === selected()"
+      [disabled]="item.disabled"
+      [attr.aria-selected]="item.value === selected()"
+      (click)="selectTab(item)"
+    >
+      <span class="tab-label">{{ item.label }}</span>
+      @if (item.count !== undefined) {
+        <span class="tab-count">{{ item.count }}</span>
+      }
+    </button>
+  }
+</div>

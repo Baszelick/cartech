@@ -6,18 +6,11 @@ export const ICON_PATHS: Record<IconName, string> = {
   sidebar: '/icons/sidebar.svg',
   arrival: '/icons/arrival.svg',
 
-  battery: '/icons/battery.svg',
   car: '/icons/car.svg',
 
   search: '/icons/search.svg',
   user: '/icons/user.svg',
-  settings: '/icons/settings.svg',
 
-  warning: '/icons/warning.svg',
-  critical: '/icons/critical.svg',
-
-  issue: '/icons/issue.svg',
-  pso: '/icons/pso.svg',
   chevron: '/icons/chevron.svg',
   check: '/icons/check.svg',
   calendar: '/icons/calendar.svg',
@@ -25,4 +18,9 @@ export const ICON_PATHS: Record<IconName, string> = {
   eye: '/icons/eye.svg',
   eyeOff: '/icons/eye-off.svg',
   building: '/icons/building.svg',
+  shield: '/icons/shield.svg',
+  mapPin: '/icons/map-pin.svg',
+  userPlus: '/icons/user-plus.svg',
+  users: '/icons/users.svg',
+  cartechLogo: '/icons/cartech-logo.svg',
 };

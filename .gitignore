@@ -47,3 +47,6 @@ pids/
 # Prisma
 prisma/*.db
 prisma/*.db-journal
+.angular
+
+.nx/

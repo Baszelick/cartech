@@ -45,6 +45,12 @@ export const routes: Routes = [
           import('@cartech/arrivals/feature-arrival')
             .then(c => c.ArrivalPageComponent),
       },
+      {
+        path: 'admin',
+        loadComponent: () =>
+          import('@feature-admin')
+            .then(c => c.AdminPage)
+      }
     ],
   },
   {

@@ -1,0 +1,30 @@
+[33m>[39m Building...
+[32m√[39m Building...
+[37m[1mInitial chunk files[22m  [2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-AOC6KB5E.js[37m    [2m | [22m[2m-[22m            [2m | [22m[36m144.35 kB[37m[2m | [22m               [36m42.77 kB[37m
+[32mchunk-FLSV3XGE.js[37m    [2m | [22m[2m-[22m            [2m | [22m[36m103.75 kB[37m[2m | [22m               [36m26.61 kB[37m
+[32mpolyfills-5CFQRCPP.js[37m[2m | [22m[2mpolyfills[22m    [2m | [22m [36m34.59 kB[37m[2m | [22m               [36m11.33 kB[37m
+[32mchunk-QKAHWFKZ.js[37m    [2m | [22m[2m-[22m            [2m | [22m  [36m5.67 kB[37m[2m | [22m                [36m1.62 kB[37m
+[32mstyles-7T2NWVQO.css[37m  [2m | [22m[2mstyles[22m       [2m | [22m  [36m4.49 kB[37m[2m | [22m                [36m1.04 kB[37m
+[32mmain-XUESOBA6.js[37m     [2m | [22m[2mmain[22m         [2m | [22m  [36m1.26 kB[37m[2m | [22m              [36m558 bytes[37m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m[2m | [22m[1m294.10 kB[22m[2m | [22m               [1m83.94 kB[22m
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-FJCGEYPB.js[37m    [2m | [22m[2m-[22m            [2m | [22m[36m189.00 kB[37m[2m | [22m               [36m44.52 kB[37m
+[32mchunk-7LPY2OFK.js[37m    [2m | [22m[2mindex[22m        [2m | [22m [36m12.55 kB[37m[2m | [22m                [36m2.98 kB[37m
+[32mchunk-WGX4TG5C.js[37m    [2m | [22m[2mindex[22m        [2m | [22m  [36m6.68 kB[37m[2m | [22m                [36m2.12 kB[37m
+[32mchunk-MU3I6JRU.js[37m    [2m | [22m[2mindex[22m        [2m | [22m[36m823 bytes[37m[2m | [22m              [36m823 bytes[37m
+[32mchunk-7AGP3QXM.js[37m    [2m | [22m[2mindex[22m        [2m | [22m[36m383 bytes[37m[2m | [22m              [36m383 bytes[37m
+[32mchunk-W7EFTV5C[39m[37m.js[39m    [2m | [22m[2mindex[22m        [2m | [22m[36m338 bytes[37m[2m | [22m              [36m338 bytes[37m
+[32mchunk-JKOVGY5V.js[37m    [2m | [22m[2mindex[22m        [2m | [22m[36m335 bytes[37m[2m | [22m              [36m335 bytes[37m
+
+Application bundle generation complete. [13.441 seconds] - 2026-08-04T14:35:16.751Z
+[39m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mTypeScript compiler option 'isolatedModules' may prevent the 'emitDecoratorMetadata' option from emitting all metadata.[0m [1m[35m[plugin angular-compiler][0m
+
+  The 'emitDecoratorMetadata' option is not required by Angularand can be removed if not explictly required by the project.
+
+[39m[22m
+[37mOutput location: C:\Users\IvanT\carTech\dist\apps\frontend
+[39m
