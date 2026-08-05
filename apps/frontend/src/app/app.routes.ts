@@ -48,7 +48,7 @@ export const routes: Routes = [
       {
         path: 'admin',
         loadComponent: () =>
-          import('@feature-admin')
+          import('@cartech/admin/feature-admin')
             .then(c => c.AdminPage)
       }
     ],

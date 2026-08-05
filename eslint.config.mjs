@@ -34,6 +34,26 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:cars',
+              onlyDependOnLibsWithTags: ['scope:cars', 'scope:shared'],
+            },
+            {
+              sourceTag: 'scope:arrivals',
+              onlyDependOnLibsWithTags: ['scope:arrivals', 'scope:shared'],
+            },
+            {
+              sourceTag: 'scope:tasks',
+              onlyDependOnLibsWithTags: ['scope:tasks', 'scope:shared'],
+            },
+            {
+              sourceTag: 'scope:dashboard',
+              onlyDependOnLibsWithTags: ['scope:dashboard', 'scope:shared'],
+            },
+            {
+              sourceTag: 'scope:admin',
+              onlyDependOnLibsWithTags: ['scope:admin', 'scope:shared'],
+            },
+            {
               sourceTag: 'scope:shell',
               onlyDependOnLibsWithTags: [
                 'scope:shell',

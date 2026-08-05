@@ -1,23 +1,13 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-} from '@angular/core';
-import {NAVIGATION} from './config/navigation.config';
-import {NavItemComponent} from './components/nav-item/nav-item.component';
-import {ButtonComponent, IconComponent, ImageLogoComponent} from '@cartech/frontend/ui';
-import {LayoutService} from '../layout.service';
-import {AuthService} from "@cartech/auth/data-access";
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { NAVIGATION } from './config/navigation.config';
+import { NavItemComponent } from './components/nav-item/nav-item.component';
+import { ButtonComponent, IconComponent, ImageLogoComponent } from '@cartech/frontend/ui';
+import { LayoutService } from '../layout.service';
+import { AuthService } from '@cartech/auth/data-access';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [
-    NavItemComponent,
-    ImageLogoComponent,
-    IconComponent,
-    ButtonComponent,
-  ],
+  imports: [NavItemComponent, ImageLogoComponent, IconComponent, ButtonComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 

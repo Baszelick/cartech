@@ -29,7 +29,7 @@
         "libs/arrivals/feature-arrival/src/index.ts"
       ],
       "@cartech/tasks/feature-tasks": ["libs/tasks/feature-tasks/src/index.ts"],
-      "@feature-admin": ["./libs/admin/src/index.ts"]
+      "@cartech/admin/feature-admin": ["libs/admin/feature-admin/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

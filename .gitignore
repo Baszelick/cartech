@@ -49,4 +49,6 @@ prisma/*.db
 prisma/*.db-journal
 .angular
 
-.nx/
+# Nx local runtime data
+.nx/cache/
+.nx/workspace-data/
