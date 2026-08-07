@@ -1,9 +1,4 @@
-export enum UserRole {
-  SYSTEM_OWNER = 'SYSTEM_OWNER',
-  OPERATIONS_MANAGER = 'OPERATIONS_MANAGER',
-  TECHNICIAN = 'TECHNICIAN',
-  VIEWER = 'VIEWER',
-}
+import { UserRole } from '@cartech/core/data-access';
 
 export interface LoginRequest {
   companyCode: string;

@@ -1,5 +1,5 @@
 import type {IconName} from '@cartech/frontend/ui';
-import { UserRole } from '@cartech/auth/data-access';
+import { UserRole } from '@cartech/core/data-access';
 
 export interface NavigationItem {
   label: string;

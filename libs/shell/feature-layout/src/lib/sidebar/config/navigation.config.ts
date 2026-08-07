@@ -1,5 +1,5 @@
 import {NavigationItem} from '../interfaces/navigation-items.interface';
-import {UserRole} from "@cartech/auth/data-access";
+import {UserRole} from "@cartech/core/data-access";
 
 export const NAVIGATION: NavigationItem[] = [
   {

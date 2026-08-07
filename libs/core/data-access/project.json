@@ -1,0 +1,13 @@
+{
+  "name": "core-data-access",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/core/data-access/src",
+  "prefix": "ct",
+  "projectType": "library",
+  "tags": ["scope:core", "type:core"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

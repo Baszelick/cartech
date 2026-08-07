@@ -7,8 +7,8 @@ import {
   LoginRequest,
   LoginResponse,
   RefreshResponse,
-  UserRole,
 } from '../interfaces/auth.interface';
+import { UserRole } from '@cartech/core/data-access';
 
 @Injectable({
   providedIn: 'root',

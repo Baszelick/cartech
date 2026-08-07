@@ -1,0 +1,706 @@
+{
+  "graph": {
+    "nodes": {
+      "arrivals-feature-arrival": {
+        "name": "arrivals-feature-arrival",
+        "type": "lib",
+        "data": {
+          "root": "libs/arrivals/feature-arrival",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "@angular-devkit/build-angular:karma",
+              "options": {
+                "polyfills": [
+                  "zone.js",
+                  "zone.js/testing"
+                ],
+                "tsConfig": "libs/arrivals/feature-arrival/tsconfig.spec.json",
+                "inlineStyleLanguage": "scss"
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "arrivals-feature-arrival",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/arrivals/feature-arrival/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:arrivals",
+            "type:feature"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "dashboard-feature-home": {
+        "name": "dashboard-feature-home",
+        "type": "lib",
+        "data": {
+          "root": "libs/dashboard/feature-home",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "@angular-devkit/build-angular:karma",
+              "options": {
+                "polyfills": [
+                  "zone.js",
+                  "zone.js/testing"
+                ],
+                "tsConfig": "libs/dashboard/feature-home/tsconfig.spec.json",
+                "inlineStyleLanguage": "scss"
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "dashboard-feature-home",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/dashboard/feature-home/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:dashboard",
+            "type:feature"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "shell-feature-layout": {
+        "name": "shell-feature-layout",
+        "type": "lib",
+        "data": {
+          "root": "libs/shell/feature-layout",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "shell-feature-layout",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/shell/feature-layout/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:shell",
+            "type:feature"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "admin-feature-admin": {
+        "name": "admin-feature-admin",
+        "type": "lib",
+        "data": {
+          "root": "libs/admin/feature-admin",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "admin-feature-admin",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/admin/feature-admin/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:admin",
+            "type:feature"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "tasks-feature-tasks": {
+        "name": "tasks-feature-tasks",
+        "type": "lib",
+        "data": {
+          "root": "libs/tasks/feature-tasks",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "@angular-devkit/build-angular:karma",
+              "options": {
+                "polyfills": [
+                  "zone.js",
+                  "zone.js/testing"
+                ],
+                "tsConfig": "libs/tasks/feature-tasks/tsconfig.spec.json",
+                "inlineStyleLanguage": "scss"
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "tasks-feature-tasks",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/tasks/feature-tasks/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:tasks",
+            "type:feature"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "auth-feature-login": {
+        "name": "auth-feature-login",
+        "type": "lib",
+        "data": {
+          "root": "libs/auth/feature-login",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "auth-feature-login",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/auth/feature-login/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:auth",
+            "type:feature"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "cars-feature-list": {
+        "name": "cars-feature-list",
+        "type": "lib",
+        "data": {
+          "root": "libs/cars/feature-list",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "@angular-devkit/build-angular:karma",
+              "options": {
+                "polyfills": [
+                  "zone.js",
+                  "zone.js/testing"
+                ],
+                "tsConfig": "libs/cars/feature-list/tsconfig.spec.json",
+                "inlineStyleLanguage": "scss"
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "cars-feature-list",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/cars/feature-list/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:cars",
+            "type:feature"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "auth-data-access": {
+        "name": "auth-data-access",
+        "type": "lib",
+        "data": {
+          "root": "libs/auth/data-access",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "auth-data-access",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/auth/data-access/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:auth",
+            "type:data-access"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "cars-data-access": {
+        "name": "cars-data-access",
+        "type": "lib",
+        "data": {
+          "root": "libs/cars/data-access",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "cars-data-access",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/cars/data-access/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:cars",
+            "type:data-access"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "core-data-access": {
+        "name": "core-data-access",
+        "type": "lib",
+        "data": {
+          "root": "libs/core/data-access",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "core-data-access",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/core/data-access/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:core",
+            "type:core"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "ui": {
+        "name": "ui",
+        "type": "lib",
+        "data": {
+          "root": "libs/frontend/ui",
+          "targets": {
+            "lint": {
+              "executor": "@nx/eslint:lint",
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "ui",
+          "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/frontend/ui/src",
+          "prefix": "ct",
+          "projectType": "library",
+          "tags": [
+            "scope:shared",
+            "type:ui"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "frontend": {
+        "name": "frontend",
+        "type": "app",
+        "data": {
+          "root": "apps/frontend",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "npx eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/frontend",
+                "command": "eslint ."
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "dependsOn": [
+                "^build"
+              ],
+              "inputs": [
+                "production",
+                "^production"
+              ],
+              "executor": "@nx/angular:application",
+              "outputs": [
+                "{options.outputPath}"
+              ],
+              "defaultConfiguration": "production",
+              "options": {
+                "outputPath": "dist/apps/frontend",
+                "index": "apps/frontend/src/index.html",
+                "browser": "apps/frontend/src/main.ts",
+                "polyfills": [
+                  "zone.js"
+                ],
+                "tsConfig": "apps/frontend/tsconfig.app.json",
+                "inlineStyleLanguage": "scss",
+                "stylePreprocessorOptions": {
+                  "includePaths": [
+                    "apps/frontend/src/styles"
+                  ]
+                },
+                "assets": [
+                  {
+                    "glob": "**/*",
+                    "input": "apps/frontend/public"
+                  },
+                  {
+                    "glob": "**/*",
+                    "input": "apps/frontend/src/assets",
+                    "output": "assets"
+                  }
+                ],
+                "styles": [
+                  "apps/frontend/src/styles.scss"
+                ],
+                "scripts": []
+              },
+              "configurations": {
+                "production": {
+                  "budgets": [
+                    {
+                      "type": "initial",
+                      "maximumWarning": "500kB",
+                      "maximumError": "1MB"
+                    },
+                    {
+                      "type": "anyComponentStyle",
+                      "maximumWarning": "4kB",
+                      "maximumError": "8kB"
+                    }
+                  ],
+                  "outputHashing": "all"
+                },
+                "development": {
+                  "optimization": false,
+                  "extractLicenses": false,
+                  "sourceMap": true
+                }
+              },
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "@nx/angular:dev-server",
+              "defaultConfiguration": "development",
+              "options": {
+                "host": "127.0.0.1",
+                "port": 4200,
+                "proxyConfig": "apps/frontend/proxy.conf.json"
+              },
+              "configurations": {
+                "production": {
+                  "buildTarget": "frontend:build:production"
+                },
+                "development": {
+                  "buildTarget": "frontend:build:development"
+                }
+              },
+              "parallelism": true,
+              "continuous": true
+            },
+            "test": {
+              "executor": "@angular-devkit/build-angular:karma",
+              "options": {
+                "polyfills": [
+                  "zone.js",
+                  "zone.js/testing"
+                ],
+                "tsConfig": "apps/frontend/tsconfig.spec.json",
+                "inlineStyleLanguage": "scss",
+                "stylePreprocessorOptions": {
+                  "includePaths": [
+                    "apps/frontend/src/styles"
+                  ]
+                },
+                "assets": [
+                  {
+                    "glob": "**/*",
+                    "input": "apps/frontend/public"
+                  },
+                  {
+                    "glob": "**/*",
+                    "input": "apps/frontend/src/assets",
+                    "output": "assets"
+                  }
+                ],
+                "styles": [
+                  "apps/frontend/src/styles.scss"
+                ],
+                "scripts": []
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "frontend",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/frontend/src",
+          "prefix": "app",
+          "tags": [
+            "type:app"
+          ],
+          "implicitDependencies": []
+        }
+      },
+      "backend": {
+        "name": "backend",
+        "type": "app",
+        "data": {
+          "root": "apps/backend",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/apps/backend/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "npx eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/backend",
+                "command": "eslint ."
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "dependsOn": [
+                "^build"
+              ],
+              "inputs": [
+                "production",
+                "^production"
+              ],
+              "executor": "@nx/webpack:webpack",
+              "outputs": [
+                "{options.outputPath}"
+              ],
+              "options": {
+                "outputPath": "dist/apps/backend",
+                "main": "apps/backend/src/main.ts",
+                "tsConfig": "apps/backend/tsconfig.build.json",
+                "outputFileName": "main.js",
+                "target": "node",
+                "compiler": "tsc",
+                "externalDependencies": "all",
+                "sourceMap": true,
+                "webpackConfig": "apps/backend/webpack.config.js"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "@nx/js:node",
+              "continuous": true,
+              "dependsOn": [
+                "build"
+              ],
+              "options": {
+                "buildTarget": "backend:build",
+                "inspect": false,
+                "watch": true
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "jest --config apps/backend/jest.config.ts",
+                "cwd": "."
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "backend",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/backend/src",
+          "implicitDependencies": [],
+          "tags": []
+        }
+      }
+    },
+    "dependencies": {
+      "arrivals-feature-arrival": [],
+      "dashboard-feature-home": [
+        {
+          "source": "dashboard-feature-home",
+          "target": "ui",
+          "type": "static"
+        }
+      ],
+      "shell-feature-layout": [
+        {
+          "source": "shell-feature-layout",
+          "target": "ui",
+          "type": "static"
+        },
+        {
+          "source": "shell-feature-layout",
+          "target": "auth-data-access",
+          "type": "static"
+        },
+        {
+          "source": "shell-feature-layout",
+          "target": "core-data-access",
+          "type": "static"
+        }
+      ],
+      "admin-feature-admin": [],
+      "tasks-feature-tasks": [],
+      "auth-feature-login": [
+        {
+          "source": "auth-feature-login",
+          "target": "auth-data-access",
+          "type": "static"
+        },
+        {
+          "source": "auth-feature-login",
+          "target": "ui",
+          "type": "static"
+        }
+      ],
+      "cars-feature-list": [],
+      "auth-data-access": [
+        {
+          "source": "auth-data-access",
+          "target": "core-data-access",
+          "type": "static"
+        }
+      ],
+      "cars-data-access": [],
+      "core-data-access": [],
+      "ui": [],
+      "frontend": [
+        {
+          "source": "frontend",
+          "target": "auth-data-access",
+          "type": "static"
+        },
+        {
+          "source": "frontend",
+          "target": "auth-feature-login",
+          "type": "dynamic"
+        },
+        {
+          "source": "frontend",
+          "target": "shell-feature-layout",
+          "type": "dynamic"
+        },
+        {
+          "source": "frontend",
+          "target": "dashboard-feature-home",
+          "type": "dynamic"
+        },
+        {
+          "source": "frontend",
+          "target": "tasks-feature-tasks",
+          "type": "dynamic"
+        },
+        {
+          "source": "frontend",
+          "target": "cars-feature-list",
+          "type": "dynamic"
+        },
+        {
+          "source": "frontend",
+          "target": "arrivals-feature-arrival",
+          "type": "dynamic"
+        },
+        {
+          "source": "frontend",
+          "target": "admin-feature-admin",
+          "type": "dynamic"
+        }
+      ],
+      "backend": []
+    }
+  }
+}
