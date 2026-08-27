@@ -10,14 +10,6 @@
       (selected)="workspace.selectLocation($event)"
     ></ct-context-select>
 
-    <span class="header__separator">|</span>
-
-    <ct-context-select
-      [items]="siteItems()"
-      [selectedId]="workspace.currentSiteId()"
-      [disabled]="!workspace.hasMultipleSites()"
-      (selected)="workspace.selectSite($event)"
-    />
   </div>
 
   <div class="header__center">

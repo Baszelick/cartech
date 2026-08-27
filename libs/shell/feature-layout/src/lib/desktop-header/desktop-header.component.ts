@@ -8,6 +8,7 @@ import {
 } from '@cartech/frontend/ui';
 import {AuthService} from '@cartech/auth/data-access';
 import { WorkspaceStore } from '@cartech/core/data-access';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-desktop-header',
@@ -37,9 +38,12 @@ export class DesktopHeaderComponent {
   );
 
   onLogout(): void {
-    this.#authService.logout().subscribe({
-      next: () => void this.#router.navigateByUrl('/login'),
-      error: () => void this.#router.navigateByUrl('/login'),
-    });
+    this.workspace.reset();
+
+    this.#authService.logout().pipe(
+      finalize(() => {
+        void this.#router.navigateByUrl('/login');
+      }),
+    ).subscribe({ error: () => undefined });
   }
 }

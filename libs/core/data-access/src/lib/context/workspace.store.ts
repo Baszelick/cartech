@@ -1,6 +1,6 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
-import { catchError, forkJoin, map, Observable, of, tap } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { CompaniesService } from '../company';
 import { LocationsService } from '../locations';
@@ -31,26 +31,29 @@ export const WorkspaceStore = signalStore(
     const locationsService = inject(LocationsService);
     const sitesService = inject(SitesService);
 
-    const loadSites = (locationId: string): void => {
-      sitesService.getSites(locationId).subscribe({
-        next: (sites) => {
+    const loadSites = (locationId: string): Observable<void> =>
+      sitesService.getSites(locationId).pipe(
+        tap((sites) => {
           const currentSiteId = sites.length === 1 ? sites[0].id : null;
 
           patchState(store, {
             sites,
             currentSiteId,
           });
-        },
+        }),
 
-        error: () => {
+        catchError(() => {
           patchState(store, {
             sites: [],
             currentSiteId: null,
             error: 'Не удалось загрузить площадки',
           });
-        },
-      });
-    };
+
+          return of(void 0);
+        }),
+
+        map(() => void 0),
+      );
 
     return {
       selectLocation(id: string): void {
@@ -61,7 +64,7 @@ export const WorkspaceStore = signalStore(
           error: null,
         });
 
-        loadSites(id);
+        loadSites(id).subscribe();
       },
 
       selectSite(id: string): void {
@@ -80,7 +83,7 @@ export const WorkspaceStore = signalStore(
           company: companyService.getCurrentCompany(),
           locations: locationsService.getLocations(),
         }).pipe(
-          tap(({ company, locations }) => {
+          switchMap(({ company, locations }) => {
             const currentLocationId = locations.length === 1 ? locations[0].id : null;
 
             patchState(store, {
@@ -92,9 +95,7 @@ export const WorkspaceStore = signalStore(
               loading: false,
             });
 
-            if (currentLocationId) {
-              loadSites(currentLocationId);
-            }
+            return currentLocationId ? loadSites(currentLocationId) : of(void 0);
           }),
 
           catchError(() => {
@@ -108,6 +109,10 @@ export const WorkspaceStore = signalStore(
 
           map(() => void 0),
         );
+      },
+
+      reset(): void {
+        patchState(store, initialWorkspace);
       },
     };
   }),
