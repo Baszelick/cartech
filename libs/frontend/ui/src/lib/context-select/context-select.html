@@ -1,0 +1,35 @@
+<div class="context-select">
+
+  <button
+    type="button"
+    class="context-select__trigger"
+    [disabled]="disabled()"
+    (click)="toggle()"
+  >
+    <span>
+      {{ selectedItem()?.label ?? placeholder() }}
+    </span>
+
+    <ct-icon
+      name="chevron"
+      class="context-select__arrow"
+    />
+  </button>
+
+  @if (isOpen()) {
+    <div class="context-select__dropdown">
+
+      @for (item of items(); track item.id) {
+        <button
+          type="button"
+          class="context-select__item"
+          (click)="selectItem(item.id)"
+        >
+          {{ item.label }}
+        </button>
+      }
+
+    </div>
+  }
+
+</div>

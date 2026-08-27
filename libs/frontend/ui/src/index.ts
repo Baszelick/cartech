@@ -15,3 +15,4 @@ export {LogoComponent} from './lib/logo/logo.component';
 export type {LogoTheme, LogoVariant} from './lib/logo/logo.types';
 export * from './lib/tabs/tabs.component';
 export * from './lib/tabs/tabs.interface';
+export {ContextSelect} from './lib/context-select/context-select'

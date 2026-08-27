@@ -1,14 +1,13 @@
-import {computed, inject, Injectable, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {catchError, finalize, map, Observable, of, switchMap, tap} from 'rxjs';
-
-import {
-  AuthUser,
+import { HttpClient } from '@angular/common/http';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { catchError, finalize, map, Observable, of, switchMap, tap } from 'rxjs';
+import { UserRole } from '../../users';
+import type {
+  CurrentUser,
   LoginRequest,
   LoginResponse,
   RefreshResponse,
 } from '../interfaces/auth.interface';
-import { UserRole } from '@cartech/core/data-access';
 
 @Injectable({
   providedIn: 'root',
@@ -18,31 +17,22 @@ export class AuthService {
   readonly #apiUrl = '/api/auth';
 
   readonly #accessToken = signal<string | null>(null);
-  readonly #currentUser = signal<AuthUser | null>(null);
+  readonly #currentUser = signal<CurrentUser | null>(null);
   readonly #initialized = signal(false);
 
   readonly accessToken = this.#accessToken.asReadonly();
   readonly currentUser = this.#currentUser.asReadonly();
   readonly initialized = this.#initialized.asReadonly();
 
-  readonly isAuthenticated = computed(() => {
-    return !!this.#accessToken();
-  });
+  readonly isAuthenticated = computed(() => !!this.#accessToken());
 
-  readonly isSystemOwner = computed(() => {
-    return this.hasRole(UserRole.SYSTEM_OWNER);
-  });
+  readonly isSystemOwner = computed(() => this.hasRole(UserRole.SYSTEM_OWNER));
 
-  readonly isOperationsManager = computed(() => {
-    return this.hasRole(UserRole.OPERATIONS_MANAGER);
-  });
+  readonly isOperationsManager = computed(() => this.hasRole(UserRole.OPERATIONS_MANAGER));
 
-  readonly canAccessAdministration = computed(() => {
-    return this.hasAnyRole([
-      UserRole.SYSTEM_OWNER,
-      UserRole.OPERATIONS_MANAGER,
-    ]);
-  });
+  readonly canAccessAdministration = computed(() =>
+    this.hasAnyRole([UserRole.SYSTEM_OWNER, UserRole.OPERATIONS_MANAGER]),
+  );
 
   hasRole(role: UserRole): boolean {
     return this.#currentUser()?.roles.includes(role) ?? false;
@@ -69,11 +59,7 @@ export class AuthService {
 
   initializeSession(): Observable<void> {
     return this.#http
-      .post<RefreshResponse>(
-        `${this.#apiUrl}/refresh`,
-        {},
-        { withCredentials: true },
-      )
+      .post<RefreshResponse>(`${this.#apiUrl}/refresh`, {}, { withCredentials: true })
       .pipe(
         tap((response) => {
           this.#accessToken.set(response.accessToken);
@@ -92,11 +78,7 @@ export class AuthService {
 
   refresh() {
     return this.#http
-      .post<RefreshResponse>(
-        `${this.#apiUrl}/refresh`,
-        {},
-        { withCredentials: true },
-      )
+      .post<RefreshResponse>(`${this.#apiUrl}/refresh`, {}, { withCredentials: true })
       .pipe(
         tap((response) => {
           this.#accessToken.set(response.accessToken);
@@ -106,7 +88,7 @@ export class AuthService {
 
   getMe() {
     return this.#http
-      .get<AuthUser>(`${this.#apiUrl}/me`)
+      .get<CurrentUser>(`${this.#apiUrl}/me`)
       .pipe(tap((user) => this.#currentUser.set(user)));
   }
 

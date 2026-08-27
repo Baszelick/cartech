@@ -1,0 +1,23 @@
+.context-select {
+  position: relative;
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 100;
+
+    min-width: 100%;
+  }
+
+  &__item {
+    width: 100%;
+    text-align: left;
+  }
+}

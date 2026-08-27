@@ -1,4 +1,4 @@
-import { UserRole } from '@cartech/core/data-access';
+import type { UserRole } from '../../users';
 
 export interface LoginRequest {
   companyCode: string;
@@ -7,11 +7,11 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-    accessToken: string;
-    user: AuthUser
+  accessToken: string;
+  user: CurrentUser;
 }
 
-export interface AuthUser {
+export interface CurrentUser {
   id: string;
   companyId: string;
   username: string;
@@ -23,4 +23,5 @@ export interface AuthUser {
 
 export interface RefreshResponse {
   accessToken: string;
+  user: CurrentUser;
 }

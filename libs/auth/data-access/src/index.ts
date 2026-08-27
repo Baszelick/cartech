@@ -1,10 +1,10 @@
-export {AuthService} from './lib/services/auth.service';
-export {authGuard} from './lib/guards/auth.guard';
-export {guestGuard} from './lib/guards/guest.guard';
-export {authInterceptor} from './lib/interceptors/auth.interceptor';
+export { AuthService } from '@cartech/core/data-access';
+export { authGuard } from './lib/guards/auth.guard';
+export { guestGuard } from './lib/guards/guest.guard';
+export { authInterceptor } from './lib/interceptors/auth.interceptor';
 export type {
-  AuthUser,
+  CurrentUser,
   LoginRequest,
   LoginResponse,
   RefreshResponse,
-} from './lib/interfaces/auth.interface';
+} from '@cartech/core/data-access';

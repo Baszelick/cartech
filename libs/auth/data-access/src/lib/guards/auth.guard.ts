@@ -1,6 +1,6 @@
-import {inject} from '@angular/core';
-import {CanActivateFn, Router, UrlTree} from '@angular/router';
-import {AuthService} from '../services/auth.service';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, UrlTree } from '@angular/router';
+import { AuthService } from '@cartech/core/data-access';
 
 export const authGuard: CanActivateFn = (_route, state) => {
   const authService = inject(AuthService);
@@ -12,7 +12,7 @@ export const authGuard: CanActivateFn = (_route, state) => {
 
   const returnUrl = state.url.startsWith('/') ? state.url : '/home';
   const urlTree: UrlTree = router.createUrlTree(['/login'], {
-    queryParams: {returnUrl},
+    queryParams: { returnUrl },
   });
 
   return urlTree;

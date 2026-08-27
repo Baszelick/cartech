@@ -1,13 +1,8 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import {
-  ActivatedRouteSnapshot,
-  Router,
-  RouterStateSnapshot,
-  UrlTree,
-} from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '@cartech/core/data-access';
 import { authGuard } from './auth.guard';
 import { guestGuard } from './guest.guard';
 
@@ -35,10 +30,7 @@ describe('auth guards', () => {
     authenticated.set(true);
 
     const result = TestBed.runInInjectionContext(() =>
-      authGuard(
-        {} as ActivatedRouteSnapshot,
-        { url: '/home' } as RouterStateSnapshot,
-      ),
+      authGuard({} as ActivatedRouteSnapshot, { url: '/home' } as RouterStateSnapshot),
     );
 
     expect(result).toBeTrue();
@@ -49,17 +41,13 @@ describe('auth guards', () => {
     router.createUrlTree.and.returnValue(loginTree);
 
     const result = TestBed.runInInjectionContext(() =>
-      authGuard(
-        {} as ActivatedRouteSnapshot,
-        { url: '/cars' } as RouterStateSnapshot,
-      ),
+      authGuard({} as ActivatedRouteSnapshot, { url: '/cars' } as RouterStateSnapshot),
     );
 
     expect(result).toBe(loginTree);
-    expect(router.createUrlTree).toHaveBeenCalledWith(
-      ['/login'],
-      { queryParams: { returnUrl: '/cars' } },
-    );
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/login'], {
+      queryParams: { returnUrl: '/cars' },
+    });
   });
 
   it('redirects an authenticated user away from login', () => {
@@ -68,10 +56,7 @@ describe('auth guards', () => {
     router.createUrlTree.and.returnValue(homeTree);
 
     const result = TestBed.runInInjectionContext(() =>
-      guestGuard(
-        {} as ActivatedRouteSnapshot,
-        {} as RouterStateSnapshot,
-      ),
+      guestGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
     );
 
     expect(result).toBe(homeTree);
@@ -80,10 +65,7 @@ describe('auth guards', () => {
 
   it('allows a guest to open login', () => {
     const result = TestBed.runInInjectionContext(() =>
-      guestGuard(
-        {} as ActivatedRouteSnapshot,
-        {} as RouterStateSnapshot,
-      ),
+      guestGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
     );
 
     expect(result).toBeTrue();

@@ -2,34 +2,15 @@
   --ct-tabs-container-height: 48px;
   --ct-tabs-container-radius: 12px;
   --ct-tabs-tab-height: 40px;
-  --ct-tabs-tab-overlap: 6px;
-  --ct-tabs-tab-radius: 14px;
+  --ct-tabs-tab-overlap: 8px;
+  --ct-tabs-tab-radius: 12px;
+  --ct-tabs-tab-wing-size: 12px;
   --ct-tabs-transition-duration: 180ms;
-  --ct-tabs-neon-start: color-mix(
-    in srgb,
-    var(--color-brand-blue) 24%,
-    transparent
-  );
-  --ct-tabs-neon-middle: color-mix(
-    in srgb,
-    var(--color-brand-blue) 12%,
-    transparent
-  );
-  --ct-tabs-neon-end: color-mix(
-    in srgb,
-    var(--color-brand-blue) 3%,
-    transparent
-  );
-  --ct-tabs-neon-border: color-mix(
-    in srgb,
-    var(--color-brand-blue) 42%,
-    transparent
-  );
-  --ct-tabs-neon-shadow: color-mix(
-    in srgb,
-    var(--color-brand-blue) 25%,
-    transparent
-  );
+  --ct-tabs-neon-start: color-mix(in srgb, var(--color-brand-blue) 24%, transparent);
+  --ct-tabs-neon-middle: color-mix(in srgb, var(--color-brand-blue) 12%, transparent);
+  --ct-tabs-neon-end: color-mix(in srgb, var(--color-brand-blue) 3%, transparent);
+  --ct-tabs-neon-border: color-mix(in srgb, var(--color-brand-blue) 42%, transparent);
+  --ct-tabs-neon-shadow: color-mix(in srgb, var(--color-brand-blue) 25%, transparent);
 
   display: block;
   min-width: 0;
@@ -38,6 +19,7 @@
 .tabs {
   display: flex;
   align-items: flex-end;
+  isolation: isolate;
 
   min-height: var(--ct-tabs-container-height);
   padding: var(--space-4) var(--space-4) 0;
@@ -46,17 +28,14 @@
   overflow-y: hidden;
 
   background: var(--color-bg-main);
-  border-bottom: 1px solid var(--color-border);
-  border-radius:
-    var(--ct-tabs-container-radius)
-    var(--ct-tabs-container-radius)
-    0
-    0;
+  border-radius: var(--ct-tabs-container-radius) var(--ct-tabs-container-radius) 0 0;
 
   scrollbar-width: thin;
 }
 
 .tab {
+  --ct-tabs-tab-fill: transparent;
+
   position: relative;
   z-index: 0;
 
@@ -78,23 +57,7 @@
   background: transparent;
   border: 1px solid transparent;
   border-bottom: 0;
-  border-radius:
-    var(--ct-tabs-tab-radius)
-    var(--ct-tabs-tab-radius)
-    var(--space-4)
-    var(--space-4);
-  clip-path: polygon(
-    12px 0,
-    calc(100% - 12px) 0,
-    calc(100% - 8px) 1px,
-    calc(100% - 5px) 4px,
-    calc(100% - 3px) 8px,
-    100% 100%,
-    0 100%,
-    3px 8px,
-    5px 4px,
-    8px 1px
-  );
+  border-radius: var(--ct-tabs-tab-radius) var(--ct-tabs-tab-radius) 0 0;
   cursor: pointer;
 
   transition:
@@ -103,16 +66,49 @@
     border-color var(--ct-tabs-transition-duration) ease,
     box-shadow var(--ct-tabs-transition-duration) ease;
 
+  &::before,
+  &::after {
+    position: absolute;
+    bottom: 0;
+    z-index: -1;
+
+    width: var(--ct-tabs-tab-wing-size);
+    height: var(--ct-tabs-tab-wing-size);
+
+    pointer-events: none;
+    content: '';
+    opacity: 0;
+
+    transition: opacity var(--ct-tabs-transition-duration) ease;
+  }
+
+  &::before {
+    right: 100%;
+    background: radial-gradient(circle at 0 0, transparent 69%, var(--ct-tabs-tab-fill) 72%);
+  }
+
+  &::after {
+    left: 100%;
+    background: radial-gradient(circle at 100% 0, transparent 69%, var(--ct-tabs-tab-fill) 72%);
+  }
+
   &:first-child {
     margin-left: 0;
   }
 
   &:hover:not(:disabled, .tab-active) {
+    --ct-tabs-tab-fill: var(--color-bg-surface-hover);
+
     z-index: 1;
 
     color: var(--color-text-main);
     background: var(--color-bg-surface-hover);
     border-color: var(--color-border);
+
+    &::before,
+    &::after {
+      opacity: 1;
+    }
   }
 
   &:focus-visible {
@@ -127,10 +123,11 @@
 }
 
 .tab-active {
+  --ct-tabs-tab-fill: color-mix(in srgb, var(--color-brand-blue) 3%, var(--color-bg-surface));
+
   z-index: 2;
 
   color: var(--color-brand-blue);
-  font-weight: 600;
 
   background:
     linear-gradient(
@@ -142,6 +139,11 @@
     var(--color-bg-surface);
   border-color: var(--ct-tabs-neon-border);
   filter: drop-shadow(0 -2px 5px var(--ct-tabs-neon-shadow));
+
+  &::before,
+  &::after {
+    opacity: 1;
+  }
 }
 
 .tab-count {

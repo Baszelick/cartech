@@ -1,23 +1,16 @@
 import { TestBed } from '@angular/core/testing';
-import {
-  provideHttpClient,
-  withInterceptors,
-} from '@angular/common/http';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 
-import { AuthService } from './auth.service';
+import { AuthService, type CurrentUser, UserRole } from '@cartech/core/data-access';
 import { authInterceptor } from '../interceptors/auth.interceptor';
-import { UserRole, type AuthUser } from '../interfaces/auth.interface';
 
 describe('AuthService session restoration', () => {
   let authService: AuthService;
   let httpTesting: HttpTestingController;
 
-  const user: AuthUser = {
+  const user: CurrentUser = {
     id: 'user-id',
     companyId: 'company-id',
     username: 'ivan',
@@ -78,11 +71,10 @@ describe('AuthService session restoration', () => {
 
     const refresh = httpTesting.expectOne('/api/auth/refresh');
     expect(refresh.request.withCredentials).toBeTrue();
-    refresh.flush({ accessToken: 'restored-access-token' });
+    refresh.flush({ accessToken: 'restored-access-token', user });
 
     const me = httpTesting.expectOne('/api/auth/me');
-    expect(me.request.headers.get('Authorization'))
-      .toBe('Bearer restored-access-token');
+    expect(me.request.headers.get('Authorization')).toBe('Bearer restored-access-token');
     me.flush(user);
 
     expect(completed).toBeTrue();
@@ -105,10 +97,9 @@ describe('AuthService session restoration', () => {
       },
     });
 
-    httpTesting.expectOne('/api/auth/refresh').flush(
-      { message: 'Refresh token not found' },
-      { status: 401, statusText: 'Unauthorized' },
-    );
+    httpTesting
+      .expectOne('/api/auth/refresh')
+      .flush({ message: 'Refresh token not found' }, { status: 401, statusText: 'Unauthorized' });
 
     expect(completed).toBeTrue();
     expect(failed).toBeFalse();

@@ -1,6 +1,6 @@
-import {inject} from '@angular/core';
-import {CanActivateFn, Router, UrlTree} from '@angular/router';
-import {AuthService} from '../services/auth.service';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, UrlTree } from '@angular/router';
+import { AuthService } from '@cartech/core/data-access';
 
 export const guestGuard: CanActivateFn = () => {
   const authService = inject(AuthService);

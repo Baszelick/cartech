@@ -1,3 +1,5 @@
+import type { Location } from '../../locations';
+
 export enum UserRole {
   SYSTEM_OWNER = 'SYSTEM_OWNER',
   OPERATIONS_MANAGER = 'OPERATIONS_MANAGER',
@@ -5,14 +7,21 @@ export enum UserRole {
   VIEWER = 'VIEWER',
 }
 
-
-export interface User {
+export interface UserSummary {
   id: string;
   username: string;
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   isActive: boolean;
   mustChangePassword: boolean;
   roles: UserRole[];
-  locationId: string;
+}
+
+export interface CreatedUser extends UserSummary {
+  locationIds: string[];
+}
+
+export interface UserLocationAccess {
+  userId: string;
+  locations: Location[];
 }

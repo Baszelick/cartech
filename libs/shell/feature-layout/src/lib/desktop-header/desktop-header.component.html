@@ -1,7 +1,23 @@
 <header class="header">
 
   <div class="header__left">
-    header__left
+    <span class="company">{{workspace.company()?.name}}</span>
+    <span>|</span>
+    <ct-context-select
+      [items]="locationItems()"
+      [selectedId]="workspace.currentLocationId()"
+      [disabled]="!workspace.hasMultipleLocations()"
+      (selected)="workspace.selectLocation($event)"
+    ></ct-context-select>
+
+    <span class="header__separator">|</span>
+
+    <ct-context-select
+      [items]="siteItems()"
+      [selectedId]="workspace.currentSiteId()"
+      [disabled]="!workspace.hasMultipleSites()"
+      (selected)="workspace.selectSite($event)"
+    />
   </div>
 
   <div class="header__center">
