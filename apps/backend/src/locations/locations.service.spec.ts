@@ -331,6 +331,60 @@ describe('LocationsService', () => {
     ]);
   });
 
+  it('returns active and inactive company locations without applying user access', async () => {
+    prisma.location.findMany.mockResolvedValue([
+      {
+        id: 'active-id',
+        code: 'MSK',
+        name: 'Москва',
+        isActive: true,
+      },
+      {
+        id: 'inactive-id',
+        code: 'SPB',
+        name: 'Санкт-Петербург',
+        isActive: false,
+      },
+    ]);
+
+    await expect(service.findAllForManagement('company-id')).resolves.toEqual([
+      {
+        id: 'active-id',
+        code: 'MSK',
+        name: 'Москва',
+        isActive: true,
+      },
+      {
+        id: 'inactive-id',
+        code: 'SPB',
+        name: 'Санкт-Петербург',
+        isActive: false,
+      },
+    ]);
+    expect(prisma.location.findMany).toHaveBeenCalledWith({
+      where: { companyId: 'company-id' },
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        isActive: true,
+      },
+    });
+  });
+
+  it('isolates the management list by JWT company', async () => {
+    prisma.location.findMany.mockResolvedValue([]);
+
+    await service.findAllForManagement('current-company-id');
+
+    expect(prisma.location.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { companyId: 'current-company-id' },
+      }),
+    );
+  });
+
   it('isolates locations by company from the JWT scope', async () => {
     prisma.location.findMany.mockResolvedValue([]);
 

@@ -1,3 +1,4 @@
+import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
@@ -12,6 +13,7 @@ import { LocationsService } from './locations.service';
 describe('LocationsController', () => {
   const locationsService = {
     findAll: jest.fn(),
+    findAllForManagement: jest.fn(),
     findSites: jest.fn(),
     create: jest.fn(),
     updateLocation: jest.fn(),
@@ -65,6 +67,7 @@ describe('LocationsController', () => {
     'createSite',
     'updateSite',
     'deactivateSite',
+    'findAllForManagement',
   ] as const)('protects %s with administrative role metadata', (method) => {
     const methodGuards = Reflect.getMetadata(
       GUARDS_METADATA,
@@ -149,6 +152,46 @@ describe('LocationsController', () => {
       userId: 'user-id',
       companyId: 'company-id',
     });
+  });
+
+  it('returns the company-wide management list to an authorized administrator', async () => {
+    const locations = [
+      { id: 'active-id', code: 'MSK', name: 'Москва', isActive: true },
+      {
+        id: 'inactive-id',
+        code: 'SPB',
+        name: 'Санкт-Петербург',
+        isActive: false,
+      },
+    ];
+    const adminRequest = {
+      ...request,
+      user: {
+        ...request.user,
+        roles: [UserRole.OPERATIONS_MANAGER],
+      },
+    } as AuthenticatedRequest;
+    locationsService.findAllForManagement.mockResolvedValue(locations);
+
+    await expect(
+      controller.findAllForManagement(adminRequest),
+    ).resolves.toEqual(locations);
+    expect(locationsService.findAllForManagement).toHaveBeenCalledWith(
+      'company-id',
+    );
+  });
+
+  it('denies the management list to a user without an administrative role', () => {
+    const context = {
+      getHandler: () => LocationsController.prototype.findAllForManagement,
+      getClass: () => LocationsController,
+      switchToHttp: () => ({ getRequest: () => request }),
+    } as unknown as ExecutionContext;
+
+    expect(() => new RolesGuard(new Reflector()).canActivate(context)).toThrow(
+      ForbiddenException,
+    );
+    expect(locationsService.findAllForManagement).not.toHaveBeenCalled();
   });
 
   it('passes UUID and authenticated user scope to the site service', async () => {

@@ -242,6 +242,23 @@ export class LocationsService {
     return locations.map((location) => ({ ...location }));
   }
 
+  async findAllForManagement(
+    companyId: string,
+  ): Promise<LocationResponseDto[]> {
+    const locations = await this.prisma.location.findMany({
+      where: { companyId },
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        isActive: true,
+      },
+    });
+
+    return locations.map((location) => ({ ...location }));
+  }
+
   async findSites(
     locationId: string,
     scope: LocationAuthScope,

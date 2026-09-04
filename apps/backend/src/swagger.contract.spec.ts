@@ -55,6 +55,7 @@ describe('Swagger contract', () => {
         '/company/me',
         '/dashboard',
         '/locations',
+        '/locations/management',
         '/locations/{id}',
         '/locations/{id}/deactivate',
         '/locations/{locationId}/sites',
@@ -88,9 +89,16 @@ describe('Swagger contract', () => {
     }
 
     expect(document.paths['/auth/login']?.post?.requestBody).toBeDefined();
-    expect(document.paths['/company/me']?.get?.responses).toHaveProperty(
-      '200',
+    expect(document.paths['/company/me']?.get?.responses).toHaveProperty('200');
+    expect(document.paths['/locations']?.get?.description).toContain(
+      'UserLocationAccess',
     );
+    expect(document.paths['/locations/management']?.get?.description).toContain(
+      'активные и неактивные',
+    );
+    expect(
+      document.paths['/locations/management']?.get?.responses,
+    ).toHaveProperty('403');
     expect(schemas).toHaveProperty('CompanyResponseDto');
     expect(schemas).toHaveProperty('LoginDto');
     expect(schemas['LoginDto']).toMatchObject({
