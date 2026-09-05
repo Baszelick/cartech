@@ -10,6 +10,7 @@ describe('LocationsService', () => {
       findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
     },
     site: {
       findMany: jest.fn(),
@@ -176,6 +177,52 @@ describe('LocationsService', () => {
       service.deactivateLocation('location-id', 'company-id'),
     ).rejects.toBeInstanceOf(ConflictException);
     expect(prisma.location.update).not.toHaveBeenCalled();
+  });
+
+  it('activates a location in the current company', async () => {
+    prisma.location.updateMany.mockResolvedValue({ count: 1 });
+    prisma.location.findFirst.mockResolvedValue({
+      id: 'location-id',
+      code: 'MSK',
+      name: 'Москва',
+      isActive: true,
+    });
+
+    await expect(
+      service.activateLocation('location-id', 'company-id'),
+    ).resolves.toMatchObject({ isActive: true });
+    expect(prisma.location.updateMany).toHaveBeenCalledWith({
+      where: { id: 'location-id', companyId: 'company-id' },
+      data: { isActive: true },
+    });
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not activate a location from another company', async () => {
+    prisma.location.updateMany.mockResolvedValue({ count: 0 });
+
+    await expect(
+      service.activateLocation('location-id', 'company-id'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    expect(prisma.location.updateMany).toHaveBeenCalledWith({
+      where: { id: 'location-id', companyId: 'company-id' },
+      data: { isActive: true },
+    });
+    expect(prisma.location.findFirst).not.toHaveBeenCalled();
+  });
+
+  it('idempotently keeps an already active location active', async () => {
+    prisma.location.updateMany.mockResolvedValue({ count: 1 });
+    prisma.location.findFirst.mockResolvedValue({
+      id: 'location-id',
+      code: 'MSK',
+      name: 'Москва',
+      isActive: true,
+    });
+
+    await expect(
+      service.activateLocation('location-id', 'company-id'),
+    ).resolves.toMatchObject({ isActive: true });
   });
 
   it('creates a site inside an inactive company location', async () => {

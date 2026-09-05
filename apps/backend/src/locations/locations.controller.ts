@@ -122,6 +122,47 @@ export class LocationsController {
     return this.locationsService.deactivateLocation(id, request.user.companyId);
   }
 
+  @Patch(':id/activate')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.SYSTEM_OWNER, UserRole.OPERATIONS_MANAGER)
+  @ApiOperation({
+    summary: 'Повторно активировать локацию',
+    description:
+      'Доступно ролям SYSTEM_OWNER и OPERATIONS_MANAGER. Устанавливает isActive=true для локации текущей компании из JWT.',
+  })
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+    example: 'cb9b2fec-7878-4dac-a87b-426df4754567',
+    description: 'Идентификатор локации.',
+  })
+  @ApiOkResponse({
+    description: 'Локация активирована.',
+    type: LocationResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Некорректный UUID локации.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Требуется аутентификация.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'Роль пользователя не разрешает управление локациями.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Локация отсутствует или принадлежит другой компании.',
+    type: HttpErrorResponseDto,
+  })
+  activateLocation(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.locationsService.activateLocation(id, request.user.companyId);
+  }
+
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRole.SYSTEM_OWNER, UserRole.OPERATIONS_MANAGER)

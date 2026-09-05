@@ -18,6 +18,7 @@ describe('LocationsController', () => {
     create: jest.fn(),
     updateLocation: jest.fn(),
     deactivateLocation: jest.fn(),
+    activateLocation: jest.fn(),
     createSite: jest.fn(),
     updateSite: jest.fn(),
     deactivateSite: jest.fn(),
@@ -64,6 +65,7 @@ describe('LocationsController', () => {
     'create',
     'updateLocation',
     'deactivateLocation',
+    'activateLocation',
     'createSite',
     'updateSite',
     'deactivateSite',
@@ -109,6 +111,47 @@ describe('LocationsController', () => {
       'location-id',
       'company-id',
     );
+  });
+
+  it('passes UUID and JWT company to location activation', async () => {
+    await controller.activateLocation('location-id', request);
+
+    expect(locationsService.activateLocation).toHaveBeenCalledWith(
+      'location-id',
+      'company-id',
+    );
+  });
+
+  it.each([UserRole.SYSTEM_OWNER, UserRole.OPERATIONS_MANAGER])(
+    'allows %s to activate a location',
+    (role) => {
+      const authorizedRequest = {
+        ...request,
+        user: { ...request.user, roles: [role] },
+      } as AuthenticatedRequest;
+      const context = {
+        getHandler: () => LocationsController.prototype.activateLocation,
+        getClass: () => LocationsController,
+        switchToHttp: () => ({ getRequest: () => authorizedRequest }),
+      } as unknown as ExecutionContext;
+
+      expect(
+        new RolesGuard(new Reflector()).canActivate(context),
+      ).toBeTruthy();
+    },
+  );
+
+  it('denies location activation to a user without an administrative role', () => {
+    const context = {
+      getHandler: () => LocationsController.prototype.activateLocation,
+      getClass: () => LocationsController,
+      switchToHttp: () => ({ getRequest: () => request }),
+    } as unknown as ExecutionContext;
+
+    expect(() => new RolesGuard(new Reflector()).canActivate(context)).toThrow(
+      ForbiddenException,
+    );
+    expect(locationsService.activateLocation).not.toHaveBeenCalled();
   });
 
   it('passes location UUID, DTO and JWT company to site creation', async () => {

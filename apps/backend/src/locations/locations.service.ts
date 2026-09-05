@@ -121,6 +121,39 @@ export class LocationsService {
     );
   }
 
+  async activateLocation(
+    locationId: string,
+    companyId: string,
+  ): Promise<LocationResponseDto> {
+    return this.prisma.$transaction(
+      async (tx) => {
+        const result = await tx.location.updateMany({
+          where: { id: locationId, companyId },
+          data: { isActive: true },
+        });
+
+        if (result.count === 0) {
+          throw new NotFoundException('Location not found');
+        }
+
+        const location = await tx.location.findFirst({
+          where: { id: locationId, companyId },
+          select: {
+            id: true,
+            code: true,
+            name: true,
+            isActive: true,
+          },
+        });
+
+        if (!location) throw new NotFoundException('Location not found');
+
+        return location;
+      },
+      { isolationLevel: 'Serializable' },
+    );
+  }
+
   async createSite(
     locationId: string,
     dto: CreateSiteDto,
