@@ -1,7 +1,4 @@
-import {
-  BadRequestException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { jest as jestRuntime } from '@jest/globals';
@@ -12,27 +9,30 @@ import { TokenService } from './token.service';
 
 jestRuntime.mock('bcrypt');
 
+type AsyncMock = (...args: unknown[]) => Promise<unknown>;
+
 describe('AuthService initial password change', () => {
-  const tx: any = {
+  const tx = {
     user: {
-      findUnique: jestRuntime.fn(),
-      update: jestRuntime.fn(),
+      findUnique: jestRuntime.fn<AsyncMock>(),
+      update: jestRuntime.fn<AsyncMock>(),
     },
     authSession: {
-      deleteMany: jestRuntime.fn(),
-      create: jestRuntime.fn(),
-      update: jestRuntime.fn(),
+      deleteMany: jestRuntime.fn<AsyncMock>(),
+      create: jestRuntime.fn<AsyncMock>(),
+      update: jestRuntime.fn<AsyncMock>(),
     },
   };
-  const prisma: any = {
+  type TransactionCallback = (client: typeof tx) => Promise<unknown>;
+  const prisma = {
     $transaction: jestRuntime.fn(
-      async (callback: (client: typeof tx) => unknown) => callback(tx),
+      (callback: TransactionCallback): Promise<unknown> => callback(tx),
     ),
   };
-  const tokenService: any = {
+  const tokenService = {
     refreshExpiresInMs: 604_800_000,
-    createRefreshToken: jestRuntime.fn(),
-    createAccessToken: jestRuntime.fn(),
+    createRefreshToken: jestRuntime.fn<AsyncMock>(),
+    createAccessToken: jestRuntime.fn<AsyncMock>(),
   };
   const user = {
     id: 'user-id',
@@ -50,7 +50,7 @@ describe('AuthService initial password change', () => {
   beforeEach(async () => {
     jestRuntime.clearAllMocks();
     prisma.$transaction.mockImplementation(
-      async (callback: (client: typeof tx) => unknown) => callback(tx),
+      (callback: TransactionCallback): Promise<unknown> => callback(tx),
     );
     tx.user.findUnique.mockResolvedValue(user);
     tx.user.update.mockResolvedValue({
@@ -108,13 +108,9 @@ describe('AuthService initial password change', () => {
       where: { id: 'new-session-id' },
       data: { refreshTokenHash: 'refresh-hash' },
     });
-    expect(result).toEqual(
-      expect.objectContaining({
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
-        user: expect.objectContaining({ mustChangePassword: false }),
-      }),
-    );
+    expect(result.accessToken).toBe('new-access-token');
+    expect(result.refreshToken).toBe('new-refresh-token');
+    expect(result.user.mustChangePassword).toBe(false);
   });
 
   it('rejects a password equal to the temporary password', async () => {

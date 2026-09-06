@@ -13,7 +13,21 @@ describe('DashboardService', () => {
   const prisma = {
     user: { findUnique: jest.fn() },
     car: { count: jest.fn(), findMany: jest.fn() },
-    vehicleEvent: { count: jest.fn() },
+    vehicleEvent: {
+      count: jest.fn<
+        Promise<unknown>,
+        [
+          {
+            where: {
+              companyId: string;
+              locationId: { in: string[] };
+              type: VehicleEventType;
+              occurredAt: { gte: Date };
+            };
+          },
+        ]
+      >(),
+    },
   };
   let service: DashboardService;
 
@@ -81,14 +95,13 @@ describe('DashboardService', () => {
         pso: { is: { status: PsoStatus.PENDING } },
       },
     });
-    expect(prisma.vehicleEvent.count).toHaveBeenCalledWith({
-      where: {
-        companyId: 'company-id',
-        locationId: { in: ['location-1', 'location-2'] },
-        type: VehicleEventType.CAR_ISSUED,
-        occurredAt: { gte: expect.any(Date) },
-      },
+    const eventWhere = prisma.vehicleEvent.count.mock.calls[0][0].where;
+    expect(eventWhere).toMatchObject({
+      companyId: 'company-id',
+      locationId: { in: ['location-1', 'location-2'] },
+      type: VehicleEventType.CAR_ISSUED,
     });
+    expect(eventWhere.occurredAt.gte).toBeInstanceOf(Date);
     jest.useRealTimers();
   });
 

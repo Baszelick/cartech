@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import type { OpenAPIObject } from '@nestjs/swagger';
+import type { Server } from 'node:http';
 import request from 'supertest';
 import { AppModule } from './app.module';
 import { PrismaService } from './prisma/prisma.service';
@@ -35,7 +36,8 @@ describe('Swagger contract', () => {
     SwaggerModule.setup('api/docs', app, document);
     await app.init();
 
-    await request(app.getHttpServer()).get('/api/docs').expect(200);
+    const httpServer = app.getHttpServer() as Server;
+    await request(httpServer).get('/api/docs').expect(200);
 
     expect(Object.keys(document.paths).sort()).toEqual(
       [
@@ -100,25 +102,27 @@ describe('Swagger contract', () => {
     expect(
       document.paths['/locations/management']?.get?.responses,
     ).toHaveProperty('403');
-    expect(document.paths['/locations/{id}/activate']?.patch?.responses).toEqual(
-      expect.objectContaining({
-        '200': expect.any(Object),
-        '401': expect.any(Object),
-        '403': expect.any(Object),
-        '404': expect.any(Object),
-      }),
-    );
+    const activateResponses =
+      document.paths['/locations/{id}/activate']?.patch?.responses;
+    expect(activateResponses).toHaveProperty('200');
+    expect(activateResponses).toHaveProperty('401');
+    expect(activateResponses).toHaveProperty('403');
+    expect(activateResponses).toHaveProperty('404');
     expect(schemas).toHaveProperty('CompanyResponseDto');
     expect(schemas).toHaveProperty('LoginDto');
-    expect(schemas['LoginDto']).toMatchObject({
-      required: expect.arrayContaining(['companyCode', 'username', 'password']),
-      properties: expect.objectContaining({
-        companyCode: expect.objectContaining({
-          example: 'FORSAGE',
-          pattern: '^[A-Z0-9_-]{2,32}$',
-        }),
-      }),
-    });
+    expect(schemas['LoginDto']).toHaveProperty('required', [
+      'companyCode',
+      'username',
+      'password',
+    ]);
+    expect(schemas['LoginDto']).toHaveProperty(
+      'properties.companyCode.example',
+      'FORSAGE',
+    );
+    expect(schemas['LoginDto']).toHaveProperty(
+      'properties.companyCode.pattern',
+      '^[A-Z0-9_-]{2,32}$',
+    );
     expect(
       document.paths['/operations/arrivals']?.post?.requestBody,
     ).toBeDefined();

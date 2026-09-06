@@ -9,30 +9,71 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service';
 import { ArrivalsService } from './arrivals.service';
 
+type AsyncMock = (...args: unknown[]) => Promise<unknown>;
+type AsyncJestMock = jest.MockedFunction<AsyncMock>;
+
+interface CarCreateArgs {
+  data: {
+    companyId: string;
+    ownerLocationId: string;
+    currentSiteId: string;
+    arrivalSiteId: string;
+    createdById: string;
+    vin?: string;
+    shortVin: string;
+    brand: string;
+    model: string;
+    color: string | null;
+    arrivedOn: Date;
+    lifecycleStatus: string;
+  };
+}
+
+interface PsoCreateArgs {
+  data: {
+    carId: string;
+    status: string;
+    deadlineOn: Date;
+    completedOn: Date | null;
+    completedById: string | null;
+  };
+}
+
 interface MockTx {
-  user: { findFirst: jest.Mock };
-  site: { findFirst: jest.Mock };
-  car: { findMany: jest.Mock; create: jest.Mock };
-  pso: { create: jest.Mock };
-  vehicleEvent: { create: jest.Mock };
+  user: { findFirst: AsyncJestMock };
+  site: { findFirst: AsyncJestMock };
+  car: {
+    findMany: AsyncJestMock;
+    create: jest.MockedFunction<(args: CarCreateArgs) => Promise<unknown>>;
+  };
+  pso: {
+    create: jest.MockedFunction<(args: PsoCreateArgs) => Promise<unknown>>;
+  };
+  vehicleEvent: { create: AsyncJestMock };
 }
 
 function createMockTx(): MockTx {
   return {
-    user: { findFirst: jestRuntime.fn() },
-    site: { findFirst: jestRuntime.fn() },
+    user: { findFirst: jestRuntime.fn<AsyncMock>() },
+    site: { findFirst: jestRuntime.fn<AsyncMock>() },
     car: {
-      findMany: jestRuntime.fn(),
-      create: jestRuntime.fn(),
+      findMany: jestRuntime.fn<AsyncMock>(),
+      create: jestRuntime.fn<(args: CarCreateArgs) => Promise<unknown>>(),
     },
-    pso: { create: jestRuntime.fn() },
-    vehicleEvent: { create: jestRuntime.fn() },
+    pso: {
+      create: jestRuntime.fn<(args: PsoCreateArgs) => Promise<unknown>>(),
+    },
+    vehicleEvent: { create: jestRuntime.fn<AsyncMock>() },
   };
 }
 
 describe('ArrivalsService', () => {
   let service: ArrivalsService;
-  let mockPrisma: { $transaction: jest.Mock };
+  let mockPrisma: {
+    $transaction: jest.MockedFunction<
+      (callback: (transaction: MockTx) => Promise<unknown>) => Promise<unknown>
+    >;
+  };
 
   const auth = {
     userId: 'user-1',
@@ -79,7 +120,12 @@ describe('ArrivalsService', () => {
 
   beforeEach(async () => {
     mockPrisma = {
-      $transaction: jestRuntime.fn(),
+      $transaction:
+        jestRuntime.fn<
+          (
+            callback: (transaction: MockTx) => Promise<unknown>,
+          ) => Promise<unknown>
+        >(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -94,7 +140,7 @@ describe('ArrivalsService', () => {
 
   function runInTransaction(tx: MockTx): void {
     mockPrisma.$transaction.mockImplementation(
-      async (callback: (transaction: MockTx) => unknown) => callback(tx),
+      (callback: (transaction: MockTx) => Promise<unknown>) => callback(tx),
     );
   }
 
@@ -143,24 +189,21 @@ describe('ArrivalsService', () => {
         locationId: true,
       },
     });
-    expect(tx.car.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: {
-          companyId: auth.companyId,
-          ownerLocationId: arrivalSite.locationId,
-          currentSiteId: arrivalSite.id,
-          arrivalSiteId: arrivalSite.id,
-          createdById: auth.userId,
-          vin: dto.cars[0].vin,
-          shortVin: dto.cars[0].shortVin,
-          brand: dto.cars[0].brand,
-          model: dto.cars[0].model,
-          color: null,
-          arrivedOn: expect.any(Date),
-          lifecycleStatus: 'ACTIVE',
-        },
-      }),
-    );
+    const createData = tx.car.create.mock.calls[0][0].data;
+    expect(createData).toMatchObject({
+      companyId: auth.companyId,
+      ownerLocationId: arrivalSite.locationId,
+      currentSiteId: arrivalSite.id,
+      arrivalSiteId: arrivalSite.id,
+      createdById: auth.userId,
+      vin: dto.cars[0].vin,
+      shortVin: dto.cars[0].shortVin,
+      brand: dto.cars[0].brand,
+      model: dto.cars[0].model,
+      color: null,
+      lifecycleStatus: 'ACTIVE',
+    });
+    expect(createData.arrivedOn).toBeInstanceOf(Date);
     expect(tx.vehicleEvent.create).toHaveBeenCalledWith({
       data: {
         companyId: auth.companyId,
@@ -284,11 +327,7 @@ describe('ArrivalsService', () => {
       auth,
     );
 
-    expect(tx.car.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({ vin: undefined }),
-      }),
-    );
+    expect(tx.car.create.mock.calls[0][0].data.vin).toBeUndefined();
     expect(result.cars[0].vin).toBeNull();
   });
 

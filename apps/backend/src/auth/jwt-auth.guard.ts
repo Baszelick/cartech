@@ -31,9 +31,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       const subscription = activation.subscribe({
         next: (allowed) => {
           try {
-            subscriber.next(
-              allowed && this.checkPasswordRequirement(context),
-            );
+            subscriber.next(allowed && this.checkPasswordRequirement(context));
           } catch (error) {
             subscriber.error(error);
           }

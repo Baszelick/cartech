@@ -1,10 +1,5 @@
 import { Transform } from 'class-transformer';
-import {
-  IsOptional,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsOptional, Matches, MaxLength, MinLength } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 const trim = ({ value }: { value: unknown }) =>

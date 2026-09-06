@@ -8,7 +8,22 @@ import { CarTasksService } from './car-tasks.service';
 describe('CarTasksService', () => {
   const prisma = {
     user: { findUnique: jest.fn() },
-    car: { findMany: jest.fn() },
+    car: {
+      findMany: jest.fn<
+        Promise<unknown>,
+        [
+          {
+            where: {
+              companyId: string;
+              ownerLocationId: { in: string[] };
+              lifecycleStatus: string;
+              [key: string]: unknown;
+            };
+            [key: string]: unknown;
+          },
+        ]
+      >(),
+    },
   };
   let service: CarTasksService;
 
@@ -80,15 +95,11 @@ describe('CarTasksService', () => {
       },
     ]);
 
-    expect(prisma.car.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
-          companyId: 'company-id',
-          ownerLocationId: { in: ['location-id'] },
-          lifecycleStatus: 'ACTIVE',
-        }),
-      }),
-    );
+    expect(prisma.car.findMany.mock.calls[0][0].where).toMatchObject({
+      companyId: 'company-id',
+      ownerLocationId: { in: ['location-id'] },
+      lifecycleStatus: 'ACTIVE',
+    });
   });
 
   it('omits a battery task outside the three-day window', async () => {

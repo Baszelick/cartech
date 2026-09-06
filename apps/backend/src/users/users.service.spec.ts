@@ -90,8 +90,8 @@ describe('UsersService', () => {
       username: 'operator',
       firstName: 'Анна',
       lastName: 'Иванова',
-        isActive: true,
-        mustChangePassword: false,
+      isActive: true,
+      mustChangePassword: false,
       roles: [{ role: UserRole.OPERATIONS_MANAGER }],
     });
 

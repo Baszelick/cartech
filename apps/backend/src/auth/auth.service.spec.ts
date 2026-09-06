@@ -9,29 +9,39 @@ import { TokenService } from './token.service';
 
 jestRuntime.mock('bcrypt');
 
+type AsyncMock = (...args: unknown[]) => Promise<unknown>;
+type UpdateSession = (args: {
+  where: { id: string };
+  data: { refreshTokenHash?: string; revokedAt?: Date };
+}) => Promise<unknown>;
+type RevokeSessions = (args: {
+  where: { id: string; revokedAt: null };
+  data: { revokedAt: Date };
+}) => Promise<unknown>;
+
 describe('AuthService', () => {
   let service: AuthService;
 
-  const mockPrisma: any = {
+  const mockPrisma = {
     company: {
-      findUnique: jestRuntime.fn(),
+      findUnique: jestRuntime.fn<AsyncMock>(),
     },
     user: {
-      findUnique: jestRuntime.fn(),
-      findUniqueOrThrow: jestRuntime.fn(),
+      findUnique: jestRuntime.fn<AsyncMock>(),
+      findUniqueOrThrow: jestRuntime.fn<AsyncMock>(),
     },
     authSession: {
-      create: jestRuntime.fn(),
-      findUnique: jestRuntime.fn(),
-      update: jestRuntime.fn(),
-      updateMany: jestRuntime.fn(),
+      create: jestRuntime.fn<AsyncMock>(),
+      findUnique: jestRuntime.fn<AsyncMock>(),
+      update: jestRuntime.fn<UpdateSession>(),
+      updateMany: jestRuntime.fn<RevokeSessions>(),
     },
   };
 
-  const mockTokenService: any = {
-    createAccessToken: jestRuntime.fn(),
-    createRefreshToken: jestRuntime.fn(),
-    verifyRefreshToken: jestRuntime.fn(),
+  const mockTokenService = {
+    createAccessToken: jestRuntime.fn<AsyncMock>(),
+    createRefreshToken: jestRuntime.fn<AsyncMock>(),
+    verifyRefreshToken: jestRuntime.fn<AsyncMock>(),
     refreshExpiresInMs: 7 * 24 * 60 * 60 * 1000,
     accessExpiresInMs: 7 * 60 * 1000,
   };
@@ -99,6 +109,10 @@ describe('AuthService', () => {
         password: 'password',
       });
 
+      expect(mockPrisma.company.findUnique).toHaveBeenCalledWith({
+        where: { code: 'FORSAGE' },
+        select: { id: true, isActive: true },
+      });
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
         where: {
           companyId_username: {
@@ -293,10 +307,9 @@ describe('AuthService', () => {
       await expect(service.refresh('reused_token')).rejects.toThrow(
         UnauthorizedException,
       );
-      expect(mockPrisma.authSession.update).toHaveBeenCalledWith({
-        where: { id: 'session-1' },
-        data: { revokedAt: expect.any(Date) },
-      });
+      const revokeCall = mockPrisma.authSession.update.mock.calls[0][0];
+      expect(revokeCall).toMatchObject({ where: { id: 'session-1' } });
+      expect(revokeCall.data.revokedAt).toBeInstanceOf(Date);
     });
   });
 
@@ -311,10 +324,9 @@ describe('AuthService', () => {
 
       await service.logout('some_token');
 
-      expect(mockPrisma.authSession.updateMany).toHaveBeenCalledWith({
-        where: { id: 'session-1', revokedAt: null },
-        data: { revokedAt: expect.any(Date) },
-      });
+      const revokeCall = mockPrisma.authSession.updateMany.mock.calls[0][0];
+      expect(revokeCall.where).toEqual({ id: 'session-1', revokedAt: null });
+      expect(revokeCall.data.revokedAt).toBeInstanceOf(Date);
     });
 
     it('does nothing when no token is provided', async () => {
@@ -333,7 +345,3 @@ describe('AuthService', () => {
     });
   });
 });
-      expect(mockPrisma.company.findUnique).toHaveBeenCalledWith({
-        where: { code: 'FORSAGE' },
-        select: { id: true, isActive: true },
-      });

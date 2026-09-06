@@ -1,7 +1,4 @@
-import {
-  ExecutionContext,
-  ForbiddenException,
-} from '@nestjs/common';
+import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtAuthGuard } from './jwt-auth.guard';
 

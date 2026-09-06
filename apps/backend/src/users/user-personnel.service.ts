@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import bcrypt from 'bcrypt';
 import { UserRole } from '../../generated/prisma/enums';
+import type { Prisma } from '../../generated/prisma/client';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-request.interface';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -85,9 +86,7 @@ export class UserPersonnelService {
       );
     } catch (error: unknown) {
       if (this.isUniqueConstraintError(error)) {
-        throw new ConflictException(
-          'Username already exists in this company',
-        );
+        throw new ConflictException('Username already exists in this company');
       }
       throw error;
     }
@@ -154,11 +153,7 @@ export class UserPersonnelService {
 
     try {
       return await this.prisma.$transaction(async (tx) => {
-        const target = await this.findManageableUser(
-          tx,
-          targetUserId,
-          actor,
-        );
+        const target = await this.findManageableUser(tx, targetUserId, actor);
         const user = await tx.user.update({
           where: { id: target.id },
           data: dto,
@@ -178,9 +173,7 @@ export class UserPersonnelService {
       });
     } catch (error: unknown) {
       if (this.isUniqueConstraintError(error)) {
-        throw new ConflictException(
-          'Username already exists in this company',
-        );
+        throw new ConflictException('Username already exists in this company');
       }
       throw error;
     }
@@ -193,17 +186,11 @@ export class UserPersonnelService {
 
     return this.prisma.$transaction(
       async (tx) => {
-        const target = await this.findManageableUser(
-          tx,
-          targetUserId,
-          actor,
-        );
+        const target = await this.findManageableUser(tx, targetUserId, actor);
         if (!target.isActive) {
           throw new ConflictException('User is already inactive');
         }
-        if (
-          target.roles.some(({ role }) => role === UserRole.SYSTEM_OWNER)
-        ) {
+        if (target.roles.some(({ role }) => role === UserRole.SYSTEM_OWNER)) {
           const otherOwnerCount = await tx.userRoleAssignment.count({
             where: {
               role: UserRole.SYSTEM_OWNER,
@@ -247,11 +234,7 @@ export class UserPersonnelService {
   ) {
     const passwordHash = await bcrypt.hash(dto.temporaryPassword, 10);
     return this.prisma.$transaction(async (tx) => {
-      const target = await this.findManageableUser(
-        tx,
-        targetUserId,
-        actor,
-      );
+      const target = await this.findManageableUser(tx, targetUserId, actor);
       if (target.isActive) {
         throw new ConflictException('User is already active');
       }
@@ -301,10 +284,7 @@ export class UserPersonnelService {
     actorRoles: UserRole[],
   ): void {
     if (actorRoles.includes(UserRole.SYSTEM_OWNER)) return;
-    if (
-      targetRoles.length !== 1 ||
-      targetRoles[0] !== UserRole.TECHNICIAN
-    ) {
+    if (targetRoles.length !== 1 || targetRoles[0] !== UserRole.TECHNICIAN) {
       throw new ForbiddenException(
         'Operations manager can reset only a single-role technician',
       );
@@ -312,7 +292,7 @@ export class UserPersonnelService {
   }
 
   private async findManageableUser(
-    tx: any,
+    tx: Prisma.TransactionClient,
     targetUserId: string,
     actor: AuthenticatedUser,
   ) {
@@ -335,10 +315,7 @@ export class UserPersonnelService {
     const targetRoles = target.roles.map(
       ({ role }: { role: UserRole }) => role,
     );
-    if (
-      targetRoles.length !== 1 ||
-      targetRoles[0] !== UserRole.TECHNICIAN
-    ) {
+    if (targetRoles.length !== 1 || targetRoles[0] !== UserRole.TECHNICIAN) {
       throw new ForbiddenException(
         'Operations manager can manage only a single-role technician',
       );
@@ -353,9 +330,8 @@ export class UserPersonnelService {
       ),
     );
     if (
-      !target.locationAccesses.some(
-        ({ locationId }: { locationId: string }) =>
-          managerLocationIds.has(locationId),
+      !target.locationAccesses.some(({ locationId }: { locationId: string }) =>
+        managerLocationIds.has(locationId),
       )
     ) {
       throw new ForbiddenException(

@@ -94,7 +94,7 @@ export class CarIdentityOperationsService {
     dto: UpdateCarIdentityDto,
     field: keyof UpdateCarIdentityDto,
   ): boolean {
-    return Object.prototype.hasOwnProperty.call(dto, field);
+    return Object.hasOwn(dto, field);
   }
 
   private isUniqueConstraintError(error: unknown): boolean {

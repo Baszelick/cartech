@@ -41,7 +41,9 @@ export class BatteryScheduleService {
     asOf: Date,
   ): BatterySchedulePeriod {
     if (!Number.isInteger(completedChecks) || completedChecks < 0) {
-      throw new RangeError('Completed battery checks must be a non-negative integer');
+      throw new RangeError(
+        'Completed battery checks must be a non-negative integer',
+      );
     }
 
     const periodNumber = completedChecks + 1;
@@ -72,11 +74,7 @@ export class BatteryScheduleService {
 
   private toUtcDate(value: Date): Date {
     return new Date(
-      Date.UTC(
-        value.getUTCFullYear(),
-        value.getUTCMonth(),
-        value.getUTCDate(),
-      ),
+      Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate()),
     );
   }
 }

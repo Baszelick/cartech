@@ -5,7 +5,7 @@ import { CompanyService } from './company.service';
 
 describe('CompanyController', () => {
   const companyService = {
-    getCurrent: jestRuntime.fn(),
+    getCurrent: jestRuntime.fn<CompanyService['getCurrent']>(),
   };
   let controller: CompanyController;
 

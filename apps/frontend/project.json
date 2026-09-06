@@ -4,20 +4,29 @@
   "projectType": "application",
   "sourceRoot": "apps/frontend/src",
   "prefix": "app",
-  "tags": ["type:app"],
+  "tags": [
+    "type:app"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/angular:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/frontend",
         "index": "apps/frontend/src/index.html",
         "browser": "apps/frontend/src/main.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": [
+          "zone.js"
+        ],
         "tsConfig": "apps/frontend/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/frontend/src/styles"]
+          "includePaths": [
+            "apps/frontend/src/styles"
+          ]
         },
         "assets": [
           {
@@ -30,7 +39,9 @@
             "output": "assets"
           }
         ],
-        "styles": ["apps/frontend/src/styles.scss"],
+        "styles": [
+          "apps/frontend/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -54,11 +65,11 @@
           "extractLicenses": false,
           "sourceMap": true
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
       "executor": "@nx/angular:dev-server",
+      "defaultConfiguration": "development",
       "options": {
         "host": "127.0.0.1",
         "port": 4200,
@@ -71,17 +82,21 @@
         "development": {
           "buildTarget": "frontend:build:development"
         }
-      },
-      "defaultConfiguration": "development"
+      }
     },
     "test": {
-      "executor": "@angular-devkit/build-angular:karma",
+      "executor": "@angular/build:karma",
       "options": {
-        "polyfills": ["zone.js", "zone.js/testing"],
+        "polyfills": [
+          "zone.js",
+          "zone.js/testing"
+        ],
         "tsConfig": "apps/frontend/tsconfig.spec.json",
         "inlineStyleLanguage": "scss",
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/frontend/src/styles"]
+          "includePaths": [
+            "apps/frontend/src/styles"
+          ]
         },
         "assets": [
           {
@@ -94,7 +109,9 @@
             "output": "assets"
           }
         ],
-        "styles": ["apps/frontend/src/styles.scss"],
+        "styles": [
+          "apps/frontend/src/styles.scss"
+        ],
         "scripts": []
       }
     }

@@ -2,12 +2,23 @@ import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { jest as jestRuntime } from '@jest/globals';
 import { PrismaService } from '../prisma/prisma.service';
+import type { CompanyResponseDto } from './dto/company-response.dto';
 import { CompanyService } from './company.service';
+
+type FindCompany = (args: {
+  where: { id: string };
+  select: {
+    id: true;
+    code: true;
+    name: true;
+    isActive: true;
+  };
+}) => Promise<CompanyResponseDto | null>;
 
 describe('CompanyService', () => {
   const prisma = {
     company: {
-      findUnique: jestRuntime.fn(),
+      findUnique: jestRuntime.fn<FindCompany>(),
     },
   };
   let service: CompanyService;
@@ -15,10 +26,7 @@ describe('CompanyService', () => {
   beforeEach(async () => {
     jestRuntime.clearAllMocks();
     const module = await Test.createTestingModule({
-      providers: [
-        CompanyService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [CompanyService, { provide: PrismaService, useValue: prisma }],
     }).compile();
     service = module.get(CompanyService);
   });

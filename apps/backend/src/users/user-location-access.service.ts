@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserRole } from '../../generated/prisma/enums';
+import type { Prisma } from '../../generated/prisma/client';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-request.interface';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserLocationAccessDto } from './dto/update-user-location-access.dto';
@@ -90,9 +91,7 @@ export class UserLocationAccessService {
         : [];
 
       if (allowedLocations.length !== dto.locationIds.length) {
-        throw new BadRequestException(
-          'One or more locations are unavailable',
-        );
+        throw new BadRequestException('One or more locations are unavailable');
       }
 
       const existingIds = targetUser.locationAccesses.map(
@@ -149,7 +148,7 @@ export class UserLocationAccessService {
   }
 
   private async validateManagerScope(
-    tx: any,
+    tx: Prisma.TransactionClient,
     targetUser: {
       id: string;
       roles: Array<{ role: UserRole }>;
@@ -158,10 +157,7 @@ export class UserLocationAccessService {
     actor: AuthenticatedUser,
   ): Promise<string[]> {
     const targetRoles = targetUser.roles.map(({ role }) => role);
-    if (
-      targetRoles.length !== 1 ||
-      targetRoles[0] !== UserRole.TECHNICIAN
-    ) {
+    if (targetRoles.length !== 1 || targetRoles[0] !== UserRole.TECHNICIAN) {
       throw new ForbiddenException(
         'Operations manager can manage only a single-role technician',
       );

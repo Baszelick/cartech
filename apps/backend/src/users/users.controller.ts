@@ -90,10 +90,7 @@ export class UsersController {
     description: 'Username уже занят в текущей компании.',
     type: HttpErrorResponseDto,
   })
-  create(
-    @Body() dto: CreateUserDto,
-    @Req() request: AuthenticatedRequest,
-  ) {
+  create(@Body() dto: CreateUserDto, @Req() request: AuthenticatedRequest) {
     return this.userPersonnelService.create(dto, request.user);
   }
 

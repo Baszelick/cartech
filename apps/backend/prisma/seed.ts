@@ -147,29 +147,26 @@ async function removeSafeLegacyDemoCompany(): Promise<void> {
     })
   ).map(({ id }) => id);
 
-  const [
-    cars,
-    vehicleEvents,
-    feedPosts,
-    auditLogs,
-    userBusinessReferences,
-  ] = await Promise.all([
-    prisma.car.count({ where: { companyId: demo.id } }),
-    prisma.vehicleEvent.count({ where: { companyId: demo.id } }),
-    prisma.feedPost.count({ where: { companyId: demo.id } }),
-    prisma.auditLog.count({ where: { companyId: demo.id } }),
-    Promise.all([
-      prisma.feedComment.count({ where: { authorId: { in: userIds } } }),
-      prisma.feedPostReaction.count({ where: { userId: { in: userIds } } }),
-      prisma.feedCommentReaction.count({ where: { userId: { in: userIds } } }),
-      prisma.batteryCheck.count({ where: { checkedById: { in: userIds } } }),
-      prisma.vehicleMovement.count({ where: { movedById: { in: userIds } } }),
-      prisma.deliveryAppointment.count({
-        where: { createdById: { in: userIds } },
-      }),
-      prisma.vehicleIssue.count({ where: { issuedById: { in: userIds } } }),
-    ]),
-  ]);
+  const [cars, vehicleEvents, feedPosts, auditLogs, userBusinessReferences] =
+    await Promise.all([
+      prisma.car.count({ where: { companyId: demo.id } }),
+      prisma.vehicleEvent.count({ where: { companyId: demo.id } }),
+      prisma.feedPost.count({ where: { companyId: demo.id } }),
+      prisma.auditLog.count({ where: { companyId: demo.id } }),
+      Promise.all([
+        prisma.feedComment.count({ where: { authorId: { in: userIds } } }),
+        prisma.feedPostReaction.count({ where: { userId: { in: userIds } } }),
+        prisma.feedCommentReaction.count({
+          where: { userId: { in: userIds } },
+        }),
+        prisma.batteryCheck.count({ where: { checkedById: { in: userIds } } }),
+        prisma.vehicleMovement.count({ where: { movedById: { in: userIds } } }),
+        prisma.deliveryAppointment.count({
+          where: { createdById: { in: userIds } },
+        }),
+        prisma.vehicleIssue.count({ where: { issuedById: { in: userIds } } }),
+      ]),
+    ]);
 
   const onlyDemoAdmin =
     users.length === 1 && users[0]?.username.toLowerCase() === 'admin';
