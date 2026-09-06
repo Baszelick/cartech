@@ -1,1 +1,6 @@
-<p>admin-page works!</p>
+<ct-tabs
+  [items]="tabs"
+  [selected]="activeTab"
+  (selectedChange)="onTabChange($event)"
+></ct-tabs>
+<router-outlet></router-outlet>
