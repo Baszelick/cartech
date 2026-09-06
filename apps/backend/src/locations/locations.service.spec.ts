@@ -10,6 +10,7 @@ describe('LocationsService', () => {
       findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
     },
     site: {
       findMany: jest.fn(),
@@ -178,6 +179,52 @@ describe('LocationsService', () => {
     expect(prisma.location.update).not.toHaveBeenCalled();
   });
 
+  it('activates a location in the current company', async () => {
+    prisma.location.updateMany.mockResolvedValue({ count: 1 });
+    prisma.location.findFirst.mockResolvedValue({
+      id: 'location-id',
+      code: 'MSK',
+      name: 'Москва',
+      isActive: true,
+    });
+
+    await expect(
+      service.activateLocation('location-id', 'company-id'),
+    ).resolves.toMatchObject({ isActive: true });
+    expect(prisma.location.updateMany).toHaveBeenCalledWith({
+      where: { id: 'location-id', companyId: 'company-id' },
+      data: { isActive: true },
+    });
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not activate a location from another company', async () => {
+    prisma.location.updateMany.mockResolvedValue({ count: 0 });
+
+    await expect(
+      service.activateLocation('location-id', 'company-id'),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    expect(prisma.location.updateMany).toHaveBeenCalledWith({
+      where: { id: 'location-id', companyId: 'company-id' },
+      data: { isActive: true },
+    });
+    expect(prisma.location.findFirst).not.toHaveBeenCalled();
+  });
+
+  it('idempotently keeps an already active location active', async () => {
+    prisma.location.updateMany.mockResolvedValue({ count: 1 });
+    prisma.location.findFirst.mockResolvedValue({
+      id: 'location-id',
+      code: 'MSK',
+      name: 'Москва',
+      isActive: true,
+    });
+
+    await expect(
+      service.activateLocation('location-id', 'company-id'),
+    ).resolves.toMatchObject({ isActive: true });
+  });
+
   it('creates a site inside an inactive company location', async () => {
     prisma.location.findFirst.mockResolvedValue({
       id: 'location-id',
@@ -329,6 +376,60 @@ describe('LocationsService', () => {
         isActive: true,
       },
     ]);
+  });
+
+  it('returns active and inactive company locations without applying user access', async () => {
+    prisma.location.findMany.mockResolvedValue([
+      {
+        id: 'active-id',
+        code: 'MSK',
+        name: 'Москва',
+        isActive: true,
+      },
+      {
+        id: 'inactive-id',
+        code: 'SPB',
+        name: 'Санкт-Петербург',
+        isActive: false,
+      },
+    ]);
+
+    await expect(service.findAllForManagement('company-id')).resolves.toEqual([
+      {
+        id: 'active-id',
+        code: 'MSK',
+        name: 'Москва',
+        isActive: true,
+      },
+      {
+        id: 'inactive-id',
+        code: 'SPB',
+        name: 'Санкт-Петербург',
+        isActive: false,
+      },
+    ]);
+    expect(prisma.location.findMany).toHaveBeenCalledWith({
+      where: { companyId: 'company-id' },
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        isActive: true,
+      },
+    });
+  });
+
+  it('isolates the management list by JWT company', async () => {
+    prisma.location.findMany.mockResolvedValue([]);
+
+    await service.findAllForManagement('current-company-id');
+
+    expect(prisma.location.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { companyId: 'current-company-id' },
+      }),
+    );
   });
 
   it('isolates locations by company from the JWT scope', async () => {

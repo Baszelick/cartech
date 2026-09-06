@@ -73,10 +73,7 @@ export class LocationsController {
     description: 'Код локации уже существует в текущей компании.',
     type: HttpErrorResponseDto,
   })
-  create(
-    @Body() dto: CreateLocationDto,
-    @Req() request: AuthenticatedRequest,
-  ) {
+  create(@Body() dto: CreateLocationDto, @Req() request: AuthenticatedRequest) {
     return this.locationsService.create(dto, request.user.companyId);
   }
 
@@ -122,10 +119,48 @@ export class LocationsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Req() request: AuthenticatedRequest,
   ) {
-    return this.locationsService.deactivateLocation(
-      id,
-      request.user.companyId,
-    );
+    return this.locationsService.deactivateLocation(id, request.user.companyId);
+  }
+
+  @Patch(':id/activate')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.SYSTEM_OWNER, UserRole.OPERATIONS_MANAGER)
+  @ApiOperation({
+    summary: 'Повторно активировать локацию',
+    description:
+      'Доступно ролям SYSTEM_OWNER и OPERATIONS_MANAGER. Устанавливает isActive=true для локации текущей компании из JWT.',
+  })
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+    example: 'cb9b2fec-7878-4dac-a87b-426df4754567',
+    description: 'Идентификатор локации.',
+  })
+  @ApiOkResponse({
+    description: 'Локация активирована.',
+    type: LocationResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Некорректный UUID локации.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Требуется аутентификация.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'Роль пользователя не разрешает управление локациями.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Локация отсутствует или принадлежит другой компании.',
+    type: HttpErrorResponseDto,
+  })
+  activateLocation(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.locationsService.activateLocation(id, request.user.companyId);
   }
 
   @Patch(':id')
@@ -341,6 +376,32 @@ export class LocationsController {
       dto,
       request.user.companyId,
     );
+  }
+
+  @Get('management')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.SYSTEM_OWNER, UserRole.OPERATIONS_MANAGER)
+  @ApiOperation({
+    summary: 'Получить все локации для управления',
+    description:
+      'Доступно ролям SYSTEM_OWNER и OPERATIONS_MANAGER. Возвращает все активные и неактивные локации компании из JWT независимо от UserLocationAccess текущего пользователя.',
+  })
+  @ApiOkResponse({
+    description:
+      'Все активные и неактивные локации текущей компании, отсортированные по названию.',
+    type: LocationResponseDto,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Требуется аутентификация.',
+    type: HttpErrorResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'Роль пользователя не разрешает управление локациями.',
+    type: HttpErrorResponseDto,
+  })
+  findAllForManagement(@Req() request: AuthenticatedRequest) {
+    return this.locationsService.findAllForManagement(request.user.companyId);
   }
 
   @Get()
