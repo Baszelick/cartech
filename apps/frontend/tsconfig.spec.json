@@ -12,5 +12,13 @@
     "src/**/*.spec.ts",
     "src/**/*.d.ts",
     "../../libs/auth/**/*.spec.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    }
+  }
 }
