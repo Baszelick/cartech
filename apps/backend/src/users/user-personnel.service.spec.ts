@@ -14,27 +14,40 @@ import { UserPersonnelService } from './user-personnel.service';
 
 jestRuntime.mock('bcrypt');
 
+type AsyncMock = (...args: unknown[]) => Promise<unknown>;
+type CreateUserMock = (args: {
+  data: {
+    companyId: string;
+    passwordHash: string;
+    isActive: boolean;
+    mustChangePassword: boolean;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}) => Promise<unknown>;
+
 describe('UserPersonnelService', () => {
-  const tx: any = {
-    location: { count: jestRuntime.fn() },
+  const tx = {
+    location: { count: jestRuntime.fn<AsyncMock>() },
     user: {
-      create: jestRuntime.fn(),
-      findFirst: jestRuntime.fn(),
-      update: jestRuntime.fn(),
+      create: jestRuntime.fn<CreateUserMock>(),
+      findFirst: jestRuntime.fn<AsyncMock>(),
+      update: jestRuntime.fn<AsyncMock>(),
     },
     userRoleAssignment: {
-      createMany: jestRuntime.fn(),
-      count: jestRuntime.fn(),
+      createMany: jestRuntime.fn<AsyncMock>(),
+      count: jestRuntime.fn<AsyncMock>(),
     },
     userLocationAccess: {
-      createMany: jestRuntime.fn(),
-      findMany: jestRuntime.fn(),
+      createMany: jestRuntime.fn<AsyncMock>(),
+      findMany: jestRuntime.fn<AsyncMock>(),
     },
-    authSession: { deleteMany: jestRuntime.fn() },
+    authSession: { deleteMany: jestRuntime.fn<AsyncMock>() },
   };
-  const prisma: any = {
+  type TransactionCallback = (client: typeof tx) => Promise<unknown>;
+  const prisma = {
     $transaction: jestRuntime.fn(
-      async (callback: (client: typeof tx) => unknown) => callback(tx),
+      (callback: TransactionCallback): Promise<unknown> => callback(tx),
     ),
   };
   const owner: AuthenticatedUser = {
@@ -63,7 +76,7 @@ describe('UserPersonnelService', () => {
   beforeEach(async () => {
     jestRuntime.clearAllMocks();
     prisma.$transaction.mockImplementation(
-      async (callback: (client: typeof tx) => unknown) => callback(tx),
+      (callback: TransactionCallback): Promise<unknown> => callback(tx),
     );
     (bcrypt.hash as jest.Mock).mockResolvedValue('password-hash');
     tx.location.count.mockResolvedValue(1);
@@ -96,16 +109,13 @@ describe('UserPersonnelService', () => {
     const result = await service.create(createDto, owner);
 
     expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-    expect(tx.user.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          companyId: owner.companyId,
-          passwordHash: 'password-hash',
-          isActive: true,
-          mustChangePassword: true,
-        }),
-      }),
-    );
+    const createCall = tx.user.create.mock.calls[0][0];
+    expect(createCall.data).toMatchObject({
+      companyId: owner.companyId,
+      passwordHash: 'password-hash',
+      isActive: true,
+      mustChangePassword: true,
+    });
     expect(tx.userRoleAssignment.createMany).toHaveBeenCalled();
     expect(tx.userLocationAccess.createMany).toHaveBeenCalled();
     expect(result).not.toHaveProperty('passwordHash');

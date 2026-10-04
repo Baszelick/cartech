@@ -4,15 +4,21 @@
   "sourceRoot": "libs/cars/feature-list/src",
   "prefix": "ct",
   "projectType": "library",
-  "tags": ["scope:cars", "type:feature"],
+  "tags": [
+    "scope:cars",
+    "type:feature"
+  ],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     },
     "test": {
-      "executor": "@angular-devkit/build-angular:karma",
+      "executor": "@angular/build:karma",
       "options": {
-        "polyfills": ["zone.js", "zone.js/testing"],
+        "polyfills": [
+          "zone.js",
+          "zone.js/testing"
+        ],
         "tsConfig": "libs/cars/feature-list/tsconfig.spec.json",
         "inlineStyleLanguage": "scss"
       }

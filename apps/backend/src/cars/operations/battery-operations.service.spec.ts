@@ -11,7 +11,23 @@ describe('BatteryOperationsService', () => {
   };
   const tx = {
     car: { findFirst: jest.fn() },
-    batteryCheck: { count: jest.fn(), create: jest.fn() },
+    batteryCheck: {
+      count: jest.fn(),
+      create: jest.fn<
+        Promise<unknown>,
+        [
+          {
+            data: {
+              carId: string;
+              checkedById: string;
+              checkedOn: Date;
+              [key: string]: unknown;
+            };
+            [key: string]: unknown;
+          },
+        ]
+      >(),
+    },
   };
   let service: BatteryOperationsService;
 
@@ -99,15 +115,11 @@ describe('BatteryOperationsService', () => {
     expect(tx.batteryCheck.count).toHaveBeenCalledWith({
       where: { carId: 'car-id' },
     });
-    expect(tx.batteryCheck.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          carId: 'car-id',
-          checkedById: 'user-id',
-          checkedOn: new Date('2026-10-05T12:00:00.000Z'),
-        }),
-      }),
-    );
+    expect(tx.batteryCheck.create.mock.calls[0][0].data).toMatchObject({
+      carId: 'car-id',
+      checkedById: 'user-id',
+      checkedOn: new Date('2026-10-05T12:00:00.000Z'),
+    });
     expect(prisma.$transaction).toHaveBeenCalledTimes(1);
     jest.useRealTimers();
   });

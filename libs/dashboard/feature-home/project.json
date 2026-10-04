@@ -4,15 +4,21 @@
   "sourceRoot": "libs/dashboard/feature-home/src",
   "prefix": "ct",
   "projectType": "library",
-  "tags": ["scope:dashboard", "type:feature"],
+  "tags": [
+    "scope:dashboard",
+    "type:feature"
+  ],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     },
     "test": {
-      "executor": "@angular-devkit/build-angular:karma",
+      "executor": "@angular/build:karma",
       "options": {
-        "polyfills": ["zone.js", "zone.js/testing"],
+        "polyfills": [
+          "zone.js",
+          "zone.js/testing"
+        ],
         "tsConfig": "libs/dashboard/feature-home/tsconfig.spec.json",
         "inlineStyleLanguage": "scss"
       }

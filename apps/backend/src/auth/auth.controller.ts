@@ -79,6 +79,17 @@ export class AuthController {
     });
   }
 
+  private getRefreshToken(cookies: unknown): string | undefined {
+    if (!this.isUnknownRecord(cookies)) return undefined;
+
+    const value = cookies[this.refreshCookieName];
+    return typeof value === 'string' ? value : undefined;
+  }
+
+  private isUnknownRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
+  }
+
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -132,8 +143,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken: string | undefined =
-      req.cookies?.[this.refreshCookieName];
+    const refreshToken = this.getRefreshToken(req.cookies);
     if (!refreshToken) {
       this.clearRefreshCookie(res);
       throw new UnauthorizedException('Refresh token not found');
@@ -202,8 +212,7 @@ export class AuthController {
     description: 'Сессия завершена, cookie очищен.',
   })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const refreshToken: string | undefined =
-      req.cookies?.[this.refreshCookieName];
+    const refreshToken = this.getRefreshToken(req.cookies);
     await this.authService.logout(refreshToken);
     this.clearRefreshCookie(res);
   }

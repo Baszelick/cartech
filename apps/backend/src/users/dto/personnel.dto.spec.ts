@@ -42,28 +42,25 @@ describe('personnel password and collection DTO validation', () => {
     expect(await validate(dto)).not.toHaveLength(0);
   });
 
-  it.each([
-    'short1!',
-    'тест2026',
-    'LettersOnly',
-    '123456',
-    'A1 bbb',
-  ])('rejects invalid password %s in every password DTO', async (password) => {
-    const create = plainToInstance(CreateUserDto, {
-      ...validCreate,
-      temporaryPassword: password,
-    });
-    const reset = plainToInstance(ResetUserPasswordDto, {
-      temporaryPassword: password,
-    });
-    const change = plainToInstance(ChangeInitialPasswordDto, {
-      newPassword: password,
-    });
+  it.each(['short1!', 'тест2026', 'LettersOnly', '123456', 'A1 bbb'])(
+    'rejects invalid password %s in every password DTO',
+    async (password) => {
+      const create = plainToInstance(CreateUserDto, {
+        ...validCreate,
+        temporaryPassword: password,
+      });
+      const reset = plainToInstance(ResetUserPasswordDto, {
+        temporaryPassword: password,
+      });
+      const change = plainToInstance(ChangeInitialPasswordDto, {
+        newPassword: password,
+      });
 
-    expect(await validate(create)).not.toHaveLength(0);
-    expect(await validate(reset)).not.toHaveLength(0);
-    expect(await validate(change)).not.toHaveLength(0);
-  });
+      expect(await validate(create)).not.toHaveLength(0);
+      expect(await validate(reset)).not.toHaveLength(0);
+      expect(await validate(change)).not.toHaveLength(0);
+    },
+  );
 
   it('normalizes username and validates personnel names', async () => {
     const dto = plainToInstance(UpdateUserDto, {

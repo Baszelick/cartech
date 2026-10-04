@@ -31,7 +31,8 @@ describe('CarIdentityOperationsService', () => {
       locationAccesses: [{ locationId: 'location-id' }],
     });
     prisma.$transaction.mockImplementation(
-      async (callback: (transaction: typeof tx) => unknown) => callback(tx),
+      (callback: (transaction: typeof tx) => unknown) =>
+        Promise.resolve(callback(tx)),
     );
     tx.car.findFirst.mockResolvedValueOnce({ id: 'car-id' });
     tx.car.update.mockResolvedValue({ id: 'car-id' });

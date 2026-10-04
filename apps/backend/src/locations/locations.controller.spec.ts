@@ -10,6 +10,13 @@ import { RolesGuard } from '../auth/roles.guard';
 import { LocationsController } from './locations.controller';
 import { LocationsService } from './locations.service';
 
+function controllerMethod<K extends keyof LocationsController>(
+  name: K,
+): LocationsController[K] {
+  // Metadata APIs require the original method reference; the method is never invoked unbound.
+  return LocationsController.prototype[name];
+}
+
 describe('LocationsController', () => {
   const locationsService = {
     findAll: jest.fn(),
@@ -49,11 +56,11 @@ describe('LocationsController', () => {
     ) as unknown[];
     const methodGuards = Reflect.getMetadata(
       GUARDS_METADATA,
-      LocationsController.prototype.create,
+      controllerMethod('create'),
     ) as unknown[];
     const roles = new Reflector().get<UserRole[]>(
       ROLES_KEY,
-      LocationsController.prototype.create,
+      controllerMethod('create'),
     );
 
     expect(classGuards).toEqual([JwtAuthGuard]);
@@ -73,11 +80,11 @@ describe('LocationsController', () => {
   ] as const)('protects %s with administrative role metadata', (method) => {
     const methodGuards = Reflect.getMetadata(
       GUARDS_METADATA,
-      LocationsController.prototype[method],
+      controllerMethod(method),
     ) as unknown[];
     const roles = new Reflector().get<UserRole[]>(
       ROLES_KEY,
-      LocationsController.prototype[method],
+      controllerMethod(method),
     );
 
     expect(methodGuards).toEqual([RolesGuard]);
@@ -130,20 +137,18 @@ describe('LocationsController', () => {
         user: { ...request.user, roles: [role] },
       } as AuthenticatedRequest;
       const context = {
-        getHandler: () => LocationsController.prototype.activateLocation,
+        getHandler: () => controllerMethod('activateLocation'),
         getClass: () => LocationsController,
         switchToHttp: () => ({ getRequest: () => authorizedRequest }),
       } as unknown as ExecutionContext;
 
-      expect(
-        new RolesGuard(new Reflector()).canActivate(context),
-      ).toBeTruthy();
+      expect(new RolesGuard(new Reflector()).canActivate(context)).toBeTruthy();
     },
   );
 
   it('denies location activation to a user without an administrative role', () => {
     const context = {
-      getHandler: () => LocationsController.prototype.activateLocation,
+      getHandler: () => controllerMethod('activateLocation'),
       getClass: () => LocationsController,
       switchToHttp: () => ({ getRequest: () => request }),
     } as unknown as ExecutionContext;
@@ -226,7 +231,7 @@ describe('LocationsController', () => {
 
   it('denies the management list to a user without an administrative role', () => {
     const context = {
-      getHandler: () => LocationsController.prototype.findAllForManagement,
+      getHandler: () => controllerMethod('findAllForManagement'),
       getClass: () => LocationsController,
       switchToHttp: () => ({ getRequest: () => request }),
     } as unknown as ExecutionContext;

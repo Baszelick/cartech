@@ -160,10 +160,7 @@ describe('UsersController', () => {
 
     await controller.create(dto, request);
 
-    expect(userPersonnelService.create).toHaveBeenCalledWith(
-      dto,
-      request.user,
-    );
+    expect(userPersonnelService.create).toHaveBeenCalledWith(dto, request.user);
   });
 
   it('passes reset DTO, UUID and JWT context to personnel service', async () => {
@@ -187,11 +184,7 @@ describe('UsersController', () => {
     userPersonnelService.deactivate.mockResolvedValue({ id: 'user-id' });
     userPersonnelService.activate.mockResolvedValue({ id: 'user-id' });
 
-    await controller.update(
-      'user-id',
-      { firstName: 'Иван' },
-      request,
-    );
+    await controller.update('user-id', { firstName: 'Иван' }, request);
     await controller.deactivate('user-id', request);
     await controller.activate(
       'user-id',

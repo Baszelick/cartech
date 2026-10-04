@@ -7,7 +7,7 @@ import {
 import { provideRouter } from '@angular/router';
 
 import {routes} from './app.routes';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { authInterceptor, AuthService } from '@cartech/auth/data-access';
 import { firstValueFrom } from 'rxjs';
 import { WorkspaceStore } from '@cartech/core/data-access';
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({eventCoalescing: true}),
     provideRouter(routes),
-    provideHttpClient(
+    provideHttpClient(withXhr(),
       withInterceptors([authInterceptor]),
     ),
     provideAppInitializer(initializeApplication),

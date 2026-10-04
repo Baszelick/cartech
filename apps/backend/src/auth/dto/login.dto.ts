@@ -8,9 +8,10 @@ export class LoginDto {
     minLength: 2,
     maxLength: 32,
     pattern: '^[A-Z0-9_-]{2,32}$',
-    description: 'Публичный код компании. Пробелы удаляются, буквы приводятся к верхнему регистру.',
+    description:
+      'Публичный код компании. Пробелы удаляются, буквы приводятся к верхнему регистру.',
   })
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toUpperCase() : value,
   )
   @IsString()

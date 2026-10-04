@@ -1,9 +1,9 @@
 export class PrismaClient {
-  async $connect(): Promise<void> {
-    return;
+  $connect(): Promise<void> {
+    return Promise.resolve();
   }
 
-  async $disconnect(): Promise<void> {
-    return;
+  $disconnect(): Promise<void> {
+    return Promise.resolve();
   }
 }

@@ -277,8 +277,7 @@ export class AuthService {
 
         const publicUser = this.toPublicUser(updatedUser);
         return {
-          accessToken:
-            await this.tokenService.createAccessToken(publicUser),
+          accessToken: await this.tokenService.createAccessToken(publicUser),
           refreshToken,
           refreshCookieName: this.refreshCookieName,
           user: publicUser,

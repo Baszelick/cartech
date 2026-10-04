@@ -4,15 +4,21 @@
   "sourceRoot": "libs/tasks/feature-tasks/src",
   "prefix": "ct",
   "projectType": "library",
-  "tags": ["scope:tasks", "type:feature"],
+  "tags": [
+    "scope:tasks",
+    "type:feature"
+  ],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     },
     "test": {
-      "executor": "@angular-devkit/build-angular:karma",
+      "executor": "@angular/build:karma",
       "options": {
-        "polyfills": ["zone.js", "zone.js/testing"],
+        "polyfills": [
+          "zone.js",
+          "zone.js/testing"
+        ],
         "tsConfig": "libs/tasks/feature-tasks/tsconfig.spec.json",
         "inlineStyleLanguage": "scss"
       }

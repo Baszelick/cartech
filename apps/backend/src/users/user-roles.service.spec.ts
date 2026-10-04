@@ -38,7 +38,8 @@ describe('UserRolesService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     prisma.$transaction.mockImplementation(
-      async (callback: (tx: typeof prisma) => unknown) => callback(prisma),
+      (callback: (tx: typeof prisma) => unknown) =>
+        Promise.resolve(callback(prisma)),
     );
     const module = await Test.createTestingModule({
       providers: [
@@ -52,10 +53,7 @@ describe('UserRolesService', () => {
   it('returns stable roles for a user in the current company', async () => {
     prisma.user.findFirst.mockResolvedValue({
       id: 'target-id',
-      roles: [
-        { role: UserRole.SYSTEM_OWNER },
-        { role: UserRole.VIEWER },
-      ],
+      roles: [{ role: UserRole.SYSTEM_OWNER }, { role: UserRole.VIEWER }],
     });
 
     await expect(
@@ -187,11 +185,7 @@ describe('UserRolesService', () => {
     prisma.userRoleAssignment.count.mockResolvedValue(1);
 
     await expect(
-      service.replaceForUser(
-        'owner-id',
-        { roles: [UserRole.VIEWER] },
-        owner,
-      ),
+      service.replaceForUser('owner-id', { roles: [UserRole.VIEWER] }, owner),
     ).resolves.toEqual({
       userId: 'owner-id',
       roles: [UserRole.VIEWER],
@@ -206,11 +200,7 @@ describe('UserRolesService', () => {
     prisma.userRoleAssignment.count.mockResolvedValue(0);
 
     await expect(
-      service.replaceForUser(
-        'owner-id',
-        { roles: [UserRole.VIEWER] },
-        owner,
-      ),
+      service.replaceForUser('owner-id', { roles: [UserRole.VIEWER] }, owner),
     ).rejects.toBeInstanceOf(ConflictException);
     expect(prisma.userRoleAssignment.deleteMany).not.toHaveBeenCalled();
     expect(prisma.authSession.deleteMany).not.toHaveBeenCalled();

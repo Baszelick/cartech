@@ -52,7 +52,8 @@ describe('PsoOperationsService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     prisma.$transaction.mockImplementation(
-      async (callback: (tx: typeof prisma) => unknown) => callback(prisma),
+      (callback: (tx: typeof prisma) => unknown) =>
+        Promise.resolve(callback(prisma)),
     );
     const module = await Test.createTestingModule({
       providers: [

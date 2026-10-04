@@ -19,7 +19,12 @@ describe('VehicleIssueOperationsService', () => {
       findFirst: jest.fn(),
       updateMany: jest.fn(),
     },
-    vehicleIssue: { create: jest.fn() },
+    vehicleIssue: {
+      create: jest.fn<
+        Promise<unknown>,
+        [{ data: Record<string, unknown>; select: unknown }]
+      >(),
+    },
     vehicleEvent: { create: jest.fn() },
     $transaction: jest.fn(),
   };
@@ -49,7 +54,8 @@ describe('VehicleIssueOperationsService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     prisma.$transaction.mockImplementation(
-      async (callback: (tx: typeof prisma) => unknown) => callback(prisma),
+      (callback: (tx: typeof prisma) => unknown) =>
+        Promise.resolve(callback(prisma)),
     );
     const module = await Test.createTestingModule({
       providers: [
@@ -92,14 +98,13 @@ describe('VehicleIssueOperationsService', () => {
       },
       data: { lifecycleStatus: CarLifecycleStatus.ISSUED },
     });
-    expect(prisma.vehicleIssue.create).toHaveBeenCalledWith({
-      data: {
-        carId: 'car-id',
-        issuedById: 'user-id',
-        issuedOn: new Date('2026-08-01T12:34:56.000Z'),
-      },
-      select: expect.any(Object),
+    const issueCreate = prisma.vehicleIssue.create.mock.calls[0][0];
+    expect(issueCreate.data).toEqual({
+      carId: 'car-id',
+      issuedById: 'user-id',
+      issuedOn: new Date('2026-08-01T12:34:56.000Z'),
     });
+    expect(issueCreate.select).toBeDefined();
     expect(prisma.vehicleEvent.create).toHaveBeenCalledWith({
       data: {
         companyId: 'company-id',

@@ -4,21 +4,41 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { jest as jestRuntime } from '@jest/globals';
 import { UserRole } from '../../generated/prisma/enums';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-request.interface';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserLocationAccessService } from './user-location-access.service';
 
+type AsyncMock = (...args: unknown[]) => Promise<unknown>;
+type AsyncJestMock = jest.MockedFunction<AsyncMock>;
+
+interface PrismaMock {
+  user: { findFirst: AsyncJestMock };
+  location: { findMany: AsyncJestMock };
+  userLocationAccess: {
+    findMany: AsyncJestMock;
+    deleteMany: AsyncJestMock;
+    createMany: AsyncJestMock;
+  };
+  $transaction: jest.MockedFunction<
+    (callback: (tx: PrismaMock) => Promise<unknown>) => Promise<unknown>
+  >;
+}
+
 describe('UserLocationAccessService', () => {
-  const prisma: any = {
-    user: { findFirst: jest.fn() },
-    location: { findMany: jest.fn() },
+  const prisma: PrismaMock = {
+    user: { findFirst: jestRuntime.fn<AsyncMock>() },
+    location: { findMany: jestRuntime.fn<AsyncMock>() },
     userLocationAccess: {
-      findMany: jest.fn(),
-      deleteMany: jest.fn(),
-      createMany: jest.fn(),
+      findMany: jestRuntime.fn<AsyncMock>(),
+      deleteMany: jestRuntime.fn<AsyncMock>(),
+      createMany: jestRuntime.fn<AsyncMock>(),
     },
-    $transaction: jest.fn(),
+    $transaction:
+      jestRuntime.fn<
+        (callback: (tx: PrismaMock) => Promise<unknown>) => Promise<unknown>
+      >(),
   };
   const manager: AuthenticatedUser = {
     userId: 'manager-id',
@@ -45,9 +65,10 @@ describe('UserLocationAccessService', () => {
   let service: UserLocationAccessService;
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    jestRuntime.clearAllMocks();
     prisma.$transaction.mockImplementation(
-      async (callback: (tx: typeof prisma) => unknown) => callback(prisma),
+      (callback: (tx: PrismaMock) => Promise<unknown>): Promise<unknown> =>
+        callback(prisma),
     );
     prisma.user.findFirst.mockResolvedValue(technician);
     prisma.userLocationAccess.findMany.mockResolvedValue([
@@ -102,9 +123,7 @@ describe('UserLocationAccessService', () => {
         },
       ],
     });
-    expect(result.locations.map(({ id }) => id)).toContain(
-      'foreign-location',
-    );
+    expect(result.locations.map(({ id }) => id)).toContain('foreign-location');
   });
 
   it('manager cannot assign a location outside own scope', async () => {
@@ -140,7 +159,8 @@ describe('UserLocationAccessService', () => {
   });
 
   it('owner replaces the full location set', async () => {
-    prisma.location.findMany.mockReset()
+    prisma.location.findMany
+      .mockReset()
       .mockResolvedValueOnce([{ id: 'manager-location' }])
       .mockResolvedValueOnce([]);
     await service.replaceForUser(
