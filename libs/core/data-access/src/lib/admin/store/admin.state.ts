@@ -1,13 +1,15 @@
+import { Location } from '../../locations';
+import { Site } from '../../sites';
+
 export interface AdminState {
-  locations: []
-  selectedLocationId: string | null
-  sites: []
+  locations: Location[];
+  selectedLocationId: string | null;
+  sites: Site[];
 
-  loadingLocations: boolean
-  loadingSates: boolean
+  loadingLocations: boolean;
+  loadingSites: boolean;
 
-  error: string | null
-
+  error: string | null;
 }
 
 export const initialAdminState: AdminState = {
@@ -16,7 +18,7 @@ export const initialAdminState: AdminState = {
   sites: [],
 
   loadingLocations: false,
-  loadingSates: false,
+  loadingSites: false,
   error: null
 
 }

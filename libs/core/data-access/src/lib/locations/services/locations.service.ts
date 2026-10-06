@@ -29,5 +29,9 @@ export class LocationsService {
     return this.#http.patch<Location>(`${this.#apiUrl}/${id}`, dto);
   }
 
+  getManagementLocations() {
+    return this.#http.get<Location[]>(`${this.#apiUrl}/management`);
+  }
+
 
 }
