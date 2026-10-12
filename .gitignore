@@ -52,3 +52,5 @@ prisma/*.db-journal
 # Nx local runtime data
 .nx/cache/
 .nx/workspace-data/
+
+__screenshots__/
