@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>CarTech Mobile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h1>Сканирование VIN</h1>
+
+  <ion-button
+    expand="block"
+    (click)="takePhoto()"
+  >
+    Сфотографировать VIN
+  </ion-button>
+
+  @if (photoUrl(); as photo) {
+    <img
+      [src]="photo"
+      alt="Photo vin"
+      class="vin-photo"
+    >
+  }
+
+  @if (vin()) {
+    <h2 class="recognized-text">{{ vin() }}</h2>
+  } @else {
+    <p>Текст пока не распознан</p>
+  }
+</ion-content>
