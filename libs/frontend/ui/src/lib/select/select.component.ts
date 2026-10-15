@@ -11,7 +11,7 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SelectOption } from './select.interface';
 import {OverlayModule} from '@angular/cdk/overlay';
-import {IconComponent} from '../icon/icon.component';
+import { IconComponent } from '@cartech/shared/ui';
 
 @Component({
   selector: 'ct-select',

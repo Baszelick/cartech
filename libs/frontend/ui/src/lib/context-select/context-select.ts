@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { ContextSelectItem } from './context.model';
-import { IconComponent } from '../icon/icon.component';
+import { IconComponent } from '@cartech/shared/ui';
 
 @Component({
   selector: 'ct-context-select',

@@ -1,4 +1,4 @@
-import type {IconName} from '@cartech/frontend/ui';
+import type { IconName } from '@cartech/shared/ui';
 import { UserRole } from '@cartech/core/data-access';
 
 export interface NavigationItem {

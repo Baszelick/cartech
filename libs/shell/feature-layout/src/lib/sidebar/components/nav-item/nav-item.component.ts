@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, input} from '@angular/core';
 import {NavigationItem} from '../../interfaces/navigation-items.interface';
-import {IconComponent} from '@cartech/frontend/ui';
+import { IconComponent } from '@cartech/shared/ui';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 
 @Component({

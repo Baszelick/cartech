@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import {Router} from '@angular/router';
 import {
   InputComponent,
-  IconComponent,
   DatePickerComponent,
   ButtonComponent, ContextSelect,
 } from '@cartech/frontend/ui';
+import { IconComponent } from '@cartech/shared/ui';
 import {AuthService} from '@cartech/auth/data-access';
 import { WorkspaceStore } from '@cartech/core/data-access';
 import { finalize } from 'rxjs';

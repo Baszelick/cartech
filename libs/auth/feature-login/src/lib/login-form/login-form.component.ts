@@ -7,12 +7,11 @@ import {
   signal,
 } from '@angular/core';
 import {
-  ImageLogoComponent,
   InputComponent,
-  IconComponent,
   ButtonComponent,
   FormFieldComponent,
 } from '@cartech/frontend/ui';
+import { IconComponent, ImageLogoComponent } from '@cartech/shared/ui';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '@cartech/auth/data-access';
 import { WorkspaceStore } from '@cartech/core/data-access';

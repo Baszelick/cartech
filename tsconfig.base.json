@@ -15,6 +15,8 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "paths": {
+      "@cartech/core/domain": ["./libs/core/domain/src/index.ts"],
+      "@cartech/shared/ui": ["./libs/shared/ui/src/index.ts"],
       "@cartech/frontend/ui": ["./libs/frontend/ui/src/index.ts"],
       "@cartech/auth/data-access": ["./libs/auth/data-access/src/index.ts"],
       "@cartech/auth/feature-login": ["./libs/auth/feature-login/src/index.ts"],

@@ -1,6 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>CarTech Mobile</ion-title>
+    <ct-image-logo
+      slot="start"
+      class="header-logo"
+      borderRadius="var(--radius-8)"
+      [size]="42"
+      imageColor="var(--color-bg-surface)"
+      backgroundColor="var(--color-brand-blue)"
+    />
+
+    <ion-title class="brand-text">Car<span>Tech</span></ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -8,6 +17,7 @@
   <h1>Сканирование VIN</h1>
 
   <ion-button
+    class="camera-button"
     expand="block"
     (click)="takePhoto()"
   >
@@ -17,7 +27,7 @@
   @if (photoUrl(); as photo) {
     <img
       [src]="photo"
-      alt="Photo vin"
+      alt="Фото VIN"
       class="vin-photo"
     >
   }

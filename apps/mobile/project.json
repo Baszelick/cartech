@@ -4,7 +4,7 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/mobile/src",
-  "tags": [],
+  "tags": ["type:app"],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
@@ -18,10 +18,18 @@
         "assets": [
           {
             "glob": "**/*",
+            "input": "libs/shared/ui/assets",
+            "output": "/"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/mobile/public"
           }
         ],
-        "styles": ["apps/mobile/src/styles.scss"]
+        "styles": [
+          "libs/shared/design-tokens/src/styles.scss",
+          "apps/mobile/src/styles.scss"
+        ]
       },
       "configurations": {
         "production": {

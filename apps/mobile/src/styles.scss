@@ -1,1 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --ion-font-family: var(--font-family);
+  --ion-background-color: var(--color-bg-main);
+  --ion-text-color: var(--color-text-main);
+  --ion-color-primary: var(--color-brand-blue);
+}

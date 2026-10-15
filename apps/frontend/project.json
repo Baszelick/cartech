@@ -31,6 +31,11 @@
         "assets": [
           {
             "glob": "**/*",
+            "input": "libs/shared/ui/assets",
+            "output": "/"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/frontend/public"
           },
           {
@@ -40,6 +45,7 @@
           }
         ],
         "styles": [
+          "libs/shared/design-tokens/src/styles.scss",
           "apps/frontend/src/styles.scss"
         ],
         "scripts": []
@@ -101,6 +107,11 @@
         "assets": [
           {
             "glob": "**/*",
+            "input": "libs/shared/ui/assets",
+            "output": "/"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/frontend/public"
           },
           {
@@ -110,6 +121,7 @@
           }
         ],
         "styles": [
+          "libs/shared/design-tokens/src/styles.scss",
           "apps/frontend/src/styles.scss"
         ],
         "scripts": []

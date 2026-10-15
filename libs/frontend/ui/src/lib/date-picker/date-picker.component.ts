@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, forwardRef, input, signal, computed
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
 import {DateTime, Info} from 'luxon';
-import {IconComponent} from '../icon/icon.component';
+import { IconComponent } from '@cartech/shared/ui';
 
 export interface CalendarDay {
   date: DateTime;

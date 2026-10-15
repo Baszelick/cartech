@@ -2,15 +2,16 @@ import {Component, signal} from '@angular/core';
 import {IonButton, IonContent, IonHeader, IonTitle, IonToolbar} from '@ionic/angular';
 import {Camera, CameraResultType, CameraSource} from '@capacitor/camera';
 import {CapacitorPluginMlKitTextRecognition} from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
+import { ImageLogoComponent } from '@cartech/shared/ui';
 
 @Component({
   selector: 'app-vin-scanner',
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton, ImageLogoComponent],
   templateUrl: './vin-scanner.html',
   styleUrl: './vin-scanner.scss',
 })
 export class VinScanner {
-  readonly photoUrl = signal<string | null>(null)
+  readonly photoUrl = signal<string | null>(null);
   readonly vin = signal<string>('');
 
   private extractVin(text: string): string | null {
@@ -34,8 +35,6 @@ export class VinScanner {
       base64Image: photo.base64String,
       rotation: 0,
     });
-
-
 
     this.vin.set(this.extractVin(result.text) ?? 'Нет вин');
   }

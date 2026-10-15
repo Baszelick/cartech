@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NAVIGATION } from './config/navigation.config';
 import { NavItemComponent } from './components/nav-item/nav-item.component';
-import { ButtonComponent, IconComponent, ImageLogoComponent } from '@cartech/frontend/ui';
+import { ButtonComponent } from '@cartech/frontend/ui';
+import { IconComponent, ImageLogoComponent } from '@cartech/shared/ui';
 import { LayoutService } from '../layout.service';
 import { AuthService } from '@cartech/auth/data-access';
 

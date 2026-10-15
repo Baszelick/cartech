@@ -1,12 +1,42 @@
+.header-logo {
+  margin-inline-start: var(--space-12);
+}
+
+.camera-button {
+  --background: var(--color-brand-blue);
+  --background-hover: var(--color-brand-blue);
+  --background-activated: var(--color-brand-blue);
+
+  --border-radius: var(--radius-8);
+  --box-shadow: none;
+
+  font-family: var(--font-family);
+  font-size: var(--text-14);
+  font-weight: var(--font-semibold);
+}
+
 .vin-photo {
   display: block;
   width: 100%;
-  max-width: 100%;
-  height: auto;
-  margin-top: 16px;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  border-radius: var(--radius-8);
 }
 
 .recognized-text {
+  align-items: center;
+  align-content: center;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+
+.brand-text {
+  font-family: 'Orbitron';
+  font-size: var(--text-24);
+  color: var(--color-text-main);
+  font-weight: var(--font-bold);
+
+  span {
+    color: var(--color-brand-blue);
+  }
 }
